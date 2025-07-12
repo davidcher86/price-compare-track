@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "declaration": false,
+    "noEmitOnError": true,
+    "module": "Node16",
+    "moduleResolution": "node16",
+    "incremental": true,
+    "tsBuildInfoFile": ".tsbuildinfo"
+  },
+  "include": ["./../*.ts","./*.ts"],
+  "exclude": []
+}

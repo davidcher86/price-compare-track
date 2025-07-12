@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "sourceMap": true,
+    "outDir": "./functions/formScrape/dist",
+    "declaration": false,
+    "noEmitOnError": true,
+    "incremental": true,
+    "allowImportingTsExtensions": true
+  },
+  "include": ["./../*.ts","./*.ts", "../../commons/*.ts", "../../commons/**/*.ts"],
+  "exclude": []
+}

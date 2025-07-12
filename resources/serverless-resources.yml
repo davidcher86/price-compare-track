@@ -1,0 +1,71 @@
+# "service" is the name of this project. This will also be added to your AWS resource names.
+org: davidcher
+
+service: sls-resources
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  region: eu-central-1
+  stage: ${env:PROFILE, 'dev'}
+  environment:
+    SERVERLESS_ACCESS_KEY: ${env:SERVERLESS_ACCESS_KEY}
+
+resources:
+  Resources:
+    PriceHistoryTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: price-history
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: key
+            AttributeType: S
+          - AttributeName: productName
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: date
+            AttributeType: S
+        KeySchema:
+          - AttributeName: key
+            KeyType: HASH # Partition Key
+          - AttributeName: date
+            KeyType: RANGE # Sort Key
+        GlobalSecondaryIndexes:
+          - IndexName: ProductNameIndex
+            KeySchema:
+              - AttributeName: productName
+                KeyType: HASH
+              - AttributeName: date
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: UserIdIndex
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+              - AttributeName: date
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+    UserDetailTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: user-details
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: false
+        Tags:
+          - Key: Environment
+            Value: ${self:provider.stage}

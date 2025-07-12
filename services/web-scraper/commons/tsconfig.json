@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "declaration": false,
+    "noEmitOnError": true,
+    "outDir": "./utils/dist",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "incremental": true,
+    "baseUrl": "../.",
+    "sourceMap": true,
+  },
+  "extends": ["../tsconfig.base.json"],
+  "include": ["./**/*"]
+}

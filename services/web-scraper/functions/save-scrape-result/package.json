@@ -1,0 +1,21 @@
+{
+  "name": "save-scrape-result",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "serverless-dotenv-plugin": "^6.0.0",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "serverless-plugin-include-dependencies": "^6.1.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.2.2"
+  }
+}

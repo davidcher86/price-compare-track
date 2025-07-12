@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "../../",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "outDir": "./functions/puppeteer/dist",
+    "declaration": false,
+    "noEmitOnError": true,
+    "allowImportingTsExtensions": true,
+    "incremental": true
+  },
+  "include": ["./../*.ts","./*.ts", "../../commons/*.ts", "../../commons/**/*.ts"],
+  "exclude": []
+}

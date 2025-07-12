@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "sourceMap": true,
+    "outDir": "./functions/data-extractor/dist",
+    "declaration": false,
+    "noEmitOnError": true,
+    "allowImportingTsExtensions": true,
+    "incremental": true
+  },
+  "include": ["../../commons/**/*.ts","./../*.ts","./*.ts","./../*.json","./*.json"],
+  "exclude": []
+}

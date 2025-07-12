@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "outDir": "dist",
+    "rootDir": ".",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "baseUrl": ".",
+  },
+  "include": ["functions/get-user-scrapes/**/*.ts", "functions/add-user/**/*.ts", "functions/update-user/**/*.ts", "commons/**/*.ts"]
+}

@@ -1,0 +1,104 @@
+# "service" is the name of this project. This will also be added to your AWS resource names.
+org: davidcher
+
+service: sls-user-details
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  memorySize: 1024
+  timeout: 60
+  region: eu-central-1
+  stage: ${env:PROFILE, 'dev'}
+  environment:
+    SERVERLESS_ACCESS_KEY: ${env:SERVERLESS_ACCESS_KEY}
+    REGION: ${self:provider.region}
+    USER_DETAILS_TABLE: user-details
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "logs:CreateLogGroup"
+        - "logs:CreateLogStream"
+        - "logs:PutLogEvents"
+        - "s3:GetObject"
+        - "dynamodb:Query"
+        - "dynamodb:GetItem"
+        - "dynamodb:PutItem"
+      Resource: "*"
+
+plugins:
+  - serverless-offline
+  - serverless-scriptable-plugin
+  - serverless-dotenv-plugin
+
+custom:
+  RESULT_DB_TABLE_NAME: ${env:RESULT_DB_TABLE_NAME}-${self:provider.stage}
+  dotenv:
+    path: .env
+#  sharedEnv: ${file(../../.env)}
+  esbuild:
+    bundle: true
+    minify: false
+    sourcemap: true
+    target: node18
+    packager: npm
+    exclude: ['aws-sdk']
+    separateBuilds: true
+    platform: node
+    concurrency: 10
+    tsconfig: './tsconfig.base.json'
+  serverless-offline:
+    httpPort: ${opt:httpPort, 4002}
+    webSocketPort: 4004
+
+functions:
+  add-user:
+    architecture: x86_64
+    handler: functions/add-user/handler.addUserDetails
+    package:
+      include:
+        - functions/add-user/**
+    events:
+      - http:
+          path: /new-user-details
+          method: post
+
+  update-user:
+    architecture: x86_64
+    handler: functions/update-user/handler.editUserDetails
+    package:
+      include:
+        - functions/update-user/**
+    events:
+      - http:
+          path: /update-user-details
+          method: put
+
+  get-user:
+    architecture: x86_64
+    handler: functions/get-user/handler.getUserDetails
+    package:
+      include:
+        - functions/get-user/**
+    events:
+      - http:
+          path: /get-user-details
+          method: get
+
+  get-user-scrape-results:
+    architecture: x86_64
+    handler: functions/get-user-scrapes/handler.getUserScrapes
+    environment:
+      RESULT_DB_TABLE_NAME: {self:custom.RESULT_DB_TABLE_NAME}
+    package:
+      include:
+        - functions/get-user-scrapes/**
+    events:
+      - http:
+          path: /get-user-scrape-data
+          method: get
+
+package:
+  individually: true

@@ -1,0 +1,24 @@
+{
+  "name": "Ebay",
+  "url": "https://www.ebay.com/sch/i.html?_nkw=logi",
+  "loadSelector": ".srp-results.srp-list",
+  "listIdentifier": ".s-item__wrapper.clearfix",
+  "brightDataSupport" : false,
+  "extractArgs": [
+    {
+      "keyName": "name",
+      "selector": "[role=\"heading\"]",
+      "type": "text"
+    },
+    {
+      "keyName": "price",
+      "selector": ".s-item__price",
+      "type": "price"
+    },
+    {
+      "keyName": "image",
+      "selector": "img[alt]",
+      "type": "src"
+    }
+  ]
+}

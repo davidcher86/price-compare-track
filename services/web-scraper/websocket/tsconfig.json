@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "sourceMap": true,
+    "outDir": "./websocket/dist",
+    "declaration": false,
+    "noEmitOnError": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  },
+  "include": ["../commons/**/*.ts","./../*.ts","./*.ts","./../*.json","./*.json"],
+  "exclude": []
+}

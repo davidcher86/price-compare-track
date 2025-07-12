@@ -1,0 +1,32 @@
+{
+  "name": "user-details",
+  "version": "1.0.0",
+  "description": "<!-- title: 'AWS NodeJS Example' description: 'This template demonstrates how to deploy a simple NodeJS function running on AWS Lambda using the Serverless Framework.' layout: Doc framework: v4 platform: AWS language: nodeJS priority: 1 authorLink: 'https://github.com/serverless' authorName: 'Serverless, Inc.' authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4' -->",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "offline:user-details": "serverless offline --config serverless-user-details.yml",
+    "deploy-user-details": "serverless deploy --config serverless-user-details.yml",
+    "seed:dynamo": "node scripts/initDynamo.js",
+    "debug": "node --inspect node_modules/.bin/serverless offline",
+    "initDynamo": "node scripts/initDynamo.js",
+    "puppeteer": "sls invoke local -f scrape-puppeteer --path functions/puppeteer/datamock.json",
+    "playwright": "sls invoke local -f scrape-playwright --path functions/playwright/datamock.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "serverless-dotenv-plugin": "1.1.5",
+    "serverless-offline": "^14.4.0",
+    "ts-loader": "^9.5.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.788.0",
+    "@aws-sdk/lib-dynamodb": "^3.789.0"
+  }
+}

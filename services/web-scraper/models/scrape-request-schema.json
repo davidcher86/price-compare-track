@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "required": ["query", "scrapeSources"],
+  "properties": {
+    "query": { "type": "string" },
+    "scrapeSources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" }
+        },
+        "required": ["name"]
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "get-user-scrapes",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "ts-loader": "^9.5.2",
+    "ts-node": "^10.9.2",
+    "@types/node": "^22.14.1",
+    "serverless-offline": "^14.4.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.788.0",
+    "@aws-sdk/lib-dynamodb": "^3.789.0",
+    "uuid": "^11.1.0"
+  }
+}

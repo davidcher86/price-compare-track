@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "strict": true,
+    "rootDir": ".",
+    "baseUrl": "./",
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": true,
+    "moduleResolution": "Node16",
+    "module": "Node16"
+  },
+  "paths": {
+    "@commons/*": ["commons/*"]
+  },
+  "include": ["functions/form-scrape/**/*.ts", "functions/data-extractor/**/*.ts", "functions/puppeteer/**/*.ts", "functions/save-scrape-result/**/*.ts", "commons/**/*.ts", "models/**/*.json", "websocket/**/*.json"],
+}

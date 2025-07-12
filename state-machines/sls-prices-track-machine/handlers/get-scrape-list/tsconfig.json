@@ -1,0 +1,7 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/handlers/get-scrape-list",
+  },
+  "include": ["./**/*"]
+}

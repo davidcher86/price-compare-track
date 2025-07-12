@@ -1,0 +1,66 @@
+org: davidcher
+service: price-compare-client
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-central-1
+
+
+Resources:
+  ReactAppBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: ${self:service}-bucket
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+    ReactAppBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: ReactAppBucket
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal: "*"
+              Action: "s3:GetObject"
+              Resource:
+                Fn::Join:
+                  - ""
+                  - - "arn:aws:s3:::"
+                    - Ref: ReactAppBucket
+                    - "/*"
+        ReactAppCloudFront:
+          Type: AWS::CloudFront::Distribution
+          Properties:
+            DistributionConfig:
+              Origins:
+                - Id: ReactAppOrigin
+                  DomainName:
+                    Fn::GetAtt:
+                      - ReactAppBucket
+                      - WebsiteURL
+                  CustomOriginConfig:
+                    OriginProtocolPolicy: http-only
+              DefaultCacheBehavior:
+                TargetOriginId: ReactAppOrigin
+                ViewerProtocolPolicy: redirect-to-https
+                AllowedMethods:
+                  - GET
+                  - HEAD
+                CachedMethods:
+                  - GET
+                  - HEAD
+              Enabled: true
+              DefaultRootObject: index.html
+
+plugins:
+  - serverless-s3-sync
+
+custom:
+  s3Sync:
+      - bucketName: ${self:service}-bucket
+        localDir: build

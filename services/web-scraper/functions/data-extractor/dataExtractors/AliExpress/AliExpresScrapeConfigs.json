@@ -1,0 +1,25 @@
+{
+  "name": "AliExpress",
+  "brightDataSupport" : false,
+  "url": "https://www.aliexpress.com/w/wholesale-logi.html?spm=a2g0o.productlist.search.0",
+  "loadSelector": "#card-list",
+  "disableSec": true,
+  "listIdentifier": ".card-out-wrapper",
+  "extractArgs": [
+    {
+      "keyName": "name",
+      "selector": "[title]",
+      "type": "text"
+    },
+    {
+      "keyName": "price",
+      "selector": "span[span:contains(\"$\")]",
+      "type": "price"
+    },
+    {
+      "keyName": "image",
+      "selector": "img[alt]",
+      "type": "src"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "Amazon",
+  "disableSec": false,
+  "url": "https://www.amazon.com/s?k=logi",
+  "loadSelector": "#search",
+  "listIdentifier": ".puisg-row",
+  "brightDataSupport" : true,
+  "extractArgs": [
+    {
+      "keyName": "name",
+      "selector": ".s-line-clamp-2",
+      "type": "text"
+    },
+    {
+      "keyName": "price",
+      "selector": ".a-price .a-offscreen",
+      "type": "price"
+    },
+    {
+      "keyName": "image",
+      "selector": ".s-image",
+      "type": "src"
+    }
+  ]
+}

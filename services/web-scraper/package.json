@@ -1,0 +1,36 @@
+{
+  "name": "web-scraper",
+  "version": "1.0.0",
+  "description": "<!-- title: 'AWS NodeJS Example' description: 'This template demonstrates how to deploy a simple NodeJS function running on AWS Lambda using the Serverless Framework.' layout: Doc framework: v4 platform: AWS language: nodeJS priority: 1 authorLink: 'https://github.com/serverless' authorName: 'Serverless, Inc.' authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4' -->",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "invoke:handle-scrape-request": "sls invoke local -f acceptRequest --stage prod --path functions/formScrape/datamocklist2.json",
+    "invoke:puppeteer-new": "sls invoke local -f scraper --path functions/puppeteer/datamocksqs.json",
+    "invoke:extract-data": "sls invoke local -f extract-data --path functions/data-extractor/mocksqsmsg.json",
+    "invoke:save-extracted-data": "sls invoke local -f save-extracted-data --path functions/save-scrape-result/mocksqsmsg.json",
+    "invoke:playwright-new": "sls invoke local -f scrapePlaywright --path functions/playwright/datamocknewegg.json --debug"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.844.0",
+    "@aws-sdk/client-secrets-manager": "^3.844.0",
+    "serverless-dotenv-plugin": "^1.1.5",
+    "@aws-sdk/client-dynamodb": "^3.839.0",
+    "@aws-sdk/client-sqs": "^3.839.0",
+    "@aws-sdk/lib-dynamodb": "^3.839.0"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.1692.0",
+    "esbuild": "^0.25.5",
+    "serverless-esbuild": "^1.55.1",
+    "serverless-offline": "^14.4.0",
+    "serverless-plugin-include-dependencies": "^6.1.1",
+    "serverless-secrets-plugin": "^0.1.0",
+    "serverless-websockets-plugin": "^1.0.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "sls-prices-track-machine",
+  "version": "1.0.0",
+  "description": "<!-- title: 'AWS NodeJS Example' description: 'This template demonstrates how to deploy a simple NodeJS function running on AWS Lambda using the Serverless Framework.' layout: Doc framework: v4 platform: AWS language: nodeJS priority: 1 authorLink: 'https://github.com/serverless' authorName: 'Serverless, Inc.' authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4' -->",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "invoke:scrapePriceTrackMachine": "sls invoke stepf --name scrapePriceTrackMachine --config serverless-price-track.yml --data '{\"userId\":\"5fcee447-d99b-44df-8b74-6315277a7bed\"}' --debug",
+    "invoke:getScrapeList": "sls invoke local -f getScrapeList --data '{\"userId\": \"5fcee447-d99b-44df-8b74-6315277a7bed\"}'",
+    "invoke:scrapeSite": "sls invoke local -f scrapeSite --config serverless-price-track.yml --path handlers/scrape-site/datamocksingle.json",
+    "invoke:extractData": "sls invoke local -f extractData --config serverless-price-track.yml --path handlers/extract-data/scrapeInfo.json",
+    "invoke:updateHistoryData": "sls invoke local -f updateHistoryData --config serverless-price-track.yml --data '{\"userId\": \"5fcee447-d99b-44df-8b74-6315277a7bed\"}'",
+    "deploy:prices-track-machine": "serverless deploy --config serverless-price-track.yml",
+    "offline:prices-track-machine": "serverless step-functions-offline --config serverless-price-track.yml --stateMachine dev",
+    "offline:prices-track-machine1": "serverless step-functions-offline --config serverless-price-track.yml"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.149",
+    "@types/aws-sdk": "^2.7.4",
+    "@types/node": "^22.15.2",
+    "glob": "^11.0.2",
+    "rimraf": "^6.0.1",
+    "serverless": "^4.14.1",
+    "serverless-dotenv-plugin": "1.1.5",
+    "serverless-esbuild": "^1.55.0",
+    "serverless-offline": "^14.4.0",
+    "serverless-offline-lambda": "^1.0.6",
+    "serverless-step-functions": "^3.22.0",
+    "serverless-step-functions-offline": "^2.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.797.0",
+    "@aws-sdk/lib-dynamodb": "^3.797.0",
+    "cheerio": "^1.0.0"
+  }
+}

@@ -1,0 +1,33 @@
+{
+
+  "query": "logi",
+  "sourceList": [{
+    "name": "Aliexpress",
+    "activated": false,
+    "disableSec": false,
+    "url": "https://www.aliexpress.com/w/wholesale-{query}.html?spm=a2g0o.productlist.search.0",
+    "resultType": "list",
+    "scrapeArgs": {
+      "scraperEngine": "static",
+      "loadSelector": "#card-list",
+      "listIdentifier": ".jr_js",
+      "extractArgs": [
+        {
+          "keyName": "name",
+          "selector": ".jr_kp",
+          "type": "text"
+        },
+        {
+          "keyName": "price",
+          "selector": ".jr_kr",
+          "type": "text"
+        },
+        {
+          "keyName": "image",
+          "selector": ".mm_be",
+          "type": "src"
+        }
+      ]
+    }
+  }]
+}
