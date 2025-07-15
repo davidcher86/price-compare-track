@@ -11,14 +11,9 @@
   "author": "",
   "license": "ISC",
   "description": "",
-  "dependencies": {
-    "@sparticuz/chromium": "^133.0.0",
-    "puppeteer-core": "^24.11.2",
-    "serverless-dotenv-plugin": "^6.0.0",
-    "uuid": "^11.1.0"
-  },
   "devDependencies": {
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "serverless-dotenv-plugin": "^6.0.0"
   }
 }

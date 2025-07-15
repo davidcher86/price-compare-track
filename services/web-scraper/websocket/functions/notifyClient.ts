@@ -1,4 +1,3 @@
-// import { ApiGatewayManagementApi, DynamoDB } from 'aws-sdk';
 import {deleteRecord, retrieveAllTableRecord} from "../../commons/utils/DynamoDBService.ts";
 import {postToConnection} from "../../commons/utils/ApiGatewayService.ts";
 

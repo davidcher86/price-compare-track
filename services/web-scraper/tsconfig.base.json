@@ -10,7 +10,8 @@
     "module": "Node16"
   },
   "paths": {
-    "@commons/*": ["commons/*"]
+    "shared/*": ["../../layers/aws-sdk/storage/nodejs/shared/*"],
+    "@commons/*": ["commons/**"]
   },
-  "include": ["functions/form-scrape/**/*.ts", "functions/data-extractor/**/*.ts", "functions/puppeteer/**/*.ts", "functions/save-scrape-result/**/*.ts", "commons/**/*.ts", "models/**/*.json", "websocket/**/*.json"],
+  "include": ["./**/*.ts", "../../layers/**/*.ts", "functions/formScrape/**/*.ts", "functions/data-extractor/**/*.ts", "functions/puppeteer/**/*.ts", "functions/save-scrape-result/**/*.ts", "commons/**/*.ts", "models/**/*.json", "websocket/**/*.json"],
 }

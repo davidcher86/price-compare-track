@@ -1,5 +1,5 @@
 {
-  "name": "save-scrape-result",
+  "name": "nodejs",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -9,9 +9,7 @@
   "author": "",
   "license": "ISC",
   "description": "",
-  "devDependencies": {
-    "ts-node": "^10.9.2",
-    "typescript": "^5.2.2",
-    "serverless-dotenv-plugin": "^6.0.0"
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.844.0"
   }
 }

@@ -3,14 +3,14 @@
   "compilerOptions": {
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "baseUrl": "./",
+    "baseUrl": "../../",
     "sourceMap": true,
-    "outDir": "./functions/formScrape/dist",
+    "outDir": "./functions/formScrape",
     "declaration": false,
     "noEmitOnError": true,
-    "incremental": true,
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "incremental": true
   },
-  "include": ["./../*.ts","./*.ts", "../../commons/*.ts", "../../commons/**/*.ts"],
+  "include": ["./*.ts", "../../../../layers/**/*.ts", "./../*.ts", "../../commons/*.ts", "../../commons/**/*.ts"],
   "exclude": []
 }

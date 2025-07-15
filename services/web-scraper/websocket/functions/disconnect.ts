@@ -1,4 +1,3 @@
-// import { DynamoDB } from 'aws-sdk';
 import {deleteRecord} from "../../commons/utils/DynamoDBService.ts";
 
 // const db = new DynamoDB.DocumentClient();

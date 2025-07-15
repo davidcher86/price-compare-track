@@ -10,6 +10,7 @@ provider:
   timeout: 60
   stage: ${opt:stage, 'dev'}
   region: ${env:REGION}
+  versionFunctions: false
   environment:
     STAGE: ${opt:STAGE, 'dev'}
     REGION: ${env:REGION}
@@ -53,16 +54,16 @@ custom:
     brightdataProxyUri: sls-fourth/brightdata/proxy/uri
   esbuild:
     bundle: true
-    minify: false
+    minify: true
     sourcemap: true
     target: node18
     packager: npm
     platform: node
     concurrency: 10
     tsconfig: './tsconfig.base.json'
+    excludeDevDependencies: true
     external:
-      - 'playwright-core'
-      - 'aws-sdk'
+      - shared/SQSService.ts
     resolveExtensions:
       - .js
       - .ts
@@ -136,6 +137,47 @@ resources:
               ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST
 
+layers:
+  chromium:
+    path: ../../layers/chromium
+    name: chromium-layer-${sls:stage}
+    compatibleRuntimes:
+      - nodejs18.x
+    description: Chromium layer for Puppeteer
+    package:
+      include:
+        - nodejs/**
+
+  uuidLib:
+    path: ../../layers/uuid
+    name: uuid-layer-${sls:stage}
+    compatibleRuntimes:
+      - nodejs18.x
+    description: Layer with uuid package
+    package:
+      include:
+        - nodejs/**
+
+  awsStorage:
+    path: ../../layers/aws-sdk/storage
+    name: aws-storage-layer-${sls:stage}
+    compatibleRuntimes:
+      - nodejs18.x
+    description: S3 and DynamoDB layer
+    package:
+      include:
+        - nodejs/**
+
+  awsDataTransfer:
+    path: ../../layers/aws-sdk/data-transfer
+    name: aws-data-transfer-layer-${sls:stage}
+    compatibleRuntimes:
+      - nodejs18.x
+    description: ApiGateWay & SQS layer
+    package:
+      include:
+        - nodejs/**
+
 functions:
   acceptRequest:
     handler: functions/formScrape/handler.formScrapeRequest
@@ -144,12 +186,16 @@ functions:
       include:
         - functions/formScrape/**
         - commons/**
+        # - ../../layers/aws-sdk/data-transfer/**
     timeout: 29
     environment:
       STAGE: ${self:provider.stage}
       REGION: ${self:provider.region}
       AWS_ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
       SQS_SCRAPE_REQUEST: ${self:custom.SQS_SCRAPE_REQUEST}
+    layers:
+    - { Ref: UuidLibLambdaLayer }
+    - { Ref: AwsDataTransferLambdaLayer }
     events:
       - http:
           path: /scrape
@@ -178,7 +224,12 @@ functions:
       BRIGHT_DATA_SERVICE_ENABLED_LIST: ${self:provider.environment.BRIGHT_DATA_SERVICE_ENABLED_LIST}
       SECRET_MANAGER_ADDRESS: ${env:SECRET_MANAGER_ADDRESS}
       SECRET_MANAGER_KEY: ${env:SECRET_MANAGER_KEY}
-    timeout: 60
+    layers:
+      - { Ref: UuidLibLambdaLayer }
+      - { Ref: AwsDataTransferLambdaLayer }
+      - { Ref: AwsStorageLambdaLayer }
+      - { Ref: ChromiumLambdaLayer }
+    timeout: 300
     events:
       - sqs:
           arn:
@@ -199,7 +250,10 @@ functions:
       REGION: ${self:provider.region}
       S3_EXTRACTED_DATA_BUCKET_NAME: ${self:custom.S3_EXTRACTED_DATA_BUCKET_NAME}
       SQS_EXTRACTED_DATA: ${self:custom.SQS_EXTRACTED_DATA}
-    timeout: 900
+    layers:
+      - { Ref: AwsDataTransferLambdaLayer }
+      - { Ref: AwsStorageLambdaLayer }
+    timeout: 60
     events:
       - sqs:
           arn:
@@ -214,11 +268,13 @@ functions:
       include:
         - functions/save-scrape-result/**
         - commons/**
+    layers:
+    - { Ref: AwsStorageLambdaLayer }
     environment:
       STAGE: ${self:provider.stage}
       REGION: ${self:provider.region}
       S3_EXTRACTED_DATA_BUCKET_NAME: ${self:custom.S3_EXTRACTED_DATA_BUCKET_NAME}
-      RESULT_DB_TABLE_NAME: ${self.custom.RESULT_DB_TABLE_NAME}
+      RESULT_DB_TABLE_NAME: ${self:custom.RESULT_DB_TABLE_NAME}
     events:
       - sqs:
           arn:
@@ -226,55 +282,51 @@ functions:
               - ScrapeExtractedResultsQueue
               - Arn
 
+  # connect:
+  #   handler: websocket/functions/connect.handler
+  #   events:
+  #     - websocket:
+  #         route: $connect
+  #   environment:
+  #     WS_CONNECTIONS_TABLE_NAME: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
 
-#  scrapePlaywright:
-#    environment:
-#      NODE_OPTIONS: "--enable-source-maps"
-#      CHROMIUM_PATH: "/tmp/chromium"
-#    handler: functions/playwright/handler.scrape
-#    package:
-#      include:
-#        - functions/playwright/**
-#        - functions/playwright/package.json
-#        - functions/playwright/node_modules/@sparticuz/chromium/**
-#    environment:
-#      CHROMIUM_PATH: "/tmp/chromium"
+  # disconnect:
+  #   handler: websocket/functions/disconnect.handler
+  #   events:
+  #     - websocket:
+  #         route: $disconnect
+  #   environment:
+  #     WS_CONNECTIONS_TABLE_NAME: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
 
-  connect:
-    handler: websocket/functions/connect.handler
-    events:
-      - websocket:
-          route: $connect
-    environment:
-      WS_CONNECTIONS_TABLE_NAME: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
+  # default:
+  #   handler: websocket/functions/default.handler
+  #   events:
+  #     - websocket:
+  #         route: $default
 
-  disconnect:
-    handler: websocket/functions/disconnect.handler
-    events:
-      - websocket:
-          route: $disconnect
-    environment:
-      WS_CONNECTIONS_TABLE_NAME: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
+  # notifyClient:
+  #   handler: websocket/functions/notifyClient.handler
+  #   environment:
+  #     WS_CONNECTIONS_TABLE_NAME: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
+  #     WS_CONNECTIONS_DOMAIN: ${env:WS_CONNECTIONS_DOMAIN}
 
-  default:
-    handler: websocket/functions/default.handler
-    events:
-      - websocket:
-          route: $default
-
-  notifyClient:
-    handler: websocket/functions/notifyClient.handler
-    environment:
-      WS_CONNECTIONS_TABLE_NAME: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
-      WS_CONNECTIONS_DOMAIN: ${env:WS_CONNECTIONS_DOMAIN}
-
-  sendMessage:
-    handler: websocket/functions/sendMessage.handler
-    events:
-      - http:
-          path: send
-          method: post
+  # sendMessage:
+  #   handler: websocket/functions/sendMessage.handler
+  #   timeout: 29
+  #   events:
+  #     - http:
+  #         path: send
+  #         method: post
 
 package:
+  individually: true
+  exclude:
+    - scripts/**
+    - mock-data/**
   patterns:
-    - '!node_modules/@sparticuz/chromium/**'
+    - '!**/*.test.js'
+    - '!**/*.spec.js'
+    - '!**/__tests__/**'
+    - '!**/docs/**'
+    - '!**/README.md'
+    - '!**/.env'
