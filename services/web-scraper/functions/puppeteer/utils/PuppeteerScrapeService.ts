@@ -40,7 +40,6 @@ export class PuppeteerScrapeService extends AbstractScrapeHandler implements Scr
             this.closeBrowser();
             throw error;
         } finally {
-            console.log('PuppeteerScrapeListService finishe');
             this.closeBrowser();
         }
     }

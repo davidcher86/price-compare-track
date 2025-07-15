@@ -91,7 +91,7 @@ const extract = async (event: any) => {
 
         await sendMessageToQueue(sqsUrl,sqsPayload);
 
-        // await deletePayload(bucketName, bucketKey);
+        await deletePayload(bucketName, bucketKey);
 
         return {
             statusCode: 200,

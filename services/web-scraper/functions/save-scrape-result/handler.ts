@@ -47,7 +47,7 @@ const save = async (event: any) => {
         
         await saveRecord(tableName,scrapeResultRecord);
 
-        // await deletePayload(bucketName, bucketKey);
+        await deletePayload(bucketName, bucketKey);
 
         return {
             statusCode: 200,
