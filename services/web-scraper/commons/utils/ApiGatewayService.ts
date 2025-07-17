@@ -1,6 +1,6 @@
 import { ApiGatewayManagementApiClient, PostToConnectionCommand } from "@aws-sdk/client-apigatewaymanagementapi";
 
-export const postToConnection = async (connectionId: string, data: string, endpoint: string): Promise<void> => {
+export const postToApiGateway = async (connectionId: string, data: string, endpoint: string): Promise<void> => {
     try {
         // Initialize the API Gateway Management API client
         const client = new ApiGatewayManagementApiClient({

@@ -49,7 +49,7 @@ custom:
   SQS_EXTRACTED_DATA: ${env:SQS_EXTRACTED_DATA}-${self:provider.stage}
   S3_RAW_HTML_RESULT_BUCKET_NAME: ${env:S3_RAW_HTML_RESULT_BUCKET_NAME}-${self:provider.stage}
   S3_EXTRACTED_DATA_BUCKET_NAME: ${env:S3_EXTRACTED_DATA_BUCKET_NAME}-${self:provider.stage}
-
+  SQS_SCRAPE_DLQ: ${env:SQS_SCRAPE_DLQ}-${self:provider.stage}
   secrets:
     brightdataProxyUri: sls-fourth/brightdata/proxy/uri
   esbuild:
@@ -76,16 +76,32 @@ resources:
       Properties:
         QueueName: ${self:custom.SQS_SCRAPE_REQUEST}
         VisibilityTimeout: 70
+        RedrivePolicy:
+          deadLetterTargetArn:
+            Fn::GetAtt: [DLQ, Arn]
+          maxReceiveCount: 1
     ScrapeHtmlRawDataQueue:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:custom.SQS_HTML_RAW_DATA_RESULT}
         VisibilityTimeout: 70
+        RedrivePolicy:
+          deadLetterTargetArn:
+            Fn::GetAtt: [DLQ, Arn]
+          maxReceiveCount: 1
     ScrapeExtractedResultsQueue:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:custom.SQS_EXTRACTED_DATA}
         VisibilityTimeout: 70
+        RedrivePolicy:
+          deadLetterTargetArn:
+            Fn::GetAtt: [DLQ, Arn]
+          maxReceiveCount: 1
+    DLQ:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:custom.SQS_SCRAPE_DLQ}
 
     ScrapedHtmlBucket:
       Type: AWS::S3::Bucket
@@ -139,7 +155,7 @@ resources:
 
 layers:
   chromium:
-    path: ../../layers/chromium
+    path: ../layers/chromium
     name: chromium-layer-${sls:stage}
     compatibleRuntimes:
       - nodejs18.x
@@ -149,7 +165,7 @@ layers:
         - nodejs/**
 
   uuidLib:
-    path: ../../layers/uuid
+    path: ../layers/uuid
     name: uuid-layer-${sls:stage}
     compatibleRuntimes:
       - nodejs18.x
@@ -159,7 +175,7 @@ layers:
         - nodejs/**
 
   awsStorage:
-    path: ../../layers/aws-sdk/storage
+    path: ../layers/aws-sdk/storage
     name: aws-storage-layer-${sls:stage}
     compatibleRuntimes:
       - nodejs18.x
@@ -169,7 +185,7 @@ layers:
         - nodejs/**
 
   awsDataTransfer:
-    path: ../../layers/aws-sdk/data-transfer
+    path: ../layers/aws-sdk/data-transfer
     name: aws-data-transfer-layer-${sls:stage}
     compatibleRuntimes:
       - nodejs18.x
@@ -186,7 +202,6 @@ functions:
       include:
         - functions/formScrape/**
         - commons/**
-        # - ../../layers/aws-sdk/data-transfer/**
     timeout: 29
     environment:
       STAGE: ${self:provider.stage}
@@ -281,42 +296,6 @@ functions:
             Fn::GetAtt:
               - ScrapeExtractedResultsQueue
               - Arn
-
-  # connect:
-  #   handler: websocket/functions/connect.handler
-  #   events:
-  #     - websocket:
-  #         route: $connect
-  #   environment:
-  #     WS_CONNECTIONS_TABLE_NAME: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
-
-  # disconnect:
-  #   handler: websocket/functions/disconnect.handler
-  #   events:
-  #     - websocket:
-  #         route: $disconnect
-  #   environment:
-  #     WS_CONNECTIONS_TABLE_NAME: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
-
-  # default:
-  #   handler: websocket/functions/default.handler
-  #   events:
-  #     - websocket:
-  #         route: $default
-
-  # notifyClient:
-  #   handler: websocket/functions/notifyClient.handler
-  #   environment:
-  #     WS_CONNECTIONS_TABLE_NAME: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
-  #     WS_CONNECTIONS_DOMAIN: ${env:WS_CONNECTIONS_DOMAIN}
-
-  # sendMessage:
-  #   handler: websocket/functions/sendMessage.handler
-  #   timeout: 29
-  #   events:
-  #     - http:
-  #         path: send
-  #         method: post
 
 package:
   individually: true

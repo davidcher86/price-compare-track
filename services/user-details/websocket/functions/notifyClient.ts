@@ -1,7 +1,5 @@
 import {deleteRecord, retrieveAllTableRecord} from "../../commons/utils/DynamoDBService.ts";
-import {postToConnection} from "../../commons/utils/ApiGatewayService.ts";
-
-// const db = new DynamoDB.DocumentClient();
+import {postToWebSocketConnection} from "../../commons/utils/ApiGatewayService.ts";
 
 export const handler = async (event: any) => {
     const body = JSON.parse(event.body);
@@ -9,20 +7,15 @@ export const handler = async (event: any) => {
 
     const domain = event.requestContext
         ? `https://${event.requestContext.domainName}/${event.requestContext.stage}`
-        : `https://${process.env.WS_CONNECTIONS_DOMAIN}`; // For cross-function calls
-
-    // const apiGw = new ApiGatewayManagementApi({ endpoint: domain });
+        : `https://${process.env.WS_CONNECTIONS_DOMAIN}`;
 
     const connectionsTble = process.env.WS_CONNECTIONS_TABLE_NAME || '';
     const connections = await retrieveAllTableRecord(connectionsTble);
-    // const connections = await db.scan({
-    //     TableName: process.env.WS_CONNECTIONS_TABLE_NAME!
-    // }).promise();
 
     const sendMessages = connections.Items?.map(async ({ connectionId }) => {
         try {
             const endpoint = ''; //TODO: add new endpoint
-            await postToConnection(connectionId, JSON.stringify({ message }), endpoint);
+            await postToWebSocketConnection(connectionId, JSON.stringify({ message }), endpoint);
             // await apiGw.postToConnection({
             //     ConnectionId: connectionId,
             //     Data: JSON.stringify({ message })

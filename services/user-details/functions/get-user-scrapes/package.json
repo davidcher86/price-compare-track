@@ -15,10 +15,5 @@
     "@types/node": "^22.14.1",
     "serverless-offline": "^14.4.0",
     "typescript": "^5.8.3"
-  },
-  "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.788.0",
-    "@aws-sdk/lib-dynamodb": "^3.789.0",
-    "uuid": "^11.1.0"
   }
 }

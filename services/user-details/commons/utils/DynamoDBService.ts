@@ -1,5 +1,5 @@
 import {DynamoDBClient} from "@aws-sdk/client-dynamodb";
-import {DynamoDBDocumentClient, PutCommand, GetCommand} from "@aws-sdk/lib-dynamodb";
+import {DynamoDBDocumentClient, PutCommand, GetCommand, ScanCommand} from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({ region: process.env.REGION });
 const ddb = DynamoDBDocumentClient.from(client);
@@ -53,5 +53,19 @@ export const retrieveRecords = async (
     } catch (err) {
         console.error("Error retrieving results:", err);
         throw new Error(`Failed to retrieve results from DynamoDB: ${JSON.stringify(err)}`);
+    }
+};
+
+export const retrieveAllTableRecord = async (
+    tableName: string
+): Promise<any> => {
+    try {
+        console.log('returning all records from DynamoDB table: ' + tableName);
+        return await ddb.send(new ScanCommand({
+            TableName: tableName
+        }));
+    } catch (err) {
+        console.error("Error adding results:", err);
+        throw new Error(`Failed to save results to DynamoDB: ${JSON.stringify(err)}`);
     }
 };

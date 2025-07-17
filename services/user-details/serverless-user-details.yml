@@ -23,24 +23,39 @@ provider:
         - "logs:CreateLogStream"
         - "logs:PutLogEvents"
         - "s3:GetObject"
+        - "lambda:InvokeFunction"
         - "dynamodb:Query"
         - "dynamodb:GetItem"
         - "dynamodb:PutItem"
       Resource: "*"
 
+resources:
+  Resources:
+    WsScrapeStatusConnectionsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
+        AttributeDefinitions:
+          - AttributeName: connectionId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: connectionId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
 plugins:
   - serverless-offline
-  - serverless-scriptable-plugin
   - serverless-dotenv-plugin
 
 custom:
+  WS_CONNECTIONS_TABLE_NAME: ${env:WS_CONNECTIONS_TABLE_NAME}-${self:provider.stage}
   RESULT_DB_TABLE_NAME: ${env:RESULT_DB_TABLE_NAME}-${self:provider.stage}
   dotenv:
     path: .env
 #  sharedEnv: ${file(../../.env)}
   esbuild:
     bundle: true
-    minify: false
+    minify: true
     sourcemap: true
     target: node18
     packager: npm
@@ -49,56 +64,155 @@ custom:
     platform: node
     concurrency: 10
     tsconfig: './tsconfig.base.json'
+    excludeDevDependencies: true
   serverless-offline:
-    httpPort: ${opt:httpPort, 4002}
-    webSocketPort: 4004
+    httpPort: ${env:LOCAL_PORT, 4002}
+
+layers:
+  uuidLib:
+    path: ../layers/uuid
+    name: uuid-layer-${sls:stage}
+    compatibleRuntimes:
+      - nodejs18.x
+    description: Layer with uuid package
+    package:
+      include:
+        - nodejs/**
+
+  awsStorage:
+    path: ../layers/aws-sdk/storage
+    name: aws-storage-layer-${sls:stage}
+    compatibleRuntimes:
+      - nodejs18.x
+    description: S3 and DynamoDB layer
+    package:
+      include:
+        - nodejs/**
+
+  awsDataTransfer:
+    path: ../layers/aws-sdk/data-transfer
+    name: aws-data-transfer-layer-${sls:stage}
+    compatibleRuntimes:
+      - nodejs18.x
+    description: ApiGateWay & SQS layer
+    package:
+      include:
+        - nodejs/**
 
 functions:
-  add-user:
-    architecture: x86_64
-    handler: functions/add-user/handler.addUserDetails
-    package:
-      include:
-        - functions/add-user/**
-    events:
-      - http:
-          path: /new-user-details
-          method: post
+  # add-user:
+  #   architecture: x86_64
+  #   handler: functions/add-user/handler.addUserDetails
+  #   layers:
+  #     - { Ref: AwsStorageLambdaLayer }
+  #   package:
+  #     include:
+  #       - functions/add-user/**
+  #   events:
+  #     - http:
+  #         path: /new-user-details
+  #         method: post
 
-  update-user:
-    architecture: x86_64
-    handler: functions/update-user/handler.editUserDetails
-    package:
-      include:
-        - functions/update-user/**
-    events:
-      - http:
-          path: /update-user-details
-          method: put
+  # update-user:
+  #   architecture: x86_64
+  #   handler: functions/update-user/handler.editUserDetails
+  #   layers:
+  #     - { Ref: AwsStorageLambdaLayer }
+  #   package:
+  #     include:
+  #       - functions/update-user/**
+  #   events:
+  #     - http:
+  #         path: /update-user-details
+  #         method: put
 
-  get-user:
-    architecture: x86_64
-    handler: functions/get-user/handler.getUserDetails
-    package:
-      include:
-        - functions/get-user/**
-    events:
-      - http:
-          path: /get-user-details
-          method: get
+  # get-user:
+  #   architecture: x86_64
+  #   handler: functions/get-user/handler.getUserDetails
+  #   layers:
+  #     - { Ref: AwsStorageLambdaLayer }
+  #   package:
+  #     include:
+  #       - functions/get-user/**
+  #   events:
+  #     - http:
+  #         path: /get-user-details
+  #         method: get
 
   get-user-scrape-results:
     architecture: x86_64
     handler: functions/get-user-scrapes/handler.getUserScrapes
+    timeout: 29
     environment:
-      RESULT_DB_TABLE_NAME: {self:custom.RESULT_DB_TABLE_NAME}
+      RESULT_DB_TABLE_NAME: ${self:custom.RESULT_DB_TABLE_NAME}
+    layers:
+      - { Ref: AwsStorageLambdaLayer }
     package:
+      individually: true
       include:
         - functions/get-user-scrapes/**
+        - commons/**
     events:
       - http:
           path: /get-user-scrape-data
           method: get
 
-package:
-  individually: true
+  connect:
+    handler: websocket/functions/connect.handler
+    package:
+      include:
+        - websocket/**
+        - commons/**
+    events:
+      - websocket:
+          route: $connect
+    environment:
+      WS_CONNECTIONS_TABLE_NAME: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
+
+  disconnect:
+    handler: websocket/functions/disconnect.handler
+    package:
+      include:
+        - websocket/**
+        - commons/**
+    events:
+      - websocket:
+          route: $disconnect
+    environment:
+      WS_CONNECTIONS_TABLE_NAME: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
+
+  default:
+    handler: websocket/functions/default.handler
+    package:
+      include:
+        - websocket/**
+        - commons/**
+    events:
+      - websocket:
+          route: $default
+
+  notifyClient:
+    handler: websocket/functions/notifyClient.handler
+    package:
+      include:
+        - websocket/**
+        - commons/**
+    environment:
+      LOCAL_PORT: ${env:LOCAL_PORT}
+      WS_CONNECTIONS_TABLE_NAME: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
+      WS_CONNECTIONS_DOMAIN: ${env:WS_CONNECTIONS_DOMAIN}
+
+  sendMessage:
+    handler: websocket/functions/sendMessage.handler
+    package:
+      include:
+        - websocket/**
+        - commons/**
+    timeout: 29
+    events:
+      - http:
+          path: send
+          method: post
+
+# package:
+#   individually: true
