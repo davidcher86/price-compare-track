@@ -49,10 +49,7 @@ plugins:
 
 custom:
   WS_CONNECTIONS_TABLE_NAME: ${env:WS_CONNECTIONS_TABLE_NAME}-${self:provider.stage}
-  RESULT_DB_TABLE_NAME: ${env:RESULT_DB_TABLE_NAME}-${self:provider.stage}
-  dotenv:
-    path: .env
-#  sharedEnv: ${file(../../.env)}
+  RESULT_DB_TABLE_NAME: ${env:RESULT_DB_TABLE_NAME}-prod
   esbuild:
     bundle: true
     minify: true
@@ -154,7 +151,7 @@ functions:
         - commons/**
     events:
       - http:
-          path: /get-user-scrape-data
+          path: /user-details/scrape-history
           method: get
 
   connect:

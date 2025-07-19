@@ -9,8 +9,11 @@ export const handler = async (event: any) => {
         ? `https://${event.requestContext.domainName}/${event.requestContext.stage}`
         : `https://${process.env.WS_CONNECTIONS_DOMAIN}`;
 
-    const connectionsTble = process.env.WS_CONNECTIONS_TABLE_NAME || '';
-    const connections = await retrieveAllTableRecord(connectionsTble);
+    const connectionsTble = process.env.STAGE === 'prod'
+                            ? process.env.WS_CONNECTIONS_TABLE_NAME || ''
+                            : "ws-scrape-result-connections-prod";
+    
+                            const connections = await retrieveAllTableRecord(connectionsTble);
 
     const sendMessages = connections.Items?.map(async ({ connectionId }) => {
         try {

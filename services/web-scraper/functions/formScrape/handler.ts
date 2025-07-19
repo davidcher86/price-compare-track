@@ -4,7 +4,10 @@ import { v4 as uuid4 } from "uuid";
 
 export const formScrapeRequest = async (event: any) => {
     try {
-        const {scrapeSources, query} = event;
+
+        const body = JSON.parse(event.body);
+        console.log(`body: ${JSON.stringify(body)}`);
+        const {scrapeSources, query} = body.payload;
 
         const tmpUserId = uuid4();
         const scrapeRequestId = uuid4();

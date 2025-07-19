@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "invoke:handle-scrape-request": "sls invoke local -f acceptRequest --stage prod --path functions/get-user-scrapes/mock-data/datamockhttp.json",
     "offline:user-details": "serverless offline --config serverless-user-details.yml",
     "deploy-user-details": "serverless deploy --config serverless-user-details.yml",
     "seed:dynamo": "node scripts/initDynamo.js",
@@ -28,3 +29,4 @@
     "typescript": "^5.8.3"
   }
 }
+

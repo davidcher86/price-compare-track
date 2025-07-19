@@ -1,32 +1,26 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 interface TextInputProps {
+    value?: string;
     label?: string;
     placeholder?: string;
-    onChange?: (value: string) => void;
+    onChange: (value: string) => void;
 }
 
-const TextInput: React.FC<TextInputProps> = ({ label, placeholder, onChange }) => {
-    const [value, setValue] = useState('');
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = event.target.value;
-        setValue(newValue);
-        if (onChange) {
-            onChange(newValue);
-        }
+const TextInput: React.FC<TextInputProps> = ({ value, label, placeholder, onChange }) => {
+    const handleChange = (event: any) => {
+        onChange(event.target.value);
     };
 
     return (
-        <div className="flex flex-col gap-2">
+        <div>
             {label && <label className="text-sm font-medium">{label}</label>}
             <input
                 type="text"
                 value={value}
                 onChange={handleChange}
                 placeholder={placeholder}
-                className="border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
-            />
+                className="flex-1 outline-none text-lg" />
         </div>
     );
 };

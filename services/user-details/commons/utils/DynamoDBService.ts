@@ -1,5 +1,5 @@
 import {DynamoDBClient} from "@aws-sdk/client-dynamodb";
-import {DynamoDBDocumentClient, PutCommand, GetCommand, ScanCommand} from "@aws-sdk/lib-dynamodb";
+import {DynamoDBDocumentClient, PutCommand, GetCommand, ScanCommand, QueryCommand} from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({ region: process.env.REGION });
 const ddb = DynamoDBDocumentClient.from(client);
@@ -42,13 +42,26 @@ export const deleteRecord = async (
 
 export const retrieveRecords = async (
     tableName: string,
-    key: any
+    userId: any
 ): Promise<any> => {
     try {
-        console.log('returning all records from DynamoDB table: ' + tableName);
-        return await ddb.send(new GetCommand({
+        console.log('returning all records from DynamoDB table: ' + tableName + ' userId: ' + userId);  
+        // return await ddb.send(new GetCommand({
+        //     TableName: tableName,
+        //     Key: key
+        // }));
+        return await ddb.send(new QueryCommand({
             TableName: tableName,
-            Key: key
+            IndexName: "user-id-index", // Specify the GSI name
+            KeyConditionExpression: "userId = :userId", // Query condition
+            ExpressionAttributeValues: {
+                ":userId": userId, // Bind the value for userId
+            },
+            ProjectionExpression: "scrapeRequestId, userId, #query, #source, scrapeDate",
+            ExpressionAttributeNames: {
+                "#query": "query", // Alias for the reserved keyword
+                "#source": "source",
+            },
         }));
     } catch (err) {
         console.error("Error retrieving results:", err);

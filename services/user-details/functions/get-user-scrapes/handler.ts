@@ -12,36 +12,36 @@ export const getUserScrapes = async (event: any) => {
     if (!userId) {
         return {
             statusCode: 400,
-            body: JSON.stringify({ error: "Missing userId or scrape-info" }),
+            body: JSON.stringify({ error: "Missing userId" }),
         };
     }
 
     try {
         const userScrapeResultsTableName = process.env.RESULT_DB_TABLE_NAME || '';
         const userScrapeResultsRecord = { userId: userId };
-        const result = await retrieveRecords(userScrapeResultsTableName, userScrapeResultsRecord);
+        const result = await retrieveRecords(userScrapeResultsTableName, userId);
         // const result = await ddb.send(new GetCommand({
         //     TableName: userScrapeResultsTableName,
         //     Key: { userId },
         // }));
-
-        if (!result.Item) {
+        console.log("Fetched user scrape results: ", JSON.stringify(result));
+        if (!result.Items) {
             return {
                 statusCode: 404,
                 body: JSON.stringify({ error: "User not found" }),
             };
         }
 
-        console.log("User details fetched successfully: ", result.Item);
+        console.log("User details fetched successfully: ", result.Items.length + " items found");
         return {
             statusCode: 200,
-            body: JSON.stringify(result.Item),
+            body: JSON.stringify(result.Items),
         };
     } catch (err) {
         console.error("Error fetching user details:", err);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: "Failed to fetch user scrape results" }),
+            body: JSON.stringify({ error: "Failed to fetch user scrape history" }),
         };
     }
 }

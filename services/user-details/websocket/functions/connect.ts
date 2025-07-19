@@ -6,6 +6,7 @@ export const handler = async (event: any) => {
     const connectionId = event.requestContext.connectionId;
     const tableName = process.env.WS_CONNECTIONS_TABLE_NAME || '';
     const connectionRecord = { connectionId };
+    console.log("connectionRecord", connectionRecord);
     await saveRecord(tableName, connectionRecord);
     // await db.put({
     //     TableName: process.env.WS_CONNECTIONS_TABLE_NAME,

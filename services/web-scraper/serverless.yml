@@ -67,6 +67,8 @@ custom:
     resolveExtensions:
       - .js
       - .ts
+  serverless-offline:
+    httpPort: 5002
 
 
 resources:
@@ -213,12 +215,12 @@ functions:
     - { Ref: AwsDataTransferLambdaLayer }
     events:
       - http:
-          path: /scrape
+          path: /scrape-service/scrape
           method: post
           cors: true
-          request:
-            schemas:
-              application/json: ${file(./models/scrape-request-schema.json)}
+          # request:
+          #   schemas:
+          #     application/json: ${file(./models/scrape-request-schema.json)}
 
   scraper:
     handler: functions/puppeteer/handler.handleSqsMessage
