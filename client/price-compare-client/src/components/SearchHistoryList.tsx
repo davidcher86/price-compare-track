@@ -1,10 +1,29 @@
 import { useState, useEffect } from "react";
 import { retrieveScrapeHistoryList } from "src/services/api";
 
+interface SearchHistoryListProps {
+    onSelectScrapeData: (scrapeRequestId: string) => void;
+}   
 
-export default function SearchHistoryList() {
-    const [historicalData, setHistoricalData] = useState([]);
-    const [selectedHistoryItem, setSelectedHistoryItem] = useState(null);
+interface HistoricalDataValueItem  {
+    scrapeDate: string,
+    source: string,
+    scrapeRequestId: "570369bd-e819-4e7c-9580-f091ffb202ac",
+    query: string,
+    userId: string
+}
+
+interface HistoricalDataItem {
+    key: string;
+    value: HistoricalDataValueItem[]; // Replace `any` with the actual type of items in the value array
+}
+
+// export default function SearchHistoryList(onSelectScrapeData: any) {
+export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ onSelectScrapeData }) => {
+ 
+    
+    const [historicalData, setHistoricalData] = useState<HistoricalDataItem[]>([]);
+    const [selectedHistoryItem, setSelectedHistoryItem] = useState<HistoricalDataItem | null>(null);
 
     // useEffect(() => {
     //     console.log('SearchHistoryList useEffect called');
@@ -19,7 +38,21 @@ export default function SearchHistoryList() {
             try {
                 const items = await retrieveScrapeHistoryList('8c62a416-504d-4b82-87f6-94a536aa27da');
                 // console.log('res 2', items);
-                setHistoricalData(items);
+                const grouped = items.reduce((acc: any, item: any) => {
+                    if (!acc[item.scrapeRequestId]) {
+                      acc[item.scrapeRequestId] = [];
+                    }
+                    acc[item.scrapeRequestId].push(item);
+                    return acc;
+                }, {} as Record<string, any[]>);
+                // console.log(grouped);
+                const output: any[] = Object.entries(grouped).map(([key, value]) => ({
+                    key,
+                    value
+                }));
+                // console.log(output);
+
+                setHistoricalData(output);
             } catch (error) {
                 console.error('Error fetching scrape history:', error);
                 setHistoricalData([]);
@@ -28,10 +61,18 @@ export default function SearchHistoryList() {
         fetchData();
     }, []);
 
-    const handleSelectedItem = (item: any) => {
+    useEffect(() => {
+        // console.log('Selected history item changed:', selectedHistoryItem);
+        if (selectedHistoryItem) {
+            // Call the onSelectScrapeData function with the selected scrapeRequestId
+            onSelectScrapeData(selectedHistoryItem.key);
+        }
+    }, [selectedHistoryItem]);
 
+    const handleSelectedItem = (item: any) => {
+        // console.log('handleSelectedItem called with item:', item);
         // console.log('selected', item);
-        setSelectedHistoryItem(item.scrapeRequestId);
+        setSelectedHistoryItem(item);
     }
     // console.log('detaildata', historicalData);
     return (
@@ -46,13 +87,16 @@ interface SearchHistoryItemProps {
     key: any,
     item: any; // Replace `any` with the actual type of `item`
     handleSelectedItem: (item: any) => void; // Replace `any` with the actual type
-  }
+}
 
 const SearchHistoryItem: React.FC<SearchHistoryItemProps> = ({ key, item, handleSelectedItem }) => {
-    // console.log('item', item);
+    // console.log( item);
+    const sourcesString = item.value.map((entry: { source: string; }) => entry.source).join(", ");
+    const query = item.value.length > 0 ? item.value[0].query : "No query";
+    // console.log( sourcesString);
     return (
         <div key={key} className="flex w-full h-full" onClick={() => handleSelectedItem(item)}>
-            <p className="text-xl font-normal text-center w-full">{item.source}</p>
+            <p className="text-xl font-normal text-center w-full">{`${query} - [${sourcesString}]`}</p>
         </div>
     );
 }

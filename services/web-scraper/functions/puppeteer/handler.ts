@@ -38,21 +38,21 @@ const scrape = async (event: any) => {
 
     console.log("scrapeInfo.name " + scrapeInfo.name);
 
-    switch (scrapeInfo.name) {
-        case 'NewEgg':
+    switch (scrapeInfo.name.toLowerCase()) {
+        case 'newegg':
             console.log("using NewEgg scrape configs")
             scrapeService = new PuppeteerScrapeService(new NewEggScrapeConfigReader());
             break;
-        case 'Ebay':
+        case 'ebay':
             console.log("using Ebay scrape configs")
             scrapeService = new PuppeteerScrapeService(new EbayScrapeConfigReader());
             break;
-        case 'Amazon':
+        case 'amazon':
             console.log("using Amazon scrape configs")
             // new PuppeteerScrapeListService(null, null);
             scrapeService = new PuppeteerScrapeService(new AmazonScrapeConfigReader());
             break;
-        case 'AliExpress':
+        case 'aliexpress':
         default:
             console.log("using AliExpress scrape configs")
             scrapeService = new PuppeteerScrapeService(new AliExpressScrapeConfigReader());

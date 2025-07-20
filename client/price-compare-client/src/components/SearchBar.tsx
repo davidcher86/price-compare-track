@@ -26,17 +26,17 @@ const stores: ScrapeSourceOption[] = [
 ];
 
 function reducer(state: any , action: any) {
-    console.log('reducer: ' + JSON.stringify(action));
+    // console.log('reducer: ' + JSON.stringify(action));
     switch (action.type) {
         case 'SET_SEARCH_BOX_TEXT':
-            console.log('set search box text: ' + action.payload);
+            // console.log('set search box text: ' + action.payload);
             return { ...state, searchBoxText: action.payload };
         case 'TOGGLE_SEARCH_RESOURCES':
-            console.log('payload: ' + JSON.stringify(action.payload));
+            // console.log('payload: ' + JSON.stringify(action.payload));
             const checkedSources = state.checkedSources.includes(action.payload)
                 ? state.checkedSources.filter((source: string) => source !== action.payload)
                 : [...state.checkedSources, action.payload];
-            console.log('state: ' + JSON.stringify({ checkedSources }));
+            // console.log('state: ' + JSON.stringify({ checkedSources }));
             return { ...state, checkedSources };
 
         default:

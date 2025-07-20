@@ -1,37 +1,35 @@
 import {SearchBar} from './components/SearchBar';
-import SearchHistoryList from './components/SearchHistoryList';
-import SearchResults from './components/SearchResults';
+import {SearchHistoryList} from './components/SearchHistoryList';
+import {SearchResults} from './components/SearchResults';
 import {sendSearchRequest} from "./services/api";
 import { useState, useEffect } from "react";
 import {retrieveScrapeResultsData} from "./services/api";
 
 export default function PriceCompareHome() {
-    const [scrapeHistory, setScrapeHistory] = useState([]);
-    // const [state, dispatch] = useReducer(reducer, {
-    //     searchBoxText: '',
-    //     checkedSources: []
-    // });
-    console.log('proc' + process.env.REACT_APP_USER_DETAILS_SERVICE_HOST)
+    const [scrapeDataScrapeResult, setSscrapeDataScrapeResult] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    // console.log('proc' + process.env.REACT_APP_USER_DETAILS_SERVICE_HOST)
     const handleSearch = async (scrapeRequestId: string) => {
         // console.log('Search initiated with query:', query, 'and sources:', sources);
-        await retrieveScrapeResultsData('16ea872b-6e6b-4d9b-9453-669fe2a7d27c', scrapeRequestId);
+        setIsLoading(true);
+        const response = await retrieveScrapeResultsData('16ea872b-6e6b-4d9b-9453-669fe2a7d27c', scrapeRequestId);
         // await sendSearchRequest(query, sources);
         // Here you would typically call your API to perform the search
         // For example:
         // const results = await sendSearchRequest(query, sources);
         // console.log('Search results:', results);
+        setIsLoading(false);
     }
 
     const handleRetriveScrapeDataResult = async (scrapeRequestId: string) => {
+        setIsLoading(true);
+        const items = await retrieveScrapeResultsData('8c62a416-504d-4b82-87f6-94a536aa27da', scrapeRequestId);
+        // console.log('res 3', items);
 
+        setSscrapeDataScrapeResult(items);
+        setIsLoading(false);
     }
-
-    // useEffect(() => {
-    //     console.log('SearchHistoryList useEffect called');
-    //     //Runs only on the first render
-    //     const res = retrieveScrapeHistoryList('8c62a416-504d-4b82-87f6-94a536aa27da');
-    //     console.log(res);
-    // }, []);
 
     return (
         <div id='main-window' className="flex h-screen w-screen flex-col">
@@ -47,7 +45,7 @@ export default function PriceCompareHome() {
             </div>
 
             <div id="content-component" className="flex flex-row h-full">
-                <SearchHistoryList />
+                <SearchHistoryList onSelectScrapeData={handleRetriveScrapeDataResult}/>
                 <div id="result-content"  className="flex flex-col 0 w-4/5 h-full">
 
                     <div id="search-scrape-bar" className="flex w-full h-28">
@@ -56,7 +54,7 @@ export default function PriceCompareHome() {
                     
                     <SearchBar onSearch={handleSearch} />
                     
-                    <SearchResults />
+                    <SearchResults resultData={scrapeDataScrapeResult}/>
                 </div>
             </div>
         </div>

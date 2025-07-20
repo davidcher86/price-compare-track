@@ -80,7 +80,9 @@ export const retrieveScrapeResult = async (
         return await ddb.send(new QueryCommand({
             TableName: tableName,
             IndexName: "user-id-index", // Specify the GSI name
-            KeyConditionExpression: "userId = :userId AND scrapeRequestId = :scrapeRequestId", // Query condition
+            // KeyConditionExpression: "userId = :userId AND scrapeRequestId = :scrapeRequestId", // Query condition
+            KeyConditionExpression: "userId = :userId", // Query by userId
+                FilterExpression: "scrapeRequestId = :scrapeRequestId",
             ExpressionAttributeValues: {
                 ":userId": userId,
                 ":scrapeRequestId": scrapeRequestId, // Bind the value for userId

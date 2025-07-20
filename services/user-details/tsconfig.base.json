@@ -9,5 +9,5 @@
     "strict": true,
     "baseUrl": ".",
   },
-  "include": ["functions/get-user-scrapes/**/*.ts", "functions/add-user/**/*.ts", "functions/update-user/**/*.ts", "commons/**/*.ts"]
+  "include": ["functions/get-scrape-result/**/*.ts", "functions/get-user-scrapes/**/*.ts", "functions/add-user/**/*.ts", "functions/update-user/**/*.ts", "commons/**/*.ts"]
 }

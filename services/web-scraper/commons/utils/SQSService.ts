@@ -12,7 +12,7 @@ export const sendMessageToQueue = async (
             QueueUrl: queueUrl,
             MessageBody: JSON.stringify(messageBody),
         });
-        console.log(`sending ${JSON.stringify(command)} to queue ${queueUrl}`);
+        console.log(`sending ${JSON.stringify(messageBody)} to queue ${queueUrl}`);
         const response = await sqsClient.send(command);
         return response.MessageId || "Unknown";
     } catch (error) {

@@ -37,7 +37,7 @@ export const sendSearchRequest = async (userId: string, query: string, sources: 
 
   console.log('payload' + JSON.stringify(payload));
   console.log('URI ' + URI)
-  // return [];
+  // return  [];
   const res = await fetch(URI, {
     method: "POST",
     headers: { "Content-Type": "application/json", "userId": userId },
@@ -87,6 +87,7 @@ export const retrieveScrapeResultsData = async (userId: string, scrapeRequestId:
       body: JSON.stringify({ payload }),
     });
 
+    // console.log('request body: ' + JSON.stringify({ payload }));
     if (!res.ok) {
       throw new Error("Scrape data result request failed");
     }
