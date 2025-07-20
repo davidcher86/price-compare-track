@@ -3,7 +3,7 @@ import SearchHistoryList from './components/SearchHistoryList';
 import SearchResults from './components/SearchResults';
 import {sendSearchRequest} from "./services/api";
 import { useState, useEffect } from "react";
-import {retrieveScrapeHistoryList} from "./services/api";
+import {retrieveScrapeResultsData} from "./services/api";
 
 export default function PriceCompareHome() {
     const [scrapeHistory, setScrapeHistory] = useState([]);
@@ -12,13 +12,18 @@ export default function PriceCompareHome() {
     //     checkedSources: []
     // });
     console.log('proc' + process.env.REACT_APP_USER_DETAILS_SERVICE_HOST)
-    const handleSearch = async (query: string, sources: string[]) => {
+    const handleSearch = async (scrapeRequestId: string) => {
         // console.log('Search initiated with query:', query, 'and sources:', sources);
+        await retrieveScrapeResultsData('16ea872b-6e6b-4d9b-9453-669fe2a7d27c', scrapeRequestId);
         // await sendSearchRequest(query, sources);
         // Here you would typically call your API to perform the search
         // For example:
         // const results = await sendSearchRequest(query, sources);
         // console.log('Search results:', results);
+    }
+
+    const handleRetriveScrapeDataResult = async (scrapeRequestId: string) => {
+
     }
 
     // useEffect(() => {

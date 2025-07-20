@@ -1,10 +1,10 @@
 // import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 // import { GetCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import {retrieveRecords} from '../../commons/utils/DynamoDBService'
+import {retrieveScrapeHistory} from '../../commons/utils/DynamoDBService'
 // const client = new DynamoDBClient({ region: process.env.REGION });
 // const ddb = DynamoDBDocumentClient.from(client);
 
-export const getUserScrapes = async (event: any) => {
+export const getScrapeResultData = async (event: any) => {
     const userId = event.headers?.userId;
 
     console.log(`fetching scrape data for userId: ${userId}`);
@@ -19,7 +19,7 @@ export const getUserScrapes = async (event: any) => {
     try {
         const userScrapeResultsTableName = process.env.RESULT_DB_TABLE_NAME || '';
         const userScrapeResultsRecord = { userId: userId };
-        const result = await retrieveRecords(userScrapeResultsTableName, userId);
+        const result = await retrieveScrapeHistory(userScrapeResultsTableName, userId);
         // const result = await ddb.send(new GetCommand({
         //     TableName: userScrapeResultsTableName,
         //     Key: { userId },

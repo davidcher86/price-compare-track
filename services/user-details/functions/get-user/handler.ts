@@ -1,6 +1,6 @@
 // import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 // import { GetCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import {retrieveRecords} from '../../commons/utils/DynamoDBService'
+import {retrieveScrapeHistory} from '../../commons/utils/DynamoDBService'
 
 // const client = new DynamoDBClient({ region: process.env.REGION });
 // const ddb = DynamoDBDocumentClient.from(client);
@@ -20,7 +20,7 @@ export const getUserDetails = async (event: any) => {
     try {
         const userDetailsTableName = process.env.USER_DETAILS_TABLE || '';
         const userDetailsKey = { userId };
-        const result = await retrieveRecords(userDetailsTableName, userDetailsKey);
+        const result = await retrieveScrapeHistory(userDetailsTableName, userDetailsKey);
         // const result = await ddb.send(new GetCommand({
         //     TableName: process.env.USER_DETAILS_TABLE,
         //     Key: { userId },

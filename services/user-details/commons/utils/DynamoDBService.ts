@@ -40,7 +40,7 @@ export const deleteRecord = async (
     }
 };
 
-export const retrieveRecords = async (
+export const retrieveScrapeHistory = async (
     tableName: string,
     userId: any
 ): Promise<any> => {
@@ -65,6 +65,34 @@ export const retrieveRecords = async (
         }));
     } catch (err) {
         console.error("Error retrieving results:", err);
+        throw new Error(`Failed to retrieve results from DynamoDB: ${JSON.stringify(err)}`);
+    }
+};
+
+export const retrieveScrapeResult = async (
+    tableName: string,
+    userId: any,
+    scrapeRequestId: string
+): Promise<any> => {
+    try {
+        console.log('returning all records from DynamoDB table: ' + tableName + ' userId: ' + userId + ' scrapeRequestId: ' + scrapeRequestId);  
+
+        return await ddb.send(new QueryCommand({
+            TableName: tableName,
+            IndexName: "user-id-index", // Specify the GSI name
+            KeyConditionExpression: "userId = :userId AND scrapeRequestId = :scrapeRequestId", // Query condition
+            ExpressionAttributeValues: {
+                ":userId": userId,
+                ":scrapeRequestId": scrapeRequestId, // Bind the value for userId
+            },
+            // ProjectionExpression: "scrapeRequestId, userId, #query, #source, scrapeDate",
+            // ExpressionAttributeNames: {
+            //     "#query": "query", // Alias for the reserved keyword
+            //     "#source": "source",
+            // },
+        }));
+    } catch (err) {
+        console.error("Error retrieving scrape results:", err);
         throw new Error(`Failed to retrieve results from DynamoDB: ${JSON.stringify(err)}`);
     }
 };

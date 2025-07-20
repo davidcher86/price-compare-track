@@ -8,6 +8,14 @@ export const formScrapeRequest = async (event: any) => {
         const body = JSON.parse(event.body);
         console.log(`body: ${JSON.stringify(body)}`);
         const {scrapeSources, query} = body.payload;
+        const userId = event.headers?.userId;
+
+        if (scrapeSources.length == 0 || query.length == 0 || userId == undefined) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ error: "Missing params" }),
+            };
+        }
 
         const tmpUserId = uuid4();
         const scrapeRequestId = uuid4();
