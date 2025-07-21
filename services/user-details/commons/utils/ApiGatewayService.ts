@@ -20,7 +20,10 @@ export const postToWebSocketConnection = async (connectionId: string, data: stri
     }
 };
 
-const client = new LambdaClient({ region: process.env.REGION });
+const client = new LambdaClient({ 
+    region: process.env.REGION,
+    endpoint: "http://localhost:4002" //TODO: remove for prod
+});
 
 export const postToHttpApiGateway = async (functionName: string, payloadObj:any) => {
     try {
@@ -28,6 +31,7 @@ export const postToHttpApiGateway = async (functionName: string, payloadObj:any)
             FunctionName: functionName,  // name or ARN of Lambda B
             Payload: new TextEncoder().encode(JSON.stringify(payloadObj)),
             LogType: LogType.Tail,
+            InvocationType: "RequestResponse",
             // InvocationType: 'Event' // default is RequestResponse
         });
 
