@@ -54,7 +54,7 @@ export const SearchBar: React.FC<Props> = ({ onSearch }) => {
 
     console.log('SearchBar state: ' + JSON.stringify(state));
     const handleSendSearchRequest = async () => {
-        const res = await sendSearchRequest('8c62a416-504d-4b82-87f6-94a536aa27da', state.searchBoxText.trim(), state.checkedSources)
+        const res = await sendSearchRequest(process.env.REACT_APP_TMP_USER_ID || '', state.searchBoxText.trim(), state.checkedSources)
     };
 
     const handleChangeSearchInput = async (value: string) => {

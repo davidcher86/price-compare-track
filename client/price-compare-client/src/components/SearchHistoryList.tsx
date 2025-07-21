@@ -36,7 +36,7 @@ export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ onSelectSc
         const fetchData = async () => {
             // console.log("fetching scrape history")
             try {
-                const items = await retrieveScrapeHistoryList('8c62a416-504d-4b82-87f6-94a536aa27da');
+                const items = await retrieveScrapeHistoryList(process.env.REACT_APP_TMP_USER_ID || '');
                 // console.log('res 2', items);
                 const grouped = items.reduce((acc: any, item: any) => {
                     if (!acc[item.scrapeRequestId]) {

@@ -7,7 +7,7 @@ export const formScrapeRequest = async (event: any) => {
 
         const body = JSON.parse(event.body);
         console.log(`body: ${JSON.stringify(body)}`);
-        const {scrapeSources, query} = body.payload;
+        const {scrapeSources, query} = body;
         const userId = event.headers?.userId;
 
         if (scrapeSources.length == 0 || query.length == 0 || userId == undefined) {
@@ -17,7 +17,6 @@ export const formScrapeRequest = async (event: any) => {
             };
         }
 
-        const tmpUserId = uuid4();
         const scrapeRequestId = uuid4();
         const scrapeDt = new Date().toISOString();
 
@@ -29,7 +28,7 @@ export const formScrapeRequest = async (event: any) => {
                 scrapeRequestId: scrapeRequestId,
                 scrapeId: scrapeId,
                 scrapeInfo: scrapeSourceInfo,
-                userId: tmpUserId,
+                userId: userId,
                 scrapeDt: scrapeDt,
                 query: query
             }

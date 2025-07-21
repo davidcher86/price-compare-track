@@ -5,7 +5,7 @@
     {
       "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",
       "receiptHandle": "MessageReceiptHandle",
-      "body": "{\n  \"scrapeRequestId\": \"sdfsfsdfdsfs\",\n  \"scrapeId\": \"dgfgdgdg\",\n  \"bucketKey\": \"Ebay-6a94651c-f10f-4517-acb2-d4c882b26383-e01819a2-8c00-4ab4-b064-2c0f8a28be6a\",\n  \"userId\": \"userId\",\n  \"scrapeInfo\": {\n    \"name\": \"Ebay\"\n  },\n  \"query\": \"logi\"\n}",
+      "body": "{\n  \"scrapeRequestId\": \"sdfsfsdfdsfs\",\n  \"scrapeId\": \"dgfgdgdg\",\n  \"bucketKey\": \"Ebay-16ea872b-6e6b-4d9b-9453-669fe2a7d27c-5edf245a-9bf5-431b-bfbc-b9ae9e4f8301\",\n  \"userId\": \"userId\",\n  \"scrapeInfo\": {\n    \"name\": \"Ebay\"\n  },\n  \"query\": \"logi\"\n}",
       "attributes": {
         "ApproximateReceiveCount": "1",
         "SentTimestamp": "1523232000000",

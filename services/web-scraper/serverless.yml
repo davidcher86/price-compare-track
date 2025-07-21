@@ -218,9 +218,9 @@ functions:
           path: /scrape-service/scrape
           method: post
           cors: true
-          # request:
-          #   schemas:
-          #     application/json: ${file(./models/scrape-request-schema.json)}
+          request:
+            schemas:
+              application/json: ${file(./models/scrape-request-schema.json)}
 
   scraper:
     handler: functions/puppeteer/handler.handleSqsMessage

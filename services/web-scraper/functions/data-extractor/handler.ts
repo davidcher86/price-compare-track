@@ -44,20 +44,20 @@ const extract = async (event: any) => {
 
         console.log("scrapeInfo.name " + scrapeInfo.name);
 
-        switch (scrapeInfo.name) {
-            case 'NewEgg':
+        switch (scrapeInfo.name.toLowerCase()) {
+            case 'newegg':
                 console.log("using NewEgg scrape configs")
                 extractDataService = new SimpleExtractData(new NewEggScrapeConfigReader());
                 break;
-            case 'Ebay':
+            case 'ebay':
                 console.log("using Ebay scrape configs")
                 extractDataService = new SimpleExtractData(new EbayScrapeConfigReader());
                 break;
-            case 'Amazon':
+            case 'amazon':
                 console.log("using Amazon scrape configs")
                 extractDataService = new SimpleExtractData(new AmazonScrapeConfigReader());
                 break;
-            case 'AliExpress':
+            case 'aliexpress':
             default:
                 console.log("using AliExpress scrape configs")
                 extractDataService = new AliExpressExtractData(new AliExpressScrapeConfigReader());
@@ -67,6 +67,7 @@ const extract = async (event: any) => {
 
         const results = await extractDataService.extract(html, scrapeInfo.userId);
 
+        console.log(`Extracted results: ${JSON.stringify(results)}`);
         const saveExtractedBucketName = process.env.STAGE === 'prod'
             ? (process.env.S3_EXTRACTED_DATA_BUCKET_NAME || '')
             : "sls-extracted-data-prod";

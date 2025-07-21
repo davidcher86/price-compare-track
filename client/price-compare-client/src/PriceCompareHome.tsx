@@ -13,7 +13,7 @@ export default function PriceCompareHome() {
     const handleSearch = async (scrapeRequestId: string) => {
         // console.log('Search initiated with query:', query, 'and sources:', sources);
         setIsLoading(true);
-        const response = await retrieveScrapeResultsData('16ea872b-6e6b-4d9b-9453-669fe2a7d27c', scrapeRequestId);
+        const response = await retrieveScrapeResultsData(process.env.REACT_APP_TMP_USER_ID || '', scrapeRequestId);
         // await sendSearchRequest(query, sources);
         // Here you would typically call your API to perform the search
         // For example:
@@ -24,7 +24,7 @@ export default function PriceCompareHome() {
 
     const handleRetriveScrapeDataResult = async (scrapeRequestId: string) => {
         setIsLoading(true);
-        const items = await retrieveScrapeResultsData('8c62a416-504d-4b82-87f6-94a536aa27da', scrapeRequestId);
+        const items = await retrieveScrapeResultsData(process.env.REACT_APP_TMP_USER_ID || '', scrapeRequestId);
         // console.log('res 3', items);
 
         setSscrapeDataScrapeResult(items);
