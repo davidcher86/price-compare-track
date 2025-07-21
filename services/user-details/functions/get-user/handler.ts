@@ -18,9 +18,8 @@ export const getUserDetails = async (event: any) => {
     }
 
     try {
-        const userDetailsTableName = process.env.USER_DETAILS_TABLE || '';
         const userDetailsKey = { userId };
-        const result = await retrieveScrapeHistory(userDetailsTableName, userDetailsKey);
+        const result = await retrieveScrapeHistory(userDetailsKey);
         // const result = await ddb.send(new GetCommand({
         //     TableName: process.env.USER_DETAILS_TABLE,
         //     Key: { userId },

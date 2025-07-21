@@ -38,9 +38,18 @@ resources:
         AttributeDefinitions:
           - AttributeName: connectionId
             AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
         KeySchema:
           - AttributeName: connectionId
             KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: user-id-index
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST
 
 plugins:
@@ -48,7 +57,8 @@ plugins:
   - serverless-dotenv-plugin
 
 custom:
-  WS_CONNECTIONS_TABLE_NAME: ${env:WS_CONNECTIONS_TABLE_NAME}-${self:provider.stage}
+  # WS_CONNECTIONS_TABLE_NAME: ${env:WS_CONNECTIONS_TABLE_NAME}-${self:provider.stage}
+  WS_CONNECTIONS_TABLE_NAME: ${env:WS_CONNECTIONS_TABLE_NAME}-prod
   RESULT_DB_TABLE_NAME: ${env:RESULT_DB_TABLE_NAME}-prod
   esbuild:
     bundle: true

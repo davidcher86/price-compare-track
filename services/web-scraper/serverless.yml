@@ -114,17 +114,17 @@ resources:
       Properties:
         BucketName: ${self:custom.S3_EXTRACTED_DATA_BUCKET_NAME}
 
-    WsScrapeStatusConnectionsTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
-        AttributeDefinitions:
-          - AttributeName: connectionId
-            AttributeType: S
-        KeySchema:
-          - AttributeName: connectionId
-            KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
+    # WsScrapeStatusConnectionsTable:
+    #   Type: AWS::DynamoDB::Table
+    #   Properties:
+    #     TableName: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
+    #     AttributeDefinitions:
+    #       - AttributeName: connectionId
+    #         AttributeType: S
+    #     KeySchema:
+    #       - AttributeName: connectionId
+    #         KeyType: HASH
+    #     BillingMode: PAY_PER_REQUEST
 
     UserScrapesResultsTable:
       Type: AWS::DynamoDB::Table

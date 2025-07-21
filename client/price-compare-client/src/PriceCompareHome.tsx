@@ -9,6 +9,44 @@ export default function PriceCompareHome() {
     const [scrapeDataScrapeResult, setSscrapeDataScrapeResult] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
+    useEffect(() => {
+        const ws = new WebSocket(`ws://localhost:4001?userId=${process.env.REACT_APP_TMP_USER_ID}`); // Replace with your WebSocket URL
+        console.log(`ws://localhost:4001?userId=${process.env.REACT_APP_TMP_USER_ID}`)
+        ws.onopen = () => {
+          console.log("Connected to WebSocket server");
+        //   ws.send(JSON.stringify({ action: "subscribe", message: "Hello Server!" }));
+        };
+    
+        ws.onmessage = (event) => {
+            console.log(event)
+          const data = JSON.parse(event.data);
+          console.log("Message from server:", data);
+        };
+    
+        ws.onerror = (error) => {
+          console.error("WebSocket error:", error);
+        };
+    
+        ws.onclose = () => {
+          console.log("WebSocket connection closed");
+        };
+    
+        const handleBeforeUnload = () => {
+            // Optionally notify server explicitly
+            ws.send(JSON.stringify({ type: "disconnect", userId: process.env.REACT_APP_TMP_USER_ID }));
+            ws.close();
+          };
+        
+          window.addEventListener("beforeunload", handleBeforeUnload);
+        
+
+        // Cleanup on component unmount
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+          ws.close();
+        };
+      }, []);
+
     // console.log('proc' + process.env.REACT_APP_USER_DETAILS_SERVICE_HOST)
     const handleSearch = async (scrapeRequestId: string) => {
         // console.log('Search initiated with query:', query, 'and sources:', sources);

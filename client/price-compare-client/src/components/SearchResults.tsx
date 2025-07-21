@@ -50,7 +50,7 @@ export const SearchResults: React.FC<SearchResultData> = ({ resultData }) => {
 
 function sourceScrapeDataColumn(item: ScapeSourceData) {
     // console.log(item);
-    console.log(JSON.parse(JSON.parse(item.results)));
+    // console.log(JSON.parse(JSON.parse(item.results)));
     const scrapeResults = JSON.parse(JSON.parse(item.results));
 
     return (
@@ -68,7 +68,7 @@ interface SourceResultData {
 }
 
 function sourceResults(sourceResult: SourceResultData) {
-    console.log(sourceResult);
+    // console.log(sourceResult);
     return (
         <div className="flex flex-col w-full h-full">
             {/* <p className="text-lg font-normal text-center w-full">{sourceResult.name.substring(0,80)}</p> */}

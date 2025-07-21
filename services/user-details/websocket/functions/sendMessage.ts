@@ -1,21 +1,28 @@
 // import { Lambda } from 'aws-sdk';
 import {postToHttpApiGateway} from '../../commons/utils/ApiGatewayService.ts';
+import { handler as notifyClientHandler } from "../functions/notifyClient.ts";
+export const handler = async (event) => {
+    try {
+        // console.log('sending');
+        const userId = event.headers?.userId;
 
-export const handler = async () => {
-    console.log('sending');
-    const functionName = 'function:sls-user-details-prod-sendMessage';
-    await postToHttpApiGateway(functionName, { message: 'Hello from another function!' })
-    // const lambda = new Lambda();
-    // await lambda.invoke({
-    //     FunctionName: 'websocket-app-dev-notifyClient',
-    //     InvocationType: 'Event',
-    //     Payload: JSON.stringify({
-    //         body: JSON.stringify({ message: 'Hello from another function!' }),
-    //     }),
-    // }).promise();
+        const functionName = 'sls-user-details-prod-notifyClient'; // Replace with your actual function name or ARN
+        
+        const res = process.env.TAGE === 'prod'
+            ? await postToHttpApiGateway(functionName, { userId: userId, message: 'Hello from another function!' })
+            : await notifyClientHandler({ message: "hhhh", body: JSON.stringify({userId: userId}) }); 
+        
+        console.log(res);
 
-    return {
-        statusCode: 200,
-        body: 'Notification sent.',
-    };
+        return {
+            statusCode: 200,
+            body: 'Notification sent.',
+        };
+    } catch (error) {
+        console.error('Error sending notification:', error);
+        return {
+            statusCode: 500,
+            body: `Error sending notification: ${error.message}`,
+        };
+    }
 };

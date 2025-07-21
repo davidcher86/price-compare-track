@@ -17,8 +17,7 @@ export const getScrapeData = async (event: any) => {
     }
 
     try {
-        const userScrapeResultsTableName = process.env.RESULT_DB_TABLE_NAME || '';
-        const result = await retrieveScrapeResult(userScrapeResultsTableName, userId, scrapeRequestId);
+        const result = await retrieveScrapeResult(userId, scrapeRequestId);
 
         console.log("Fetched scrape result: ", JSON.stringify(result));
         if (!result.Items) {
