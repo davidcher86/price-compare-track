@@ -27,7 +27,7 @@ export default function PriceCompareHome() {
     const handleRetrieveUserScrpaeHistory = async (userId: string) => {
         try {
           const items = await retrieveScrapeHistoryList(process.env.REACT_APP_TMP_USER_ID || '');
-          console.log('res 2', items);
+          console.log('handleRetrieveUserScrpaeHistory', items);
           const grouped = items.reduce((acc: any, item: any) => {
               if (!acc[item.scrapeRequestId]) {
                 acc[item.scrapeRequestId] = [];

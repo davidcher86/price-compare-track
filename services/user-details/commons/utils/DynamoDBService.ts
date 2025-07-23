@@ -58,6 +58,7 @@ export const retrieveScrapeHistory = async (
                 "#query": "query", // Alias for the reserved keyword
                 "#source": "source",
             },
+            ScanIndexForward: false,
         }));
     } catch (err) {
         console.error("Error retrieving results:", err);
