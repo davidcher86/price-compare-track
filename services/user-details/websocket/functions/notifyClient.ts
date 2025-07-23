@@ -18,7 +18,7 @@ export const handler = async (event: any) => {
             // ? `https://${process.env.WS_CONNECTIONS_DOMAIN}`
             // : `http://localhost:4001`;
 
-            const domain = process.env.WS_CONNECTIONS_DOMAIN || '';
+            const domain = `${process.env.WS_CONNECTIONS_DOMAIN}/prod` || '';
             console.log(`Domain: ${domain}`);
             const message = {status: "SCRAPE_COMPLETED", userId: userId}; //TODO: add new endpoint
             console.log(`Sending message to connectionId: ${connectionId} with message: ${message}`);
