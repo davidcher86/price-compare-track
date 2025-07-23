@@ -48,9 +48,9 @@ const save = async (event: any) => {
         
         await saveRecord(tableName,scrapeResultRecord);
 
-        // await deletePayload(bucketName, bucketKey);
+        await deletePayload(bucketName, bucketKey);
 
-        await sendClientNotification(userId);
+        await sendClientNotification(userId, "SCRAPE_COMPLETED");
 
         return {
             statusCode: 200,
@@ -62,10 +62,10 @@ const save = async (event: any) => {
     }
 }
 
-const sendClientNotification = async (userId: string) => {
+const sendClientNotification = async (userId: string, message: string) => {
     try {
         const functionName = 'sls-user-details-prod-notifyClient'; // Replace with your actual function name or ARN
-        const res = await postToHttpApiGateway(functionName, { userId: userId, message: 'Hello from another function!' })
+        const res = await postToHttpApiGateway(functionName, { userId: userId, message: message })
     } catch (error) {
         console.error('Error sending notification:', error);
         return {

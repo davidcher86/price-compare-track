@@ -5,24 +5,30 @@ import {sendSearchRequest} from "./services/api";
 import { useState, useEffect } from "react";
 import {retrieveScrapeResultsData,retrieveScrapeHistoryList} from "./services/api";
 
-// interface HistoricalDataValueItem  {
-//   scrapeDate: string,
-//   source: string,
-//   scrapeRequestId: "570369bd-e819-4e7c-9580-f091ffb202ac",
-//   query: string,
-//   userId: string
-// }
+interface HistoricalDataValueItem  {
+  scrapeDate: string,
+  source: string,
+  scrapeRequestId: string,
+  query: string,
+  userId: string
+}
 
-// interface HistoricalDataItem {
-//   key: string;
-//   value: HistoricalDataValueItem[]; // Replace `any` with the actual type of items in the value array
-// }
+interface HistoricalDataItem {
+  key: string;
+  value: HistoricalDataValueItem[]; // Replace `any` with the actual type of items in the value array
+}
 
 export default function PriceCompareHome() {
     const [scrapeDataScrapeResult, setSscrapeDataScrapeResult] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [historicalData, setHistoricalData] = useState<any[]>([]);
-    
+    const [selectedHistoryItem, setSelectedHistoryItem] = useState<HistoricalDataItem | null>(null);
+
+    const handleSelectedItem = (item: any) => {
+      // console.log('handleSelectedItem called with item:', item);
+      // console.log('selected', item);
+      setSelectedHistoryItem(item);
+  }
 
     const handleRetrieveUserScrpaeHistory = async (userId: string) => {
         try {
@@ -38,7 +44,7 @@ export default function PriceCompareHome() {
           // console.log(grouped);
           const output = Object.entries(grouped).map(([key, value]) => ({
               key,
-              value
+              value: value as HistoricalDataValueItem[] // Explicitly type the value
           }));
           setHistoricalData(output);
           return output;
@@ -60,13 +66,15 @@ export default function PriceCompareHome() {
     // }, []);
 
     useEffect(() => {
-        // const fetchHistoricalScrapeData = async () => {
-        //   const data: any[] = await handleRetrieveUserScrpaeHistory(process.env.REACT_APP_TMP_USER_ID || '')
-        //   setHistoricalData(data);
-        //   setIsLoading(false);
-        // }
-        // setIsLoading(true);
-        // fetchHistoricalScrapeData();
+      // console.log('Selected history item changed:', selectedHistoryItem);
+      if (selectedHistoryItem !== null && selectedHistoryItem.key !==undefined) {
+          // Call the onSelectScrapeData function with the selected scrapeRequestId
+          handleRetriveScrapeDataResult(selectedHistoryItem.key);
+          // onSelectScrapeData(selectedHistoryItem.key);
+      }
+  }, [selectedHistoryItem]);
+
+    useEffect(() => {
         handleRetrieveUserScrpaeHistory(process.env.REACT_APP_TMP_USER_ID || '');
         // const wssUri = `ws://localhost:4001?userId=${process.env.REACT_APP_TMP_USER_ID}&domain=${process.env.REACT_APP_WEBSOCKET_DOMAIN}`; // Replace with your WebSocket URL
         const wssUri = `wss://${process.env.REACT_APP_WEBSOCKET_DOMAIN}/prod?userId=${process.env.REACT_APP_TMP_USER_ID}&domain=${process.env.REACT_APP_WEBSOCKET_DOMAIN}`;
@@ -74,20 +82,18 @@ export default function PriceCompareHome() {
         console.log(wssUri)
         ws.onopen = () => {
           console.log("Connected to WebSocket server");
-        //   ws.send(JSON.stringify({ action: "subscribe", message: "Hello Server!" }));
         };
-    
-        // const fetchHistoricalScrapeData = async () => {
-        //   const data: any[] = await handleRetrieveUserScrpaeHistory(process.env.REACT_APP_TMP_USER_ID || '')
-        //   // setHistoricalData(data);
-        //   setIsLoading(false);
-        // }
 
         ws.onmessage = (event) => {
             console.log(event)
           const data = JSON.parse(event.data);
 
-          handleRetrieveUserScrpaeHistory(process.env.REACT_APP_TMP_USER_ID || '');
+          handleRetrieveUserScrpaeHistory(process.env.REACT_APP_TMP_USER_ID || '')
+          .then((records) => {
+            if (records.length >0 ) {
+              setSelectedHistoryItem(records[0]);
+            }
+          });
           console.log("Message from server:", data);
         };
     
@@ -151,7 +157,7 @@ export default function PriceCompareHome() {
             </div>
 
             <div id="content-component" className="flex flex-row h-full">
-                <SearchHistoryList handleRetrieveUserScrpaeHistory={handleRetrieveUserScrpaeHistory} historicalData={historicalData} onSelectScrapeData={handleRetriveScrapeDataResult}/>
+                <SearchHistoryList selectedHistoryItem={selectedHistoryItem} handleSelectedItem={handleSelectedItem} handleRetrieveUserScrpaeHistory={handleRetrieveUserScrpaeHistory} historicalData={historicalData} onSelectScrapeData={handleRetriveScrapeDataResult}/>
                 <div id="result-content"  className="flex flex-col 0 w-4/5 h-full">
 
                     <div id="search-scrape-bar" className="flex w-full h-28">

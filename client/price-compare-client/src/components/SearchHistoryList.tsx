@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { retrieveScrapeHistoryList } from "src/services/api";
 
 interface SearchHistoryListProps {
+    selectedHistoryItem: any;
+    handleSelectedItem: (item: any) => void; 
     handleRetrieveUserScrpaeHistory: (userId: string) => Promise<any[]>;
     onSelectScrapeData: (scrapeRequestId: string) => void;
     historicalData: any[];
@@ -10,7 +12,7 @@ interface SearchHistoryListProps {
 interface HistoricalDataValueItem  {
     scrapeDate: string,
     source: string,
-    scrapeRequestId: "570369bd-e819-4e7c-9580-f091ffb202ac",
+    scrapeRequestId: string,
     query: string,
     userId: string
 }
@@ -21,18 +23,18 @@ interface HistoricalDataItem {
 }
 
 // export default function SearchHistoryList(onSelectScrapeData: any) {
-export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ handleRetrieveUserScrpaeHistory, onSelectScrapeData, historicalData }) => {
+export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ selectedHistoryItem, handleSelectedItem, handleRetrieveUserScrpaeHistory, onSelectScrapeData, historicalData }) => {
  
     
     // const [historicalData, setHistoricalData] = useState<HistoricalDataItem[]>([]);
-    const [selectedHistoryItem, setSelectedHistoryItem] = useState<HistoricalDataItem | null>(null);
+    // const [selectedHistoryItem, setSelectedHistoryItem] = useState<HistoricalDataItem | null>(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            await handleRetrieveUserScrpaeHistory(process.env.REACT_APP_TMP_USER_ID || '');
-        }
-        fetchData();
-    }, []);
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         await handleRetrieveUserScrpaeHistory(process.env.REACT_APP_TMP_USER_ID || '');
+    //     }
+    //     fetchData();
+    // }, []);
 
     // console.log('historicalData', historicalData);
     // console.log('selectedHistoryItem', selectedHistoryItem);
@@ -75,11 +77,11 @@ export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ handleRetr
         }
     }, [selectedHistoryItem]);
 
-    const handleSelectedItem = (item: any) => {
-        // console.log('handleSelectedItem called with item:', item);
-        // console.log('selected', item);
-        setSelectedHistoryItem(item);
-    }
+    // const handleSelectedItem = (item: any) => {
+    //     // console.log('handleSelectedItem called with item:', item);
+    //     // console.log('selected', item);
+    //     setSelectedHistoryItem(item);
+    // }
     // console.log('detaildata', historicalData);
     return (
         <div id="search-bar"  className="flex flex-col w-1/5 h-full border-r border-sky-500">
