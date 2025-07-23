@@ -7,13 +7,14 @@ export const handler = async (event: any) => {
     console.log('event.queryStringParameters');
     console.log(event.queryStringParameters);
     const queryStringParameters = event.queryStringParameters;
-    const userId = queryStringParameters.userId; // Extract userId from query parameters
-    console.log("Type of userId:" +  userId);
-    // const tableName = process.env.WS_CONNECTIONS_TABLE_NAME || '';
+    const userId = queryStringParameters.userId;
+    const domain = queryStringParameters.domain; 
+
     try {
         // const connectionRecord = { connectionId: String(connectionId), userId: userId };
         console.log("connectionId", connectionId);
-        await saveUserWebsocket(connectionId, userId);
+        console.log("domain", domain);
+        await saveUserWebsocket(connectionId, userId, domain);
         // await db.put({
         //     TableName: process.env.WS_CONNECTIONS_TABLE_NAME,
         //     Item: { connectionId }

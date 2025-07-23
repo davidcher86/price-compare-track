@@ -5,7 +5,7 @@
     {
       "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",
       "receiptHandle": "MessageReceiptHandle",
-      "body": "{\n  \"scrapeRequestId\": \"test-sdfsd-dsfsd-sdvcdvc\",\n  \"bucketKey\": \"Ebay-6a94651c-f10f-4517-acb2-d4c882b26383-e01819a2-8c00-4ab4-b064-2c0f8a28be6a-extracted\",\n  \"userId\": \"test-sdfsdfsdf-324-fsfds\",\n  \"scrapeInfo\": {\"name\": \"Ebay\"},\n  \"query\": \"logi\"\n}",
+      "body": "{\"scrapeRequestId\": \"8f480929-dea8-4052-99b1-f56302120d7c\"\"scrapeId\": \"d3ed3635-b89c-43d6-bf81-072be3489b80\"\"bucketKey\": \"Ebay-92cff5b0-fb83-4492-9686-0e6623044527-0be01846-3df3-4f2a-b925-99b25ca83fec-extracted\"\"userId\": \"9962a416-504d-4b82-87f6-94a536aa27da\"\"scrapeInfo\": {\"name\": \"eb ay\"}\"scrapeDt\": \"2025-07-22T09:50:20.382Z\"\"startScrapeDt\": \"2025-07-22T09:50:23.336Z\"\"endScrapeDt\": \"2025-07-22T09:50:31.508Z\"\"query\": \"tail\"}",
       "attributes": {
         "ApproximateReceiveCount": "1",
         "SentTimestamp": "1523232000000",

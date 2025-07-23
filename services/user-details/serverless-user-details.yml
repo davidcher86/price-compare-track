@@ -29,28 +29,29 @@ provider:
         - "dynamodb:PutItem"
       Resource: "*"
 
-resources:
-  Resources:
-    WsScrapeStatusConnectionsTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
-        AttributeDefinitions:
-          - AttributeName: connectionId
-            AttributeType: S
-          - AttributeName: userId
-            AttributeType: S
-        KeySchema:
-          - AttributeName: connectionId
-            KeyType: HASH
-        GlobalSecondaryIndexes:
-          - IndexName: user-id-index
-            KeySchema:
-              - AttributeName: userId
-                KeyType: HASH
-            Projection:
-              ProjectionType: ALL
-        BillingMode: PAY_PER_REQUEST
+# resources:
+#   Resources:
+#     WsScrapeStatusConnectionsTable:
+#       Type: AWS::DynamoDB::Table
+#       DeletionPolicy: Retain
+#       Properties:
+#         TableName: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
+#         AttributeDefinitions:
+#           - AttributeName: connectionId
+#             AttributeType: S
+#           - AttributeName: userId
+#             AttributeType: S
+#         KeySchema:
+#           - AttributeName: connectionId
+#             KeyType: HASH
+#         GlobalSecondaryIndexes:
+#           - IndexName: user-id-index
+#             KeySchema:
+#               - AttributeName: userId
+#                 KeyType: HASH
+#             Projection:
+#               ProjectionType: ALL
+#         BillingMode: PAY_PER_REQUEST
 
 plugins:
   - serverless-offline
@@ -75,6 +76,7 @@ custom:
   serverless-offline:
     httpPort: 4002
     websocketPort: 4001
+    lambdaPort: 4010
 
 layers:
   uuidLib:
@@ -224,6 +226,7 @@ functions:
         - websocket/**
         - commons/**
     environment:
+      STAGE: ${self:provider.stage}
       LOCAL_PORT: ${env:LOCAL_PORT}
       WS_CONNECTIONS_TABLE_NAME: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
       WS_CONNECTIONS_DOMAIN: ${env:WS_CONNECTIONS_DOMAIN}

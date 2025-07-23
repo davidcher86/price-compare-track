@@ -1,3 +1,4 @@
+import { postToHttpApiGateway } from "../../commons/utils/ApiGatewayService.ts";
 import {saveRecord} from "../../commons/utils/DynamoDBService.ts";
 import {deletePayload, retrievePayload} from "../../commons/utils/S3Service.ts";
 import process from "node:process";
@@ -22,7 +23,7 @@ const save = async (event: any) => {
     try {
         const bucketName = process.env.STAGE === 'prod'
             ? (process.env.S3_EXTRACTED_DATA_BUCKET_NAME || '')
-            : "sls-extracted-data-prod";
+            : "sls-scrape-extracted-data-prod";
 
         const rawPayload = await retrievePayload(bucketName, bucketKey);
 
@@ -47,7 +48,9 @@ const save = async (event: any) => {
         
         await saveRecord(tableName,scrapeResultRecord);
 
-        await deletePayload(bucketName, bucketKey);
+        // await deletePayload(bucketName, bucketKey);
+
+        await sendClientNotification(userId);
 
         return {
             statusCode: 200,
@@ -59,3 +62,15 @@ const save = async (event: any) => {
     }
 }
 
+const sendClientNotification = async (userId: string) => {
+    try {
+        const functionName = 'sls-user-details-prod-notifyClient'; // Replace with your actual function name or ARN
+        const res = await postToHttpApiGateway(functionName, { userId: userId, message: 'Hello from another function!' })
+    } catch (error) {
+        console.error('Error sending notification:', error);
+        return {
+            statusCode: 500,
+            body: `Error sending notification: ${(error as Error).message}`,
+        };
+    }
+}

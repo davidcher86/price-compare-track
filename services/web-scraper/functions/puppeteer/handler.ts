@@ -67,7 +67,7 @@ const scrape = async (event: any) => {
         const bucketKey = `${scrapeInfo.name.replace(/\s+/g, "")}-${userId}-${uuid4()}`;
         const bucketName = process.env.STAGE === 'prod'
             ? (process.env.S3_RAW_HTML_RESULT_BUCKET_NAME || '')
-            : "sls-scrape-html-results-prod";
+            : "sls-scrape-html-raw-results-prod";
         await savePayload(html, bucketName, bucketKey, 'text/html');
 
         const sqsPayload = {

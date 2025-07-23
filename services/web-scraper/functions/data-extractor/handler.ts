@@ -34,7 +34,7 @@ const extract = async (event: any) => {
         console.log('event:', JSON.stringify(event));
         const bucketName = process.env.STAGE === 'prod'
             ? (process.env.S3_RAW_HTML_RESULT_BUCKET_NAME || '')
-            : "sls-scrape-html-results-prod";
+            : "sls-scrape-html-raw-results-prod";
 
         const html = await retrievePayload(bucketName, bucketKey);
         if (html.length === 0)
@@ -70,7 +70,7 @@ const extract = async (event: any) => {
         console.log(`Extracted results: ${JSON.stringify(results)}`);
         const saveExtractedBucketName = process.env.STAGE === 'prod'
             ? (process.env.S3_EXTRACTED_DATA_BUCKET_NAME || '')
-            : "sls-extracted-data-prod";
+            : "sls-scrape-extracted-data-prod";
         const saveExtractedBucketKey = bucketKey + '-extracted';
         await savePayload(JSON.stringify(results), saveExtractedBucketName, saveExtractedBucketKey, 'text/html');
 

@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { retrieveScrapeHistoryList } from "src/services/api";
 
 interface SearchHistoryListProps {
+    handleRetrieveUserScrpaeHistory: (userId: string) => Promise<any[]>;
     onSelectScrapeData: (scrapeRequestId: string) => void;
+    historicalData: any[];
 }   
 
 interface HistoricalDataValueItem  {
@@ -19,47 +21,51 @@ interface HistoricalDataItem {
 }
 
 // export default function SearchHistoryList(onSelectScrapeData: any) {
-export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ onSelectScrapeData }) => {
+export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ handleRetrieveUserScrpaeHistory, onSelectScrapeData, historicalData }) => {
  
     
-    const [historicalData, setHistoricalData] = useState<HistoricalDataItem[]>([]);
+    // const [historicalData, setHistoricalData] = useState<HistoricalDataItem[]>([]);
     const [selectedHistoryItem, setSelectedHistoryItem] = useState<HistoricalDataItem | null>(null);
 
-    // useEffect(() => {
-    //     console.log('SearchHistoryList useEffect called');
-    //     //Runs only on the first render
-    // }, []);
+    useEffect(() => {
+        const fetchData = async () => {
+            await handleRetrieveUserScrpaeHistory(process.env.REACT_APP_TMP_USER_ID || '');
+        }
+        fetchData();
+    }, []);
 
     // console.log('historicalData', historicalData);
     // console.log('selectedHistoryItem', selectedHistoryItem);
-    useEffect(() => {
-        const fetchData = async () => {
-            // console.log("fetching scrape history")
-            try {
-                const items = await retrieveScrapeHistoryList(process.env.REACT_APP_TMP_USER_ID || '');
-                // console.log('res 2', items);
-                const grouped = items.reduce((acc: any, item: any) => {
-                    if (!acc[item.scrapeRequestId]) {
-                      acc[item.scrapeRequestId] = [];
-                    }
-                    acc[item.scrapeRequestId].push(item);
-                    return acc;
-                }, {} as Record<string, any[]>);
-                // console.log(grouped);
-                const output: any[] = Object.entries(grouped).map(([key, value]) => ({
-                    key,
-                    value
-                }));
-                // console.log(output);
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         // console.log("fetching scrape history")
+    //         try {
+    //             const historyData: any[] = await handleRetrieveUserScrpaeHistory(process.env.REACT_APP_TMP_USER_ID || '')
+    //             setHistoricalData(historyData);
+    //             // const items = await retrieveScrapeHistoryList(process.env.REACT_APP_TMP_USER_ID || '');
+    //             // // console.log('res 2', items);
+    //             // const grouped = items.reduce((acc: any, item: any) => {
+    //             //     if (!acc[item.scrapeRequestId]) {
+    //             //       acc[item.scrapeRequestId] = [];
+    //             //     }
+    //             //     acc[item.scrapeRequestId].push(item);
+    //             //     return acc;
+    //             // }, {} as Record<string, any[]>);
+    //             // // console.log(grouped);
+    //             // const output: any[] = Object.entries(grouped).map(([key, value]) => ({
+    //             //     key,
+    //             //     value
+    //             // }));
+    //             // // console.log(output);
 
-                setHistoricalData(output);
-            } catch (error) {
-                console.error('Error fetching scrape history:', error);
-                setHistoricalData([]);
-            };
-        };
-        fetchData();
-    }, []);
+    //             // setHistoricalData(output);
+    //         } catch (error) {
+    //             console.error('Error fetching scrape history:', error);
+    //             setHistoricalData([]);
+    //         };
+    //     };
+    //     fetchData();
+    // }, []);
 
     useEffect(() => {
         // console.log('Selected history item changed:', selectedHistoryItem);

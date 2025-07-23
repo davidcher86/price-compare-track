@@ -44,7 +44,7 @@ export const retrieveScrapeHistory = async (
     userId: any
 ): Promise<any> => {
     try {
-        const tableName = process.env.USER_DETAILS_TABLE
+        const tableName = process.env.RESULT_DB_TABLE_NAME;
         console.log('returning all records from DynamoDB table: ' + tableName + ' userId: ' + userId);  
         return await ddb.send(new QueryCommand({
             TableName: tableName,
@@ -72,7 +72,7 @@ export const retrieveScrapeResult = async (
 ): Promise<any> => {
     try {
         const tableName = process.env.RESULT_DB_TABLE_NAME
-        console.log('returning all records from DynamoDB table: ' + tableName + ' userId: ' + userId + ' scrapeRequestId: ' + scrapeRequestId);  
+        console.log('returning all scrape resultrecords from DynamoDB table: ' + tableName + ' userId: ' + userId + ' scrapeRequestId: ' + scrapeRequestId);  
 
         return await ddb.send(new QueryCommand({
             TableName: tableName,
@@ -94,10 +94,16 @@ export const retrieveScrapeResult = async (
 export const saveUserWebsocket = async (
     connectionId: any,
     userId: string,
+    domain: string
 ): Promise<void> => {
     try {
         const tableName = process.env.WS_CONNECTIONS_TABLE_NAME || '';
-        const connectionRecord = { connectionId, userId };
+        const connectionRecord = { 
+            connectionId: connectionId, 
+            userId: userId,
+            domain: domain,
+            createDt: new Date().toISOString(),
+        };
 
         console.log('Adding result-set to DynamoDB: to' + tableName);
 
@@ -133,9 +139,12 @@ export const retrieveUserWebsocket = async (
             return {
               connectionId: item.connectionId,
               userId: item.userId,
+              domain: item.domain,
+              createDt: item.createDt,
             };
         }) || [];
-
+        console.log('records');
+        console.log(records);
         return records;
     } catch (err) {
         console.error("Error restrieving user websocket results:", err);

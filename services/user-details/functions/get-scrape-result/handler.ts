@@ -19,7 +19,7 @@ export const getScrapeData = async (event: any) => {
     try {
         const result = await retrieveScrapeResult(userId, scrapeRequestId);
 
-        console.log("Fetched scrape result: ", JSON.stringify(result));
+        // console.log("Fetched retrieveScrapeResult result: ", JSON.stringify(result));
         if (!result.Items) {
             return {
                 statusCode: 404,

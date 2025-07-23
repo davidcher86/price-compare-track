@@ -1,0 +1,95 @@
+org: davidcher
+service: price-compare-tracker-resources
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  memorySize: 2048
+  timeout: 60
+  stage: ${opt:stage, 'dev'}
+  region: ${env:REGION}
+  versionFunctions: false
+  environment:
+    STAGE: ${opt:STAGE, 'dev'}
+    REGION: ${env:REGION}
+
+plugins:
+  - serverless-dotenv-plugin
+
+custom:
+  WS_CONNECTIONS_TABLE_NAME: ${env:WS_CONNECTIONS_TABLE_NAME}-${self:provider.stage}
+  RESULT_DB_TABLE_NAME: ${env:RESULT_DB_TABLE_NAME}-${self:provider.stage}
+  S3_RAW_HTML_RESULT_BUCKET_NAME: ${env:S3_RAW_HTML_RESULT_BUCKET_NAME}-${self:provider.stage}
+  S3_EXTRACTED_DATA_BUCKET_NAME: ${env:S3_EXTRACTED_DATA_BUCKET_NAME}-${self:provider.stage}
+
+
+resources:
+  Resources:
+    ScrapedHtmlBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.S3_RAW_HTML_RESULT_BUCKET_NAME}
+      DeletionPolicy: Retain
+
+    ExtractedDataBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.S3_EXTRACTED_DATA_BUCKET_NAME}
+      DeletionPolicy: Retain
+
+    WsScrapeStatusConnectionsTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
+        AttributeDefinitions:
+          - AttributeName: connectionId
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: connectionId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: user-id-index
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
+
+    UserScrapesResultsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: user-scrape-results-${self:provider.stage}
+        AttributeDefinitions:
+          - AttributeName: scrapeId
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: scrapeRequestId
+            AttributeType: S
+          - AttributeName: scrapeDate
+            AttributeType: S
+        KeySchema:
+          - AttributeName: scrapeId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: user-id-index
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+              - AttributeName: scrapeDate
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: scrape-request-id-index
+            KeySchema:
+              - AttributeName: scrapeRequestId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST

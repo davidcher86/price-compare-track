@@ -3,8 +3,9 @@ import { LambdaClient, InvokeCommand, LogType } from "@aws-sdk/client-lambda";
 
 export const postToWebSocketConnection = async (connectionId: string, data: string, endpoint: string): Promise<void> => {
     try {
+        console.log('endpoint: ' + endpoint);
         const client = new ApiGatewayManagementApiClient({
-            endpoint, // The WebSocket endpoint (e.g., https://<api-id>.execute-api.<region>.amazonaws.com/<stage>)
+            endpoint: 'https://' + endpoint, // The WebSocket endpoint (e.g., https://<api-id>.execute-api.<region>.amazonaws.com/<stage>)
         });
 
         const command = new PostToConnectionCommand({
@@ -22,7 +23,7 @@ export const postToWebSocketConnection = async (connectionId: string, data: stri
 
 const client = new LambdaClient({ 
     region: process.env.REGION,
-    endpoint: "http://localhost:4002" //TODO: remove for prod
+    // endpoint: "http://localhost:4002" //TODO: remove for prod
 });
 
 export const postToHttpApiGateway = async (functionName: string, payloadObj:any) => {

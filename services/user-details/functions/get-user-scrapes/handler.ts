@@ -19,7 +19,7 @@ export const getScrapeResultData = async (event: any) => {
     try {
         const userScrapeResultsTableName = process.env.RESULT_DB_TABLE_NAME || '';
         const userScrapeResultsRecord = { userId: userId };
-        const result = await retrieveScrapeHistory(userScrapeResultsTableName, userId);
+        const result = await retrieveScrapeHistory(userId);
         // const result = await ddb.send(new GetCommand({
         //     TableName: userScrapeResultsTableName,
         //     Key: { userId },

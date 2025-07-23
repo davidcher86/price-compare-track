@@ -69,6 +69,7 @@ custom:
       - .ts
   serverless-offline:
     httpPort: 5002
+    lambdaPort: 5010
 
 
 resources:
@@ -77,7 +78,7 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:custom.SQS_SCRAPE_REQUEST}
-        VisibilityTimeout: 70
+        VisibilityTimeout: 310
         RedrivePolicy:
           deadLetterTargetArn:
             Fn::GetAtt: [DLQ, Arn]
@@ -86,7 +87,7 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:custom.SQS_HTML_RAW_DATA_RESULT}
-        VisibilityTimeout: 70
+        VisibilityTimeout: 310
         RedrivePolicy:
           deadLetterTargetArn:
             Fn::GetAtt: [DLQ, Arn]
@@ -95,7 +96,7 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:custom.SQS_EXTRACTED_DATA}
-        VisibilityTimeout: 70
+        VisibilityTimeout: 310
         RedrivePolicy:
           deadLetterTargetArn:
             Fn::GetAtt: [DLQ, Arn]
@@ -105,55 +106,49 @@ resources:
       Properties:
         QueueName: ${self:custom.SQS_SCRAPE_DLQ}
 
-    ScrapedHtmlBucket:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: ${self:custom.S3_RAW_HTML_RESULT_BUCKET_NAME}
-    ExtractedDataBucket:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: ${self:custom.S3_EXTRACTED_DATA_BUCKET_NAME}
+    # ScrapedHtmlBucket:
+    #   Type: AWS::S3::Bucket
+    #   Properties:
+    #     BucketName: ${self:custom.S3_RAW_HTML_RESULT_BUCKET_NAME}
+    #   DeletionPolicy: Retain
+    # ExtractedDataBucket:
+    #   Type: AWS::S3::Bucket
+    #   Properties:
+    #     BucketName: ${self:custom.S3_EXTRACTED_DATA_BUCKET_NAME}
+    #   DeletionPolicy: Retain
 
-    # WsScrapeStatusConnectionsTable:
+    # UserScrapesResultsTable:
     #   Type: AWS::DynamoDB::Table
     #   Properties:
-    #     TableName: ${self:custom.WS_CONNECTIONS_TABLE_NAME}
+    #     TableName: user-scrape-results-${self:provider.stage}
     #     AttributeDefinitions:
-    #       - AttributeName: connectionId
+    #       - AttributeName: scrapeId
+    #         AttributeType: S
+    #       - AttributeName: userId
+    #         AttributeType: S
+    #       - AttributeName: scrapeRequestId
+    #         AttributeType: S
+    #       - AttributeName: scrapeDate
     #         AttributeType: S
     #     KeySchema:
-    #       - AttributeName: connectionId
+    #       - AttributeName: scrapeId
     #         KeyType: HASH
+    #     GlobalSecondaryIndexes:
+    #       - IndexName: user-id-index
+    #         KeySchema:
+    #           - AttributeName: userId
+    #             KeyType: HASH
+    #           - AttributeName: scrapeDate
+    #             KeyType: RANGE
+    #         Projection:
+    #           ProjectionType: ALL
+    #       - IndexName: scrape-request-id-index
+    #         KeySchema:
+    #           - AttributeName: scrapeRequestId
+    #             KeyType: HASH
+    #         Projection:
+    #           ProjectionType: ALL
     #     BillingMode: PAY_PER_REQUEST
-
-    UserScrapesResultsTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: user-scrape-results-${self:provider.stage}
-        AttributeDefinitions:
-          - AttributeName: scrapeId
-            AttributeType: S
-          - AttributeName: userId
-            AttributeType: S
-          - AttributeName: scrapeRequestId
-            AttributeType: S
-        KeySchema:
-          - AttributeName: scrapeId
-            KeyType: HASH
-        GlobalSecondaryIndexes:
-          - IndexName: user-id-index
-            KeySchema:
-              - AttributeName: userId
-                KeyType: HASH
-            Projection:
-              ProjectionType: ALL
-          - IndexName: scrape-request-id-index
-            KeySchema:
-              - AttributeName: scrapeRequestId
-                KeyType: HASH
-            Projection:
-              ProjectionType: ALL
-        BillingMode: PAY_PER_REQUEST
 
 layers:
   chromium:
@@ -211,8 +206,8 @@ functions:
       AWS_ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
       SQS_SCRAPE_REQUEST: ${self:custom.SQS_SCRAPE_REQUEST}
     layers:
-    - { Ref: UuidLibLambdaLayer }
-    - { Ref: AwsDataTransferLambdaLayer }
+      - { Ref: UuidLibLambdaLayer }
+      - { Ref: AwsDataTransferLambdaLayer }
     events:
       - http:
           path: /scrape-service/scrape
@@ -286,7 +281,8 @@ functions:
         - functions/save-scrape-result/**
         - commons/**
     layers:
-    - { Ref: AwsStorageLambdaLayer }
+      - { Ref: AwsStorageLambdaLayer }
+      - { Ref: AwsDataTransferLambdaLayer }
     environment:
       STAGE: ${self:provider.stage}
       REGION: ${self:provider.region}
