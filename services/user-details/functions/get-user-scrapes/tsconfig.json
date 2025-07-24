@@ -3,5 +3,5 @@
   "compilerOptions": {
     "outDir": "../../dist/functions/get-user-scrapes",
   },
-  "include": ["./**/*"]
+  "include": ["./**/*", "../../../utils/**/*"]
 }

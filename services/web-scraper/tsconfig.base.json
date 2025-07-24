@@ -13,5 +13,14 @@
     "shared/*": ["../../layers/aws-sdk/storage/nodejs/shared/*"],
     "@commons/*": ["commons/**"]
   },
-  "include": ["./**/*.ts", "../../layers/**/*.ts", "functions/formScrape/**/*.ts", "functions/data-extractor/**/*.ts", "functions/puppeteer/**/*.ts", "functions/save-scrape-result/**/*.ts", "commons/**/*.ts", "models/**/*.json", "websocket/**/*.json"],
+  "include": ["./**/*.ts", 
+              "../../layers/**/*.ts", 
+              "functions/formScrape/**/*.ts", 
+              "functions/data-extractor/**/*.ts", 
+              "functions/puppeteer/**/*.ts", 
+              "functions/save-scrape-result/**/*.ts", 
+              "commons/**/*.ts", 
+              "models/**/*.json", 
+              "websocket/**/*.json",
+              "../utils/**/*"],
 }

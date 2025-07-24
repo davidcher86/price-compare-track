@@ -1,8 +1,5 @@
-// import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-// import { GetCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import {retrieveScrapeHistory} from '../../commons/utils/DynamoDBService'
-// const client = new DynamoDBClient({ region: process.env.REGION });
-// const ddb = DynamoDBDocumentClient.from(client);
+// import {retrieveScrapeHistory} from '@utils/aws-sdk/DynamoDBService';
 
 export const getScrapeResultData = async (event: any) => {
     const userId = event.headers?.userId;
