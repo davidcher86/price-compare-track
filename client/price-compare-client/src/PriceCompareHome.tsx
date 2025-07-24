@@ -55,16 +55,6 @@ export default function PriceCompareHome() {
         // setHistoricalData(output);
     }
 
-    // useEffect(() => {
-    //   const fetchHistoricalScrapeData = async () => {
-    //     const data: any[] = await handleRetrieveUserScrpaeHistory(process.env.REACT_APP_TMP_USER_ID || '')
-    //     setHistoricalData(data);
-    //     setIsLoading(false);
-    //   }
-    //   setIsLoading(true);
-    //   fetchHistoricalScrapeData();
-    // }, []);
-
     useEffect(() => {
       // console.log('Selected history item changed:', selectedHistoryItem);
       if (selectedHistoryItem !== null && selectedHistoryItem.key !==undefined) {

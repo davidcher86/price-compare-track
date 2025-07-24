@@ -5,3 +5,11 @@
 .rem-100 {
     height: 100rem;
 }
+
+.borders-color-blue {
+    @apply border-blue-500;
+}
+
+.item-borders {
+    @apply rounded-xl borders-color-blue border-solid border-2
+}

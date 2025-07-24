@@ -103,7 +103,7 @@ const SearchHistoryItem: React.FC<SearchHistoryItemProps> = ({ key, item, handle
     const query = item.value.length > 0 ? item.value[0].query : "No query";
     // console.log( sourcesString);
     return (
-        <div key={key} className="flex w-full h-full" onClick={() => handleSelectedItem(item)}>
+        <div key={key} className="flex w-90 h-16 m-2 bg-orange-500  item-borders" onClick={() => handleSelectedItem(item)}>
             <p className="text-xl font-normal text-center w-full">{`${query} - [${sourcesString}]`}</p>
         </div>
     );

@@ -73,9 +73,9 @@ export const SearchBar: React.FC<Props> = ({ onSearch }) => {
 
             <button onClick={handleSendSearchRequest} className="p-4 text-sm">Search</button>
 
-            <div id="scrape-source-bar" className="flex flex-row justify-center ">
+            <div id="scrape-source-bar" className="flex flex-row justify-center m-4">
                 {stores.map((store, i) => (
-                    <div onClick={() => dispatch({ type: 'TOGGLE_SEARCH_RESOURCES', payload: store.id })} key={i} className="flex flex-col items-center w-28 text-center cursor-pointer">
+                    <div onClick={() => dispatch({ type: 'TOGGLE_SEARCH_RESOURCES', payload: store.id })} key={i} className="flex flex-col items-center bg-gray-500 m-4 w-28 text-center item-borders cursor-pointer">
                         <div className="w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold text-white">
                             {store.logo}
                         </div>

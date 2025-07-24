@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/static/css/main.31b904d2.css",
-    "main.js": "/static/js/main.376a0117.js",
+    "main.css": "/static/css/main.ee22189f.css",
+    "main.js": "/static/js/main.db5c7fc4.js",
     "static/js/453.f22e51b2.chunk.js": "/static/js/453.f22e51b2.chunk.js",
     "static/media/newegg-logo.svg": "/static/media/newegg-logo.92291c81878ba4b6a46a301576240abf.svg",
     "static/media/amazon-logo.svg": "/static/media/amazon-logo.c85adf3bd9e4e37fbaa3827deab78302.svg",
     "static/media/ebay-logo.svg": "/static/media/ebay-logo.538041f7b1c1a3dc96f2ba479ac96475.svg",
     "static/media/aliexpress-logo.svg": "/static/media/aliexpress-logo.dd7a3c00791d412b46a735af39dc1b68.svg",
     "index.html": "/index.html",
-    "main.31b904d2.css.map": "/static/css/main.31b904d2.css.map",
-    "main.376a0117.js.map": "/static/js/main.376a0117.js.map",
+    "main.ee22189f.css.map": "/static/css/main.ee22189f.css.map",
+    "main.db5c7fc4.js.map": "/static/js/main.db5c7fc4.js.map",
     "453.f22e51b2.chunk.js.map": "/static/js/453.f22e51b2.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.31b904d2.css",
-    "static/js/main.376a0117.js"
+    "static/css/main.ee22189f.css",
+    "static/js/main.db5c7fc4.js"
   ]
 }
