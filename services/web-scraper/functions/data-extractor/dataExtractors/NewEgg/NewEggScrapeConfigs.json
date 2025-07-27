@@ -2,9 +2,10 @@
   "name": "NewEgg",
   "url": "https://www.newegg.com/p/pl?d={query}",
   "disableSec": true,
-  "loadSelector": ".list-wrap",
+  "loadSelector": ".items-list-view",
   "listIdentifier": ".item-cell",
   "brightDataSupport" : false,
+  "hrefHost": "https://www.newegg.com",
   "extractArgs": [
     {
       "keyName": "name",
@@ -12,7 +13,7 @@
       "type": "text"
     },
     {
-      "keyName": "link",
+      "keyName": "href",
       "selector": ".item-open-box-italic",
       "type": "href"
     },
@@ -23,8 +24,8 @@
     },
     {
       "keyName": "image",
-      "selector": "img[alt]",
-      "type": "src"
+      "selector": ".item-container a img",
+      "type": "img"
     }
   ]
 }

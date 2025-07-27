@@ -5,6 +5,7 @@
   "loadSelector": "#search",
   "listIdentifier": ".puisg-row",
   "brightDataSupport" : true,
+  "hrefHost": "https://www.amazon.com",
   "extractArgs": [
     {
       "keyName": "name",
@@ -19,7 +20,12 @@
     {
       "keyName": "image",
       "selector": ".s-image",
-      "type": "src"
+      "type": "img"
+    },
+    {
+      "keyName": "href",
+      "selector": "a.a-link-normal",
+      "type": "href"
     }
   ]
 }

@@ -23,6 +23,7 @@
   },
   "include": [
     "src/**/*",
+    "public/**/*",
   ],
   "paths": {
     "../types/*": ["src/types/*"]

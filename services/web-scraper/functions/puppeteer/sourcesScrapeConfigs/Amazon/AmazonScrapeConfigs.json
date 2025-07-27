@@ -1,7 +1,7 @@
 {
   "name": "Amazon",
   "disableSec": false,
-  "url": "https://www.amazon.com/s?k=logi",
+  "url": "https://www.amazon.com/s?k={query}",
   "loadSelector": "#search",
   "listIdentifier": ".puisg-row",
   "brightDataSupport" : true,

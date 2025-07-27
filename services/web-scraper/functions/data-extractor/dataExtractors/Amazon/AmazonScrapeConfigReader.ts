@@ -1,4 +1,4 @@
-import {ScrapeConfigReader} from "../abstract/ScrapeConfigReader";
+import {ScrapeConfigReader} from "../abstract/ScrapeConfigReader.ts";
 import config from "./AmazonScrapeConfigs.json";
 
 export class AmazonScrapeConfigReader extends ScrapeConfigReader {

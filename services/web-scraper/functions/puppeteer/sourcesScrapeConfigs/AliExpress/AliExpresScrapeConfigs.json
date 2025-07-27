@@ -1,7 +1,7 @@
 {
   "name": "AliExpress",
   "brightDataSupport" : false,
-  "url": "https://www.aliexpress.com/w/wholesale-logi.html?spm=a2g0o.productlist.search.0",
+  "url": "https://www.aliexpress.com/w/wholesale-{query}.html?spm=a2g0o.productlist.search.0",
   "loadSelector": "#card-list",
   "disableSec": true,
   "listIdentifier": ".card-out-wrapper",

@@ -1,4 +1,4 @@
-import {ScrapeConfigReader} from "../abstract/ScrapeConfigReader";
+import {ScrapeConfigReader} from "../abstract/ScrapeConfigReader.ts";
 import config from "./EbayScrapeConfigs.json";
 
 export class EbayScrapeConfigReader extends ScrapeConfigReader {

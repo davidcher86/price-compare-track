@@ -2,8 +2,9 @@
   "name": "Ebay",
   "url": "https://www.ebay.com/sch/i.html?_nkw=logi",
   "loadSelector": ".srp-results.srp-list",
-  "listIdentifier": ".s-item__wrapper.clearfix",
+  "listIdentifier": ".s-item__wrapper",
   "brightDataSupport" : false,
+  "hrefHost": "https://www.ebay.com",
   "extractArgs": [
     {
       "keyName": "name",
@@ -17,8 +18,13 @@
     },
     {
       "keyName": "image",
-      "selector": "img[alt]",
-      "type": "src"
+      "selector": ".s-item__wrapper img[src]",
+      "type": "img"
+    },
+    {
+      "keyName": "href",
+      "selector": "a.s-item__link",
+      "type": "href"
     }
   ]
 }

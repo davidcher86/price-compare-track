@@ -6,4 +6,5 @@ export interface ScrapeConfigDataInterface {
     getListIdentifier(): string | null;
     getDisableSec(): boolean | null
     getName(): string | null;
+    getHrefHost(): string | null;
 }

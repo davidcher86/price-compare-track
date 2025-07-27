@@ -6,6 +6,7 @@ import {EbayScrapeConfigReader} from "./dataExtractors/Ebay/EbayScrapeConfigRead
 import {AmazonScrapeConfigReader} from "./dataExtractors/Amazon/AmazonScrapeConfigReader.ts";
 import {ExtractDataInterface} from "./interfaces/ExtractDataInterface.ts";
 import process from "node:process";
+import {NewEggExtractData} from "./dataExtractors/NewEgg/NewEggExtractData.ts";
 import { retrievePayload, deletePayload, savePayload } from '../../commons/utils/S3Service.ts';
 import {sendMessageToQueue} from "../../commons/utils/SQSService.ts";
 
@@ -47,7 +48,7 @@ const extract = async (event: any) => {
         switch (scrapeInfo.name.toLowerCase()) {
             case 'newegg':
                 console.log("using NewEgg scrape configs")
-                extractDataService = new SimpleExtractData(new NewEggScrapeConfigReader());
+                extractDataService = new NewEggExtractData(new NewEggScrapeConfigReader());
                 break;
             case 'ebay':
                 console.log("using Ebay scrape configs")
@@ -92,7 +93,7 @@ const extract = async (event: any) => {
 
         await sendMessageToQueue(sqsUrl,sqsPayload);
 
-        await deletePayload(bucketName, bucketKey);
+        // await deletePayload(bucketName, bucketKey);
 
         return {
             statusCode: 200,

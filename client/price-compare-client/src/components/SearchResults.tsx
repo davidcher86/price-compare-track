@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { retrieveScrapeHistoryList } from "src/services/api";
+import { ReactComponent as GoToPageLogo } from '../logos/go-to-page-icon.svg';
 
 // export default function SearchResults() {
 
@@ -56,24 +57,38 @@ function sourceScrapeDataColumn(item: ScapeSourceData) {
     return (
         <div id="scrape-source-item" className="flex flex-col overflow-auto w-full h-full">
             <p className="text-xl font-normal text-center w-full">{item.source}</p>
-            {scrapeResults.map((item:SourceResultData) => sourceResults(item))}
+            {scrapeResults.map((item: SourceResultData) => <SourceResults sourceResult={item} />)}
         </div>
     );
 }
 
 interface SourceResultData {
     name: string;
-    img?: string;
+    image?: string;
     price: number;
+    href?: string;
 }
 
-function sourceResults(sourceResult: SourceResultData) {
-    // console.log(sourceResult);
+// function sourceResults(sourceResult: SourceResultData) {
+const SourceResults: React.FC<{ sourceResult: SourceResultData }> = ({ sourceResult }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    console.log(isOpen);
     return (
-        <div className="flex flex-col w-full h-full">
-            {/* <p className="text-lg font-normal text-center w-full">{sourceResult.name.substring(0,80)}</p> */}
-            <img src={sourceResult.img} alt={sourceResult.name.substring(0,80)} className="w-32 h-32 object-cover mx-auto" />
-            <p className="text-lg font-normal text-center w-full">{sourceResult.price}</p>
+        <div className="bg-gray-200 m-2">
+            <div className="flex flex-row">
+                <div className="inline-block result-item-image-container">
+                    <img src={sourceResult.image} alt={sourceResult.name.substring(0,120)} className="m-2 w-full h-full object-coverobject-cover" />
+                </div>
+                <div className="inline-block h-full item-price-wrapper">
+                    <GoToPageLogo className="m-2 w-8 justify-self-end" onClick={() => window.open(sourceResult.href, '_blank')}/>
+                    <p className="block text-2xl font-normal text-center">{sourceResult.price}</p>
+                </div>
+            </div>
+            <p onClick={() => setIsOpen(true)} className="w-full">{isOpen ? sourceResult.name : sourceResult.name.substring(0,120)}</p>
+            {sourceResult.name.length > 80 
+                ? <p className="w-full" onClick={() => setIsOpen(!isOpen)}>{isOpen == false ? "read more..." : "close"}</p> 
+                : null}
+            
         </div>
     );
 }

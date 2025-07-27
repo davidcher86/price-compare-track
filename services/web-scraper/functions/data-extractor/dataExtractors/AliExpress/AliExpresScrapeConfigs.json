@@ -8,7 +8,7 @@
   "extractArgs": [
     {
       "keyName": "name",
-      "selector": "[title]",
+      "selector": "div[title]",
       "type": "text"
     },
     {
@@ -18,8 +18,13 @@
     },
     {
       "keyName": "image",
-      "selector": "img[alt]",
-      "type": "src"
+      "selector": ".ml_mn img",
+      "type": "img"
+    },
+    {
+      "keyName": "href",
+      "selector": "a.search-card-item",
+      "type": "href"
     }
   ]
 }

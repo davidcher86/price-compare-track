@@ -61,9 +61,10 @@ export const SearchBar: React.FC<Props> = ({ onSearch }) => {
         dispatch({ type: 'SET_SEARCH_BOX_TEXT', payload: value })
     };
     
+    
     return (
         <div id="search-form" className="flex flex-col bg-black-700 w-full rem-100 border-b border-sky-500">
-            <div id="search-bar" className="flex h-12 items-center w-3/6 mt-10 mb-10 mr-auto ml-auto m-4 border-2 border-red-600 rounded-full p-2">
+            <div id="search-bar" className="flex h-12 items-center w-3/6 h-20 mt-10 mb-10 mr-auto ml-auto m-4 border-2 border-red-600 rounded-full p-2">
                 <TextInput placeholder="Search Stores Online" onChange={handleChangeSearchInput} />
                 {/* <input
                     type="text"
@@ -75,15 +76,16 @@ export const SearchBar: React.FC<Props> = ({ onSearch }) => {
 
             <div id="scrape-source-bar" className="flex flex-row justify-center m-4">
                 {stores.map((store, i) => (
-                    <div onClick={() => dispatch({ type: 'TOGGLE_SEARCH_RESOURCES', payload: store.id })} key={i} className="flex flex-col items-center bg-gray-500 m-4 w-28 text-center item-borders cursor-pointer">
-                        <div className="w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold text-white">
+                    <div onClick={() => dispatch({ type: 'TOGGLE_SEARCH_RESOURCES', payload: store.id })} key={i} style={{ opacity: state.checkedSources.includes(store.id) ? 1 : 0.3 }} className={`flex flex-col items-center bg-gray-500 m-4 w-28 text-center item-borders cursor-pointer`}>
+                        <div className="w-16 h-24 rounded-full flex items-center justify-center text-xl font-bold text-white">
                             {store.logo}
                         </div>
-                        <div className="mt-2 text-sm font-medium">{store.id}</div>
+                        <p>{store.label}</p>
+                        {/* <div className="mt-2 text-sm font-medium">{store.id}</div>
                             <Checkbox
                                 checked={state.checkedSources.includes(store.id)}
                                 onChange={() => dispatch({ type: 'TOGGLE_SEARCH_RESOURCES', payload: store.id })}
-                                nameId={store.id} />
+                                nameId={store.id} /> */}
                     </div>
                 ))}
             </div>

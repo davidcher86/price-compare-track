@@ -84,7 +84,7 @@ export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ selectedHi
     // }
     // console.log('detaildata', historicalData);
     return (
-        <div id="search-bar"  className="flex flex-col w-1/5 h-full border-r border-sky-500">
+        <div id="search-bar"  className="flex flex-col w-1/5 h-full border-r border-sky-500 overflow-auto">
             <p className="text-xl font-normal text-center">history</p>
             {historicalData.map((item, index) => <SearchHistoryItem key={index} item={item} handleSelectedItem={handleSelectedItem} />)}
         </div>
@@ -103,8 +103,9 @@ const SearchHistoryItem: React.FC<SearchHistoryItemProps> = ({ key, item, handle
     const query = item.value.length > 0 ? item.value[0].query : "No query";
     // console.log( sourcesString);
     return (
-        <div key={key} className="flex w-90 h-16 m-2 bg-orange-500  item-borders" onClick={() => handleSelectedItem(item)}>
-            <p className="text-xl font-normal text-center w-full">{`${query} - [${sourcesString}]`}</p>
+        <div key={key} className="flex flex-col w-90 h-18 m-2 bg-orange-500  item-borders" onClick={() => handleSelectedItem(item)}>
+            <p className="text-xl font-normal text-center w-full">{query}</p>
+            <p className="mx-2.5 text-sm font-normal text-left w-full">{`sources: [${sourcesString}]`}</p>
         </div>
     );
 }

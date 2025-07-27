@@ -1,6 +1,6 @@
 {
   "name": "Ebay",
-  "url": "https://www.ebay.com/sch/i.html?_nkw=logi",
+  "url": "https://www.ebay.com/sch/i.html?_nkw={query}",
   "loadSelector": ".srp-results.srp-list",
   "listIdentifier": ".s-item__wrapper.clearfix",
   "brightDataSupport" : false,

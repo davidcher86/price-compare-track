@@ -13,3 +13,12 @@
 .item-borders {
     @apply rounded-xl borders-color-blue border-solid border-2
 }
+
+.result-item-image-container {
+    width: 130px;
+    @apply h-32;
+}
+
+.item-price-wrapper {
+    @apply w-4/6 h-32;
+}

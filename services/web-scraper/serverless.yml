@@ -106,50 +106,6 @@ resources:
       Properties:
         QueueName: ${self:custom.SQS_SCRAPE_DLQ}
 
-    # ScrapedHtmlBucket:
-    #   Type: AWS::S3::Bucket
-    #   Properties:
-    #     BucketName: ${self:custom.S3_RAW_HTML_RESULT_BUCKET_NAME}
-    #   DeletionPolicy: Retain
-    # ExtractedDataBucket:
-    #   Type: AWS::S3::Bucket
-    #   Properties:
-    #     BucketName: ${self:custom.S3_EXTRACTED_DATA_BUCKET_NAME}
-    #   DeletionPolicy: Retain
-
-    # UserScrapesResultsTable:
-    #   Type: AWS::DynamoDB::Table
-    #   Properties:
-    #     TableName: user-scrape-results-${self:provider.stage}
-    #     AttributeDefinitions:
-    #       - AttributeName: scrapeId
-    #         AttributeType: S
-    #       - AttributeName: userId
-    #         AttributeType: S
-    #       - AttributeName: scrapeRequestId
-    #         AttributeType: S
-    #       - AttributeName: scrapeDate
-    #         AttributeType: S
-    #     KeySchema:
-    #       - AttributeName: scrapeId
-    #         KeyType: HASH
-    #     GlobalSecondaryIndexes:
-    #       - IndexName: user-id-index
-    #         KeySchema:
-    #           - AttributeName: userId
-    #             KeyType: HASH
-    #           - AttributeName: scrapeDate
-    #             KeyType: RANGE
-    #         Projection:
-    #           ProjectionType: ALL
-    #       - IndexName: scrape-request-id-index
-    #         KeySchema:
-    #           - AttributeName: scrapeRequestId
-    #             KeyType: HASH
-    #         Projection:
-    #           ProjectionType: ALL
-    #     BillingMode: PAY_PER_REQUEST
-
 layers:
   chromium:
     path: ../layers/chromium

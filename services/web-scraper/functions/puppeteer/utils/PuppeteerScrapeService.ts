@@ -92,7 +92,7 @@ export class PuppeteerScrapeService extends AbstractScrapeHandler implements Scr
 
     public async startBrowser(scraperInfo: any): Promise<void> {
         console.log(`starting browser. on stage: ${process.env.STAGE}`);
-        if (brightDataServices.indexOf(scraperInfo.name) > -1) {
+        if (brightDataServices.indexOf((scraperInfo.name).toLowerCase()) > -1) {
             console.log("with BrightData service...");
             const brightDataWsEndpoint = await this.getBrightDataKey();
 
