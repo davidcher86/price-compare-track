@@ -5,6 +5,7 @@ import {SimpleExtractData} from "./dataExtractors/SimpleExtractData.ts";
 import {EbayScrapeConfigReader} from "./dataExtractors/Ebay/EbayScrapeConfigReader.ts";
 import {AmazonScrapeConfigReader} from "./dataExtractors/Amazon/AmazonScrapeConfigReader.ts";
 import {ExtractDataInterface} from "./interfaces/ExtractDataInterface.ts";
+import {EbayExtractData} from "./dataExtractors/Ebay/EbayExtractData.ts";
 import process from "node:process";
 import {NewEggExtractData} from "./dataExtractors/NewEgg/NewEggExtractData.ts";
 import { retrievePayload, deletePayload, savePayload } from '../../commons/utils/S3Service.ts';
@@ -52,7 +53,7 @@ const extract = async (event: any) => {
                 break;
             case 'ebay':
                 console.log("using Ebay scrape configs")
-                extractDataService = new SimpleExtractData(new EbayScrapeConfigReader());
+                extractDataService = new EbayExtractData(new EbayScrapeConfigReader());
                 break;
             case 'amazon':
                 console.log("using Amazon scrape configs")

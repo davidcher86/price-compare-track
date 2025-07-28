@@ -134,6 +134,7 @@ export default function PriceCompareHome() {
     }
 
     return (
+        // <div id='main-window' className="flex h-screen w-screen flex-col overflow-clip">
         <div id='main-window' className="flex h-screen w-screen flex-col">
             <div id="main-nav-bar" className="flex flex-row justify-between h-20  p-4 border-b border-sky-500">
                 <div id="logo" className="flex  w-10 h-full justify-self-start bg-gray-200">
@@ -141,17 +142,18 @@ export default function PriceCompareHome() {
                 </div>
                 <div className="items-center justify-self-end">
                     {/* <button className="p-4 bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded-lg">Add to Edge</button> */}
-                    <button className="p-4 text-sm">Register</button>
-                    <button className="p-4 text-sm">Sign-In</button>
+                    <button className="p-4 text-sm theme-font">Register</button>
+                    <button className="p-4 text-sm theme-font">Sign-In</button>
                 </div>
             </div>
 
             <div id="content-component" className="flex flex-row h-full">
                 <SearchHistoryList selectedHistoryItem={selectedHistoryItem} handleSelectedItem={handleSelectedItem} handleRetrieveUserScrpaeHistory={handleRetrieveUserScrpaeHistory} historicalData={historicalData} onSelectScrapeData={handleRetriveScrapeDataResult}/>
-                <div id="result-content"  className="flex flex-col 0 w-4/5 h-full">
+                <div id="earch-scrape-result-content"  className="flex flex-col 0 w-4/5 h-full">
 
-                    <div id="search-scrape-bar" className="flex w-full h-28">
-                        <p className="text-xl font-medium mb-4 text-center">Compare pices of online stores - Maximize Your Savings</p>
+                    <div id="scrape-bar-header" className="flex flex-col w-full h-28 m-3.5 justify-center">
+                      <p className="block text-xl font-large font-semibold mb-4 text-center theme-font ">Little Compare Tool</p>
+                        <p className="block text-xl font-medium mb-4 text-center theme-font">Compare largest online stores - Maximize Your Savings</p>
                     </div>
                     
                     <SearchBar onSearch={handleSearch} />

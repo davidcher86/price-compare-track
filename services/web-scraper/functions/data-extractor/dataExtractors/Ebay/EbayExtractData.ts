@@ -1,71 +1,26 @@
-// import * as cheerio from "cheerio";
-// import {ExtractDataInterface} from "../../interfaces/ExtractDataInterface";
-// import {NewEggScrapeConfigReader} from "../NewEgg/NewEggScrapeConfigReader";
-//
-// export class EbayExtractData implements ExtractDataInterface {
-//
-//     protected configData: any;
-//
-//     constructor() {
-//         this.configData = new NewEggScrapeConfigReader();
-//     }
-//
-//     public async extract(html: any, scraperInfo: any) {
-//         const $ = cheerio.load(html);
-//
-//         let items: any[] = [];
-//         $(scraperInfo.scrapeArgs.listIdentifier).each((_, element) => {
-//             try {
-//                 let dynamicObject: any = {};
-//                 for (const arg of scraperInfo.scrapeArgs.extractArgs) {
-//                     console.log('arg:', JSON.stringify(arg));
-//                     let selector = arg.selector;
-//                     let key = arg.keyName;
-//                     let type = arg.type;
-//                     let value: string | null = '';
-//
-//                     switch (type) {
-//                         case 'src':
-//                             console.log("src searching for selector: " + selector);
-//                             if ($(element)?.find(selector) !== null && $(element)?.find(selector) !== undefined)
-//                                 value = $(element)?.find(selector)?.first()?.attr('src') || null;
-//                             break;
-//                         case 'price':
-//                             if ($(element)?.find(selector) !== null && $(element)?.find(selector) !== undefined)
-//                                 value = $(element).find(selector).first().text().trim() || null;
-//
-//                             // value = this.findPrice($, element);
-//                             break;
-//                         case 'text':
-//                         default:
-//                             console.log("text searching for selector: " + selector);
-//                             if ($(element)?.find(selector) !== null && $(element)?.find(selector) !== undefined)
-//                                 value = $(element)?.find(selector)?.text()?.trim() || null;
-//                             break;
-//                     }
-//
-//                     if (value !== null && value !== undefined && value !== '') {
-//                         dynamicObject[key] = value;
-//                         console.log(`key: ${key}, value: ${value}`);
-//                     }
-//                 }
-//
-//                 if (Object.keys(dynamicObject).length > 0 && dynamicObject.name !== undefined && dynamicObject.price !== undefined) {
-//                     items.push(dynamicObject);
-//                 }
-//             } catch (error) {
-//                 console.error('Error processing element:', error);
-//             }
-//         });
-//
-//         return items;
-//     }
-//
-//     protected findPrice($: any, element: any) {
-//         return $(element).find('.a-price').each((_: any, el: any) => {
-//             const priceText = $(el).find('.a-offscreen').first().text().trim();
-//             console.log('Price:', priceText);
-//             return priceText;
-//         });
-//     }
-// }
+import * as cheerio from "cheerio";
+import {SimpleExtractData} from "../SimpleExtractData.ts";
+import {ScrapeConfigReader} from "../abstract/ScrapeConfigReader.ts";
+
+export class EbayExtractData extends SimpleExtractData {
+    protected configData: any;
+
+    constructor(scrapeConfigReader: ScrapeConfigReader) {
+        super(scrapeConfigReader)
+    }
+
+    protected isRecordValid(dynamicObject: any): boolean {
+        return (Object.keys(dynamicObject).length > 0 
+                && dynamicObject.name !== undefined 
+                && dynamicObject.price !== undefined
+                && !dynamicObject.name?.toLowerCase().includes("shop on ebay"));
+    }
+
+    protected extractHref($: cheerio.CheerioAPI, element: any, selector: any, hrefHost: string): string | null {
+        if ($(element)?.find(selector) !== null && $(element)?.find(selector) !== undefined) {
+            return ($(element)?.find(selector)?.first()?.attr('href') || null);
+        }
+
+        return null;
+    }
+}

@@ -2,14 +2,6 @@ import * as cheerio from "cheerio";
 import {CheerioAPI} from "cheerio";
 import {ExtractDataInterface} from "../interfaces/ExtractDataInterface.ts";
 import {ScrapeConfigDataInterface} from "../interfaces/ScrapeConfig.ts";
-import { AnyNode } from "node_modules/domhandler/lib/esm/node.js";
-
-const items: {
-    title: string;
-    price: string;
-    image: string;
-    link: string;
-}[] = [];
 
 export class SimpleExtractData implements ExtractDataInterface {
 
@@ -26,12 +18,12 @@ export class SimpleExtractData implements ExtractDataInterface {
         const extractArgs = this.configData.getExtractArgs();
         const hrefHost = this.configData.getHrefHost() || '';
         const listIdentifier = this.configData.getListIdentifier() || '';
-        // const divWithTooltip = listIdentifier ? $(listIdentifier) : undefined;
 
-        // if (divWithTooltip == null || divWithTooltip.length === 0)
-        //     return items;
+        if (extractArgs === undefined || extractArgs.length === 0 || listIdentifier === '') {
+            throw new Error("extractArgs/listIdentifier is undefined or empty");
+        }
 
-        // const childElements = divWithTooltip.find('*');
+
         const childElements = $(listIdentifier);
 
         console.log("childElements found: " + childElements.length);
@@ -65,7 +57,8 @@ export class SimpleExtractData implements ExtractDataInterface {
                         dynamicObject[key] = value;
                     }
                 }
-                if (Object.keys(dynamicObject).length > 0 && dynamicObject.name !== undefined && dynamicObject.price !== undefined) {
+                
+                if (this.isRecordValid(dynamicObject)) {
                         items.push(dynamicObject);
                 }
             } catch (error) {
@@ -77,16 +70,11 @@ export class SimpleExtractData implements ExtractDataInterface {
         return items;
     }
 
-    protected extractHref($: cheerio.CheerioAPI, element: AnyNode, selector: any, hrefHost: string): string | null {
-        const image = $(element).find(selector).attr('href');
-        if ($(element)?.find(selector) !== null && $(element)?.find(selector) !== undefined) {
-            const href = hrefHost + ($(element)?.find(selector)?.first()?.attr('href') || null);
-            return href;
-        }
-        return null;
+    protected isRecordValid(dynamicObject: any): boolean {
+        return (Object.keys(dynamicObject).length > 0 && dynamicObject.name !== undefined && dynamicObject.price !== undefined)
     }
 
-    protected extractImgttr($: CheerioAPI, element: AnyNode, selector: string, dynamicObject: any) {
+    protected extractHref($: CheerioAPI, element: any, selector: string, dynamicObject: any) {
         const image = $(element).find(selector).attr('src');
        if ($(element).find(selector).attr('src') != undefined) {
             const img = $(element).find(selector).attr('src');
@@ -95,7 +83,16 @@ export class SimpleExtractData implements ExtractDataInterface {
         return null;
     }
 
-    protected extractName($: CheerioAPI, element: AnyNode, selector: string) {
+    protected extractImgttr($: CheerioAPI, element: any, selector: string, dynamicObject: any) {
+        const image = $(element).find(selector).attr('src');
+       if ($(element).find(selector).attr('src') != undefined) {
+            const img = $(element).find(selector).attr('src');
+            return img || null;
+        }
+        return null;
+    }
+
+    protected extractName($: CheerioAPI, element: any, selector: string) {
         if ($(element)?.find(selector) !== null && $(element)?.find(selector) !== undefined)
             return $(element)?.find(selector)?.text()?.trim() || null;
 
