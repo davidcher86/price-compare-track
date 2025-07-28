@@ -61,7 +61,7 @@ export class PuppeteerScrapeService extends AbstractScrapeHandler implements Scr
                 await page.setBypassCSP(true);
             }
 
-            const blockedResources = ['image', 'media', 'font'];
+            const blockedResources = ['media', 'font'];
             await page.setRequestInterception(true);
             page.on('request', (req: any) => {
                 if (blockedResources.includes(req.resourceType())) {
@@ -91,16 +91,15 @@ export class PuppeteerScrapeService extends AbstractScrapeHandler implements Scr
     }
 
     public async startBrowser(scraperInfo: any): Promise<void> {
-        console.log(`starting browser. on stage: ${process.env.STAGE}`);
         if (brightDataServices.indexOf((scraperInfo.name).toLowerCase()) > -1) {
-            console.log("with BrightData service...");
+            console.log(`starting browser. with BrightData service...`);
             const brightDataWsEndpoint = await this.getBrightDataKey();
 
             this.browser = await puppeteerCore.connect({
                 browserWSEndpoint: brightDataWsEndpoint,
             });
         } else if (process.env.STAGE === 'prod') {
-            console.log("using installed chromium...")
+            console.log(`starting browser. using installed chromium...`)
             this.browser = await puppeteerCore.launch({
                 args: [
                     ...chromium.args,

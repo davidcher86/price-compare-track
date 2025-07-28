@@ -79,29 +79,9 @@ export const SearchBar: React.FC<Props> = ({ onSearch }) => {
                             {store.logo}
                         </div>
                         <p className="theme-font">{store.label}</p>
-                        {/* <div className="mt-2 text-sm font-medium">{store.id}</div>
-                            <Checkbox
-                                checked={state.checkedSources.includes(store.id)}
-                                onChange={() => dispatch({ type: 'TOGGLE_SEARCH_RESOURCES', payload: store.id })}
-                                nameId={store.id} /> */}
                     </div>
                 ))}
             </div>
         </div>
-    //   <div className="flex gap-2 mb-4">
-    //     <input
-    //       className="border p-2 w-full rounded"
-    //       type="text"
-    //       placeholder="Search..."
-    //       value={query}
-    //       onChange={(e) => setQuery(e.target.value)}
-    //     />
-    //     <button
-    //       className="bg-blue-500 text-white px-4 rounded"
-    //       onClick={handleSearch}
-    //     >
-    //       Search
-    //     </button>
-    //   </div>
     );
   };
