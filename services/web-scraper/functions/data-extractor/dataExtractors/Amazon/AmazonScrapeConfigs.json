@@ -2,14 +2,14 @@
   "name": "Amazon",
   "disableSec": false,
   "url": "https://www.amazon.com/s?k=logi",
-  "loadSelector": "#search",
-  "listIdentifier": ".puisg-row",
+  "loadSelector": "span[data-component-type]",
+  "listIdentifier": "[data-asin][data-component-type=\"s-search-result\"]",
   "brightDataSupport" : true,
   "hrefHost": "https://www.amazon.com",
   "extractArgs": [
     {
       "keyName": "name",
-      "selector": ".s-line-clamp-2",
+      "selector": "h2 a span",
       "type": "text"
     },
     {
@@ -19,7 +19,7 @@
     },
     {
       "keyName": "image",
-      "selector": ".s-image",
+      "selector": "img.s-image",
       "type": "img"
     },
     {

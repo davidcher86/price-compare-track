@@ -69,7 +69,6 @@ interface SourceResultData {
     href?: string;
 }
 
-// function sourceResults(sourceResult: SourceResultData) {
 const SourceResults: React.FC<{ sourceResult: SourceResultData }> = ({ sourceResult }) => {
     const [isOpen, setIsOpen] = useState(false);
     console.log(isOpen);
@@ -80,14 +79,16 @@ const SourceResults: React.FC<{ sourceResult: SourceResultData }> = ({ sourceRes
                     <img src={sourceResult.image} alt={sourceResult.name.substring(0,120)} className="m-2 w-full h-full object-coverobject-cover" />
                 </div>
                 <div className="inline-block h-full item-price-wrapper">
-                    <GoToPageLogo className="m-2 w-8 justify-self-end" onClick={() => window.open(sourceResult.href, '_blank')}/>
+                    <GoToPageLogo className="m-2 w-8 justify-self-end cursor-pointer" onClick={() => window.open(sourceResult.href, '_blank')}/>
                     <p className="block text-2xl font-normal text-center">{sourceResult.price}</p>
                 </div>
             </div>
-            <p onClick={() => setIsOpen(true)} className="w-full theme-font">{isOpen ? sourceResult.name : sourceResult.name.substring(0,120)}</p>
-            {sourceResult.name.length > 80 
-                ? <p className="w-full cursor-pointer font-medium text-sm" onClick={() => setIsOpen(!isOpen)}>{isOpen == false ? "read more..." : "close"}</p> 
-                : null}
+            <div className="p-3">
+                <p onClick={() => setIsOpen(true)} className="w-full theme-font">{isOpen ? sourceResult.name : sourceResult.name.substring(0,120)}</p>
+                {sourceResult.name.length > 80 
+                    ? <p className="w-full cursor-pointer font-medium text-sm" onClick={() => setIsOpen(!isOpen)}>{isOpen == false ? "read more..." : "close"}</p> 
+                    : null}
+            </div>
             
         </div>
     );

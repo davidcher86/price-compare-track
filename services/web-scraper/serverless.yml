@@ -1,7 +1,9 @@
 org: davidcher
 service: web-scraper
 
+
 frameworkVersion: '4'
+
 
 provider:
   name: aws
@@ -36,10 +38,13 @@ provider:
         - s3:DeleteObject
         - s3:ListBucket
       Resource: "*"
+
+
 plugins:
   - serverless-dotenv-plugin
   - serverless-offline
   - serverless-websockets-plugin
+
 
 custom:
   WS_CONNECTIONS_TABLE_NAME: ${env:WS_CONNECTIONS_TABLE_NAME}-${self:provider.stage}
@@ -78,11 +83,12 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:custom.SQS_SCRAPE_REQUEST}
-        VisibilityTimeout: 310
+        VisibilityTimeout: 900
         RedrivePolicy:
           deadLetterTargetArn:
             Fn::GetAtt: [DLQ, Arn]
           maxReceiveCount: 1
+
     ScrapeHtmlRawDataQueue:
       Type: AWS::SQS::Queue
       Properties:
@@ -91,7 +97,8 @@ resources:
         RedrivePolicy:
           deadLetterTargetArn:
             Fn::GetAtt: [DLQ, Arn]
-          maxReceiveCount: 1
+          maxReceiveCount: 3
+
     ScrapeExtractedResultsQueue:
       Type: AWS::SQS::Queue
       Properties:
@@ -104,7 +111,9 @@ resources:
     DLQ:
       Type: AWS::SQS::Queue
       Properties:
+        VisibilityTimeout: 310
         QueueName: ${self:custom.SQS_SCRAPE_DLQ}
+
 
 layers:
   chromium:
@@ -147,6 +156,7 @@ layers:
       include:
         - nodejs/**
 
+
 functions:
   acceptRequest:
     handler: functions/formScrape/handler.formScrapeRequest
@@ -175,6 +185,7 @@ functions:
 
   scraper:
     handler: functions/puppeteer/handler.handleSqsMessage
+    reservedConcurrency: 4
     package:
       individually: true
       include:
@@ -197,7 +208,7 @@ functions:
       - { Ref: AwsDataTransferLambdaLayer }
       - { Ref: AwsStorageLambdaLayer }
       - { Ref: ChromiumLambdaLayer }
-    timeout: 300
+    timeout: 900
     events:
       - sqs:
           arn:
@@ -218,6 +229,7 @@ functions:
       REGION: ${self:provider.region}
       S3_EXTRACTED_DATA_BUCKET_NAME: ${self:custom.S3_EXTRACTED_DATA_BUCKET_NAME}
       SQS_EXTRACTED_DATA: ${self:custom.SQS_EXTRACTED_DATA}
+      SQS_SCRAPE_DLQ: ${self:custom.SQS_SCRAPE_DLQ}
     layers:
       - { Ref: AwsDataTransferLambdaLayer }
       - { Ref: AwsStorageLambdaLayer }
@@ -250,6 +262,27 @@ functions:
             Fn::GetAtt:
               - ScrapeExtractedResultsQueue
               - Arn
+
+  dlq-handler:
+    handler: functions/extract-data-dlq/handler.handleSqsMessage
+    package:
+      individually: true
+      include:
+        - functions/extract-data-dlq/**
+        - commons/**
+    layers:
+      - { Ref: AwsDataTransferLambdaLayer }
+      - { Ref: AwsStorageLambdaLayer }
+    environment:
+      STAGE: ${self:provider.stage}
+      REGION: ${self:provider.region}
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - DLQ
+              - Arn
+
 
 package:
   individually: true

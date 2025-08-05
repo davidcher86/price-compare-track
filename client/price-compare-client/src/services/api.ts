@@ -2,6 +2,7 @@ import axios from "axios";
 
 interface ScrapeSource {
   name: string;
+  order: number;
 }
 
 interface SearchPayload {
@@ -19,15 +20,19 @@ interface ScrapeHDataResult {
 
 const API_BASE = process.env.REACT_APP_USER_DETAILS_SERVICE_HOST;
 
-export const sendSearchRequest = async (userId: string, query: string, sources: string[]): Promise<SearchPayload[]> => {
+export const sendSearchRequest = async (userId: string, query: string, sources: ScrapeSource[]): Promise<SearchPayload[]> => {
   console.log(`Sending search request for userId: ${userId}, query: ${query}, sources: ${sources.join(', ')}`);  
   
   if (userId == undefined || query.length == 0 || sources.length == 0) 
     throw new Error("missing params")
   
+  sources.sort((a: ScrapeSource, b: ScrapeSource) => {
+    return Number(a.order) - Number(b.order);
+  }); 
+  
   const payload: SearchPayload = {
       query: query,
-      scrapeSources: sources.map(source => ({ name: source })),
+      scrapeSources: sources,
   };
   const URI = `${process.env.REACT_APP_SCRAPER_SERVICE_HOST}${process.env.REACT_APP_SCRAPER_SERVICE_SEARCH_REQUEST_ENDPOINT || "/search-history"}`;
 
@@ -92,7 +97,8 @@ export const retrieveScrapeResultsData = async (userId: string, scrapeRequestId:
 
     // console.log('request body: ' + JSON.stringify({ payload }));
     if (!res.ok) {
-      throw new Error("Scrape data result request failed");
+      return [];
+      // throw new Error("Scrape data result request failed");
     }
 
     return await res.json();

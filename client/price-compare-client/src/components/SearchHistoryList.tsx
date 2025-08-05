@@ -72,7 +72,6 @@ export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ selectedHi
     useEffect(() => {
         // console.log('Selected history item changed:', selectedHistoryItem);
         if (selectedHistoryItem) {
-            // Call the onSelectScrapeData function with the selected scrapeRequestId
             onSelectScrapeData(selectedHistoryItem.key);
         }
     }, [selectedHistoryItem]);
@@ -84,8 +83,8 @@ export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ selectedHi
     // }
     // console.log('detaildata', historicalData);
     return (
-        <div id="search-bar"  className="flex flex-col w-1/5 h-full gap-3 theme-border overflow-auto">
-            <p className="text-xl font-normal text-center theme-font">{"search history".toUpperCase()}</p>
+        <div id="search-bar"  className="flex flex-col w-1/5 h-full gap-3 theme-border overflow-auto items-center">
+            <p className="text-xl font-normal text-center theme-font pt-5 pb-3">{"search history".toUpperCase()}</p>
             {historicalData.map((item, index) => <SearchHistoryItem key={index} item={item} handleSelectedItem={handleSelectedItem} />)}
         </div>
     );
@@ -93,19 +92,18 @@ export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ selectedHi
 
 interface SearchHistoryItemProps {
     key: any,
-    item: any; // Replace `any` with the actual type of `item`
-    handleSelectedItem: (item: any) => void; // Replace `any` with the actual type
+    item: any;
+    handleSelectedItem: (item: any) => void; 
 }
 
 const SearchHistoryItem: React.FC<SearchHistoryItemProps> = ({ key, item, handleSelectedItem }) => {
-    // console.log( item);
     const sourcesString = item.value.map((entry: { source: string; }) => entry.source).join(", ");
     const query = item.value.length > 0 ? item.value[0].query : "No query";
     // console.log( sourcesString);
     return (
-        <div key={key} className="flex flex-col w-90 h-18 theme-background shadow-lg item-borders cursor-pointer" onClick={() => handleSelectedItem(item)}>
+        <div key={key} className="flex flex-col w-90 h-18 w-11/12 theme-background shadow-lg item-borders cursor-pointer" onClick={() => handleSelectedItem(item)}>
             <p className="text-xl font-normal text-center w-full theme-font text-lg font-medium">{query}</p>
-            <p className="mx-2.5 text-sm font-normal text-left w-full theme-font">{`sources: [${sourcesString}]`}</p>
+            <p className="mx-2.5 text-sm font-normal text-left w-full theme-font p-1">{`sources: [${sourcesString}]`}</p>
         </div>
     );
 }

@@ -75,8 +75,8 @@ export class PuppeteerScrapeService extends AbstractScrapeHandler implements Scr
             const searchUrl = this.constructUri(query, url);
             console.log("scraping address: " + searchUrl);
 
-            await page.goto(searchUrl, {waitUntil: 'networkidle2', timeout: 20 * 60 * 1000});
-            // await page.goto(searchUrl, {waitUntil: 'domcontentloaded', timeout: 20 * 60 * 1000});
+            // await page.goto(searchUrl, {waitUntil: 'networkidle2'});
+            await page.goto(searchUrl, {waitUntil: 'networkidle2', timeout: 60 * 60 * 1000});
             if (loadSelector == undefined || loadSelector === null) {
                 console.log('waiting for: ' + loadSelector);
                 await page.waitForSelector(loadSelector);
@@ -86,12 +86,13 @@ export class PuppeteerScrapeService extends AbstractScrapeHandler implements Scr
 
             return html;
         } catch (error) {
-            throw new Error('Scrape process failed, error: ' + error);
+            throw {status: "SCRAPE_ERROR",message: 'failed scraping: ' + error};
+            // throw new Error('Scrape process failed, error: ' + error);
         }
     }
 
     public async startBrowser(scraperInfo: any): Promise<void> {
-        if (brightDataServices.indexOf((scraperInfo.name).toLowerCase()) > -1) {
+        if (brightDataServices.indexOf((scraperInfo.name.toLowerCase())) > -1) {
             console.log(`starting browser. with BrightData service...`);
             const brightDataWsEndpoint = await this.getBrightDataKey();
 
@@ -124,11 +125,11 @@ export class PuppeteerScrapeService extends AbstractScrapeHandler implements Scr
         }
         console.log("browser started...");
     }
+
     protected async getBrightDataKey(): Promise<string> {
         const adrrs = process.env.SECRET_MANAGER_ADDRESS || '';
         const secrets = await getSecretValue(adrrs);
         const SECRET_MANAGER_KEY: string = process.env.SECRET_MANAGER_KEY || '';
-        console.log("My Secret:", secrets[SECRET_MANAGER_KEY]);
         return secrets[SECRET_MANAGER_KEY];
     }
 
@@ -145,4 +146,10 @@ export class PuppeteerScrapeService extends AbstractScrapeHandler implements Scr
             }
         }
     }
+}
+
+interface ErrorMessage {
+    status: string;
+    message: string;
+    data?: any;
 }

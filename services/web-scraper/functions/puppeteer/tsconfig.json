@@ -8,8 +8,8 @@
     "outDir": "./functions/puppeteer/dist",
     "declaration": false,
     "noEmitOnError": true,
-    "allowImportingTsExtensions": true,
-    "incremental": true
+    "incremental": true,
+    "noEmit": true
   },
   "include": ["./../*.ts","./*.ts", "../../commons/*.ts", "../../commons/**/*.ts"],
   "exclude": []

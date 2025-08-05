@@ -1,5 +1,4 @@
-import {sendMessageToQueue} from "../../commons/utils/SQSService.ts";
-import process from "node:process";
+import {sendMessageToQueue, getAccepetScrapeRequestSqsName} from "../../commons/utils/SQSService.ts";
 import { v4 as uuid4 } from "uuid";
 
 export const formScrapeRequest = async (event: any) => {
@@ -32,13 +31,9 @@ export const formScrapeRequest = async (event: any) => {
                 scrapeDt: scrapeDt,
                 query: query
             }
-
-            const sqsUrl = process.env.STAGE === 'prod'
-                ? `https://sqs.${process.env.REGION}.amazonaws.com/${process.env.AWS_ACCOUNT_ID}/${process.env.SQS_SCRAPE_REQUEST}`
-                : `https://sqs.${process.env.REGION}.amazonaws.com/${process.env.AWS_ACCOUNT_ID}/accept-scrape-request-queue-prod`;
-
+            
             console.log(`SQS Message: ${JSON.stringify(sqsPayload)}`);
-            const sqsResponse = await sendMessageToQueue(sqsUrl, sqsPayload);
+            const sqsResponse = await sendMessageToQueue(getAccepetScrapeRequestSqsName(), sqsPayload);
             console.log(`SQS Response: ${sqsResponse}`);
         }
 

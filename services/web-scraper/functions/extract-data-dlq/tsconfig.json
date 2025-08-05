@@ -3,14 +3,14 @@
   "compilerOptions": {
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "baseUrl": "./",
+    "baseUrl": "../../",
     "sourceMap": true,
-    "outDir": "./functions/data-extractor/dist",
+    "outDir": "./functions/extract-data-dlq",
     "declaration": false,
     "noEmitOnError": true,
     "incremental": true,
     "noEmit": true
   },
-  "include": ["../../commons/**/*.ts","./../*.ts","./*.ts","./../*.json","./*.json"],
+  "include": ["./*.ts", "../../../../layers/**/*.ts", "./../*.ts", "../../commons/*.ts", "../../commons/**/*.ts"],
   "exclude": []
 }

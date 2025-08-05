@@ -6,6 +6,8 @@
     "baseUrl": "./",
     "esModuleInterop": true,
     "allowImportingTsExtensions": true,
+    "noEmitOnError": true,
+    "incremental": true,
     "moduleResolution": "Node16",
     "module": "Node16"
   },

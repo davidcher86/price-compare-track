@@ -13,17 +13,23 @@ interface Props {
   onSearch: (query: string, sources: string[]) => void;
 }
 
+interface CheckedSource {
+    name: string;
+    order: number;
+  }
+
 interface ScrapeSourceOption {
-    id: string;
+    name: string;
     label: string;
+    order: number,
     logo: ReactNode;
 }
 
 const stores: ScrapeSourceOption[] = [
-    { id: 'amazon', label: 'Amazon', logo: <AmazonLogo /> },
-    { id: 'newegg', label: 'NewEgg', logo: <NewEggLogo /> },
-    { id: 'aliexpress', label: 'AliExpress', logo: <AliExpressLogo /> },
-    { id: 'ebay', label: 'eBay', logo: <EbayLogo /> },
+    { name: 'amazon', label: 'Amazon', order: 1, logo: <AmazonLogo /> },
+    { name: 'newegg', label: 'NewEgg', order: 2, logo: <NewEggLogo /> },
+    { name: 'aliexpress', label: 'AliExpress', order: 3, logo: <AliExpressLogo /> },
+    { name: 'ebay', label: 'eBay', order: 4, logo: <EbayLogo /> },
 ];
 
 function reducer(state: any , action: any) {
@@ -33,24 +39,26 @@ function reducer(state: any , action: any) {
             // console.log('set search box text: ' + action.payload);
             return { ...state, searchBoxText: action.payload };
         case 'TOGGLE_SEARCH_RESOURCES':
-            // console.log('payload: ' + JSON.stringify(action.payload));
-            const checkedSources = state.checkedSources.includes(action.payload)
-                ? state.checkedSources.filter((source: string) => source !== action.payload)
-                : [...state.checkedSources, action.payload];
-            // console.log('state: ' + JSON.stringify({ checkedSources }));
+            console.log(action.payload)
+            const sourceId = action.payload.name;
+            console.log(sourceId)
+            const sourceExists = state.checkedSources.some((source: CheckedSource) => source.name === sourceId);
+            console.log(sourceExists);
+            const checkedSources = sourceExists
+                ? state.checkedSources.filter((source: CheckedSource) => source.name !== sourceId)
+                : [...state.checkedSources, { name: sourceId, order: action.payload.order }];
+                console.log(checkedSources);
             return { ...state, checkedSources };
 
         default:
             return state;
     }
-
-    return state;
 }
 
 export const SearchBar: React.FC<Props> = ({ onSearch }) => {
     const [state, dispatch] = useReducer(reducer, {
         searchBoxText: '',
-        checkedSources: []
+        checkedSources: [],
     });
 
     console.log('SearchBar state: ' + JSON.stringify(state));
@@ -67,14 +75,14 @@ export const SearchBar: React.FC<Props> = ({ onSearch }) => {
         <div id="search-form" className="flex flex-col bg-black-700 w-full rem-100 theme-border">
             <div id="search-bar" className="flex flex-row h-12 items-center w-3/6 h-18 mt-5 mb-5 mr-auto ml-auto theme-input-frame rounded-2xl">
                 <TextInput className={""} placeholder="Search Stores Online" onChange={handleChangeSearchInput} />
-                <div className="w-5"><SearchButton /></div>
+                <div className="w-5 mr-5"><SearchButton /></div>
             </div>
 
             <button onClick={handleSendSearchRequest} className="p-4 text-sm">Search</button>
 
             <div id="scrape-source-bar" className="flex flex-row justify-center m-4">
                 {stores.map((store, i) => (
-                    <div onClick={() => dispatch({ type: 'TOGGLE_SEARCH_RESOURCES', payload: store.id })} key={i} style={{ opacity: state.checkedSources.includes(store.id) ? 1 : 0.3 }} className={`flex flex-col items-center bg-gray-500 m-4 w-28 text-center item-borders cursor-pointer`}>
+                    <div onClick={() => dispatch({ type: 'TOGGLE_SEARCH_RESOURCES', payload: {name: store.name, order: store.order} })} key={i} style={{ opacity: state.checkedSources.some((source: CheckedSource) => source.name === store.name) ? 1 : 0.3 }} className={`flex flex-col items-center bg-gray-500 m-4 w-28 text-center item-borders cursor-pointer`}>
                         <div className="w-16 h-24 rounded-full flex items-center justify-center text-xl font-bold theme-font">
                             {store.logo}
                         </div>

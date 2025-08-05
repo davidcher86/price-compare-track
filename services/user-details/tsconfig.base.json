@@ -13,8 +13,7 @@
               "functions/get-user-scrapes/**/*.ts", 
               "functions/add-user/**/*.ts", 
               "functions/update-user/**/*.ts", 
-              "commons/**/*.ts",
-              "../utils/**/*"],
+              "commons/**/*.ts"],
   "paths": {
     "@utils/*": ["../utils/*"]
   }

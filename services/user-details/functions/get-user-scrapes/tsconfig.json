@@ -1,7 +1,16 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/functions/get-user-scrapes",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "sourceMap": true,
+    "outDir": "./functions/get-user-scrapes/dist",
+    "declaration": false,
+    "noEmitOnError": true,
+    "incremental": true, 
+    "noEmit": true,
   },
-  "include": ["./**/*", "../../../utils/**/*"]
+  "include": ["../../commons/**/*.ts", "./../*.ts", "./*.ts", "./../*.json", "./*.json"],
+  "exclude": []
 }

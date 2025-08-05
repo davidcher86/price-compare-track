@@ -5,12 +5,10 @@ import {EbayScrapeConfigReader} from "./sourcesScrapeConfigs/Ebay/EbayScrapeConf
 import {AmazonScrapeConfigReader} from "./sourcesScrapeConfigs/Amazon/AmazonScrapeConfigReader.ts";
 import {PuppeteerScrapeService} from "./utils/PuppeteerScrapeService.ts";
 import { v4 as uuid4 } from "uuid";
-// import {savePayload} from "../../commons/utils/S3Service.ts";
 import {savePayload} from "../../commons/utils/S3Service.ts";
-// import {sendMessageToQueue} from "../../commons/utils/SQSService.ts";
 import * as process from "node:process";
 import {getSecretValue} from "../../commons/utils/SecretManager.ts";
-import {sendMessageToQueue} from "../../commons/utils/SQSService.ts";
+import {sendMessageToQueue, getDlqSqsName, generateDlqSqsPayload, getHtmlRawResultSqsName} from "../../commons/utils/SQSService.ts";
 
 export const handleSqsMessage = async (event: any) => {
     console.log('Received SQS event:', JSON.stringify(event));
@@ -31,35 +29,35 @@ const scrape = async (event: any) => {
     const {scrapeId, scrapeInfo, query, userId, scrapeRequestId, scrapeDt} = event;
     console.log("scrapeInfo: " + JSON.stringify(scrapeInfo));
 
-    if (scrapeInfo == undefined || query == undefined)
-        throw new Error("scrapeInfo or query is undefined");
-
-    let scrapeService: ScraperInterface;
-
-    console.log("scrapeInfo.name " + scrapeInfo.name);
-
-    switch (scrapeInfo.name.toLowerCase()) {
-        case 'newegg':
-            console.log("using NewEgg scrape configs")
-            scrapeService = new PuppeteerScrapeService(new NewEggScrapeConfigReader());
-            break;
-        case 'ebay':
-            console.log("using Ebay scrape configs")
-            scrapeService = new PuppeteerScrapeService(new EbayScrapeConfigReader());
-            break;
-        case 'amazon':
-            console.log("using Amazon scrape configs")
-            // new PuppeteerScrapeListService(null, null);
-            scrapeService = new PuppeteerScrapeService(new AmazonScrapeConfigReader());
-            break;
-        case 'aliexpress':
-        default:
-            console.log("using AliExpress scrape configs")
-            scrapeService = new PuppeteerScrapeService(new AliExpressScrapeConfigReader());
-            break;
-    }
-
     try {
+        if (scrapeInfo == undefined || query == undefined)
+            throw new Error("scrapeInfo or query is undefined");
+
+        let scrapeService: ScraperInterface;
+
+        console.log("scrapeInfo.name " + scrapeInfo.name);
+
+        switch (scrapeInfo.name.toLowerCase()) {
+            case 'newegg':
+                console.log("using NewEgg scrape configs")
+                scrapeService = new PuppeteerScrapeService(new NewEggScrapeConfigReader());
+                break;
+            case 'ebay':
+                console.log("using Ebay scrape configs")
+                scrapeService = new PuppeteerScrapeService(new EbayScrapeConfigReader());
+                break;
+            case 'amazon':
+                console.log("using Amazon scrape configs")
+                // new PuppeteerScrapeListService(null, null);
+                scrapeService = new PuppeteerScrapeService(new AmazonScrapeConfigReader());
+                break;
+            case 'aliexpress':
+            default:
+                console.log("using AliExpress scrape configs")
+                scrapeService = new PuppeteerScrapeService(new AliExpressScrapeConfigReader());
+                break;
+        }
+
         const startScrapeDt = new Date().toISOString();
         const html = await scrapeService.start(query, scrapeInfo.userId, scrapeInfo);
         const endScrapeDt = new Date().toISOString();
@@ -83,19 +81,24 @@ const scrape = async (event: any) => {
             query: query,
         }
 
-        const sqsUrl = process.env.STAGE === 'prod'
-                ? `https://sqs.${process.env.REGION}.amazonaws.com/${process.env.AWS_ACCOUNT_ID}/${process.env.SQS_HTML_RAW_DATA_RESULT}`
-                : `https://sqs.${process.env.REGION}.amazonaws.com/${process.env.AWS_ACCOUNT_ID}/html-raw-data-results-queue-prod`;
+        // const sqsUrl = getHtmlRawResultSqsName()
 
-        console.log("sqsPayload: " + JSON.stringify(sqsPayload) + " to " + sqsUrl);
-        await sendMessageToQueue(sqsUrl, sqsPayload);
+        // console.log("sqsPayload: " + JSON.stringify(sqsPayload) + " to " + sqsUrl);
+        await sendMessageToQueue(getHtmlRawResultSqsName(), sqsPayload);
         return {
             statusCode: 200,
             body: JSON.stringify({ message: "Scraping completed successfully" }),
         }
-    } catch (error) {
+    } catch (error: ErrorMessage | any) {
         console.error('Error during scraping:', error);
-        throw error;
+        await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(event, error.event, error.errorMessage));
+        throw new Error('Scrape process failed, error: ' + error);
     }
+}
+
+interface ErrorMessage {
+    status: string;
+    message: string;
+    data?: any;
 }
 

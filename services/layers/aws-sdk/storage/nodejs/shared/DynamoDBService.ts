@@ -9,7 +9,7 @@ export const saveRecord = async (
     record: any
 ): Promise<void> => {
     try {
-        console.log('Adding result-set to DynamoDB: to' + tableName);
+        console.log('Adding result-set to DynamoDB: ' + tableName);
         await ddb.send(new PutCommand({
             TableName: tableName,
             Item: record,
@@ -27,7 +27,7 @@ export const deleteRecord = async (
     record: any
 ): Promise<void> => {
     try {
-        console.log('Adding result-set to DynamoDB: to' + tableName);
+        console.log('Adding result-set to DynamoDB: ' + tableName);
         await ddb.send(new PutCommand({
             TableName: tableName,
             Item: record,

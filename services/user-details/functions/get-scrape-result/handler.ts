@@ -7,7 +7,10 @@ export const getScrapeData = async (event: any) => {
 
     const userId = event.headers?.userId;
 
-    console.log(`fetching scrape data for scrapeRequestId: ${scrapeRequestId}`);
+    // console.log(`fetching scrape data for scrapeRequestId: ${scrapeRequestId}`);
+    // console.log(`userId from headers: ${userId}`);
+    // console.log(`userId type: ${typeof userId}`);
+    // console.log(`scrapeRequestId type: ${typeof scrapeRequestId}`);
 
     if (userId == undefined || scrapeRequestId == undefined) {
         return {
@@ -17,10 +20,12 @@ export const getScrapeData = async (event: any) => {
     }
 
     try {
+        console.log(`Making query with userId: "${userId}" and scrapeRequestId: "${scrapeRequestId}"`);
         const result = await retrieveScrapeResult(userId, scrapeRequestId);
 
-        // console.log("Fetched retrieveScrapeResult result: ", JSON.stringify(result));
-        if (!result.Items) {
+        console.log("Query result:", JSON.stringify(result, null, 2));
+        if (!result.Items || result.Items.length === 0) {
+            console.log("No items found in result");
             return {
                 statusCode: 404,
                 body: JSON.stringify({ error: "result not found" }),

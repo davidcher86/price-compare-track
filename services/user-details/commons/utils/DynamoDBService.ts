@@ -73,22 +73,52 @@ export const retrieveScrapeResult = async (
 ): Promise<any> => {
     try {
         const tableName = process.env.RESULT_DB_TABLE_NAME
-        console.log('returning all scrape resultrecords from DynamoDB table: ' + tableName + ' userId: ' + userId + ' scrapeRequestId: ' + scrapeRequestId);  
+        console.log('returning all scrape result records from DynamoDB table: ' + tableName + ' userId: ' + userId + ' scrapeRequestId: ' + scrapeRequestId);  
 
-        return await ddb.send(new QueryCommand({
+        // Convert inputs to strings to ensure data type consistency
+        const userIdStr = String(userId);
+        const scrapeRequestIdStr = String(scrapeRequestId);
+
+        console.log('Query parameters - userId:', userIdStr, 'scrapeRequestId:', scrapeRequestIdStr);
+        console.log('Query parameters types - userId:', typeof userIdStr, 'scrapeRequestId:', typeof scrapeRequestIdStr);
+
+        // Use the scrape-request-id-index to query by scrapeRequestId first
+        const queryParams = {
             TableName: tableName,
-            IndexName: "user-id-index", // Specify the GSI name
-            KeyConditionExpression: "userId = :userId", // Query by userId
-            FilterExpression: "scrapeRequestId = :scrapeRequestId",
+            IndexName: "scrape-request-id-index", // Use the scrape-request-id index
+            KeyConditionExpression: "scrapeRequestId = :scrapeRequestId",
             ExpressionAttributeValues: {
-                ":userId": userId,
-                ":scrapeRequestId": scrapeRequestId, // Bind the value for userId
+                ":scrapeRequestId": scrapeRequestIdStr,
             },
-        }));
+        };
+        
+        console.log('DynamoDB Query Params:', JSON.stringify(queryParams, null, 2));
+        
+        const result = await ddb.send(new QueryCommand(queryParams));
+        
+        console.log('DynamoDB Query Result:', JSON.stringify(result, null, 2));
+        
+        // Filter results by userId on the client side for security
+        if (result.Items && result.Items.length > 0) {
+            const filteredItems = result.Items.filter(item => 
+                String(item.userId) === userIdStr
+            );
+            
+            console.log('Filtered result count for userId:', filteredItems.length);
+            
+            return {
+                ...result,
+                Items: filteredItems,
+                Count: filteredItems.length,
+                ScannedCount: result.ScannedCount
+            };
+        }
+        
+        return result;
     } catch (err) {
         console.error("Error retrieving scrape results:", err);
+        console.error("Error details:", JSON.stringify(err, null, 2));
         return [];
-        // throw new Error(`Failed to retrieve results from DynamoDB: ${JSON.stringify(err)}`);
     }
 };
 

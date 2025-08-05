@@ -5,7 +5,7 @@
     {
       "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",
       "receiptHandle": "MessageReceiptHandle",
-      "body": "{\n  \"scrapeRequestId\": \"sdfsfsdfdsfs\",\n  \"scrapeId\": \"dgfgdgdg\",\n  \"bucketKey\": \"newegg-9962a416-504d-4b82-87f6-94a536aa27da-0ef489cb-5651-4f28-a5a7-a874160695ee\",\n  \"userId\": \"userId\",\n  \"scrapeInfo\": {\n    \"name\": \"newegg\"\n  },\n  \"query\": \"logi\"\n}",
+      "body": "{\n  \"scrapeRequestId\": \"sdfsfsdfdsfs\",\n  \"scrapeId\": \"dgfgdgdg\",\n  \"bucketKey\": \"ebay-9962a416-504d-4b82-87f6-94a536aa27da-9c451d3b-30f8-4d04-b173-d5c91d17b9ce\",\n  \"userId\": \"9962a416-504d-4b82-87f6-94a536aa27da\",\n  \"scrapeInfo\": {\n    \"name\": \"ebay\"\n  },\n  \"query\": \"icee\"\n}",
       "attributes": {
         "ApproximateReceiveCount": "1",
         "SentTimestamp": "1523232000000",

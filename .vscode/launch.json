@@ -4,6 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+    
         {
             "type": "java",
             "request": "attach",
@@ -21,6 +22,31 @@
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run Script: invoke:extract-data",
+            "cwd": "${workspaceFolder}/services/web-scraper",
+            "program": "${workspaceFolder}/services/web-scraper/node_modules/.bin/sls",
+            "args": [
+                "invoke",
+                "local",
+                "-f",
+                "extract-data",
+                "--path",
+                "functions/data-extractor/mock-data/mocksqsmsg.json"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_OPTIONS": "--inspect"
+            },
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ],
+            "console": "integratedTerminal"
         }
     ]
 }
