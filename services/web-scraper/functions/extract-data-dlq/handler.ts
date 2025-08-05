@@ -1,4 +1,4 @@
-import {sendMessageToQueue} from "../../commons/utils/SQSService.ts";
+import {sendMessageToQueue, getAccepetScrapeRequestSqsName} from "../../commons/utils/SQSService.ts";
 import process from "node:process";
 import { v4 as uuid4 } from "uuid";
 
@@ -14,59 +14,40 @@ export const handleSqsMessage = async (event: any) => {
     }
 }
 
-export const handleMsg = async (body: any) => {
+export const handleMsg = async (payload: any) => {
     try {
 
         // const body = JSON.parse(event.body);
-        console.log(`body: `);
-        console.log(body);
-        console.log(`error: ${body.error}`);
+        console.log(`payload: `);
+        console.log(payload);
+        console.log(`error: ${payload.error}`);
+
+        switch (payload.event) {  
+            case 'SCRAPE_FAILED':
+                console.log(`scrape failed, error: ${payload.error}`);
+                console.log(`resending to accept scrape request queue for re-scraping`);
+                if (payload.triesCount === undefined || payload.triesCount < 3) {
+                    payload.event.triesCount = payload.triesCount ? payload.triesCount + 1 : 1;
+                    await sendMessageToQueue(getAccepetScrapeRequestSqsName(), payload);
+                } else {
+                    console.log(`Max retries reached for payload: ${JSON.stringify(payload)}`);
+                    // TODO: return websocket message for failed scraping
+                }
+                break;
+            // case 'EXTRACT_DATA_FAILED':
+            //     console.log(`extract data failed, error: ${body.error}`);
+            //     // Handle extract data failure
+            //     break;
+            default:
+                console.log(`Unknown event type: ${payload.event}`);
+                break;
+        }
 
         return {
             statusCode: 200,
             body: "done"
         }
 
-
-    //     const {scrapeSources, query} = body;
-    //     const userId = event.headers?.userId;
-
-    //     if (scrapeSources.length == 0 || query.length == 0 || userId == undefined) {
-    //         return {
-    //             statusCode: 400,
-    //             body: JSON.stringify({ error: "Missing params" }),
-    //         };
-    //     }
-
-    //     const scrapeRequestId = uuid4();
-    //     const scrapeDt = new Date().toISOString();
-
-    //     for (const scrapeSourceInfo of scrapeSources) {
-    //         console.log(`sendingMessageTooQueue ${JSON.stringify(scrapeSourceInfo)}`);
-
-    //         const scrapeId = uuid4();
-    //         const sqsPayload = {
-    //             scrapeRequestId: scrapeRequestId,
-    //             scrapeId: scrapeId,
-    //             scrapeInfo: scrapeSourceInfo,
-    //             userId: userId,
-    //             scrapeDt: scrapeDt,
-    //             query: query
-    //         }
-
-    //         const sqsUrl = process.env.STAGE === 'prod'
-    //             ? `https://sqs.${process.env.REGION}.amazonaws.com/${process.env.AWS_ACCOUNT_ID}/${process.env.SQS_SCRAPE_REQUEST}`
-    //             : `https://sqs.${process.env.REGION}.amazonaws.com/${process.env.AWS_ACCOUNT_ID}/accept-scrape-request-queue-prod`;
-
-    //         console.log(`SQS Message: ${JSON.stringify(sqsPayload)}`);
-    //         const sqsResponse = await sendMessageToQueue(sqsUrl, sqsPayload);
-    //         console.log(`SQS Response: ${sqsResponse}`);
-    //     }
-
-        // return {
-        //     statusCode: 200,
-        //     body: "done"
-        // }
     } catch (error) {
         console.error(error)
         return {

@@ -30,6 +30,8 @@ const scrape = async (event: any) => {
     console.log("scrapeInfo: " + JSON.stringify(scrapeInfo));
 
     try {
+        // throw new Error("scrapeInfo or query is undefined");
+
         if (scrapeInfo == undefined || query == undefined)
             throw new Error("scrapeInfo or query is undefined");
 
@@ -79,6 +81,7 @@ const scrape = async (event: any) => {
             startScrapeDt: startScrapeDt,
             endScrapeDt: endScrapeDt,
             query: query,
+            triesCount: 1
         }
 
         // const sqsUrl = getHtmlRawResultSqsName()
@@ -91,7 +94,7 @@ const scrape = async (event: any) => {
         }
     } catch (error: ErrorMessage | any) {
         console.error('Error during scraping:', error);
-        await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(event, error.event, error.errorMessage));
+        await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(event, 'SCRAPE_FAILED', `Error: ${error.message}`));
         throw new Error('Scrape process failed, error: ' + error);
     }
 }

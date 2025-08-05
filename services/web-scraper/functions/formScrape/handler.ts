@@ -29,7 +29,8 @@ export const formScrapeRequest = async (event: any) => {
                 scrapeInfo: scrapeSourceInfo,
                 userId: userId,
                 scrapeDt: scrapeDt,
-                query: query
+                query: query,
+                triesCount: 1
             }
             
             console.log(`SQS Message: ${JSON.stringify(sqsPayload)}`);
