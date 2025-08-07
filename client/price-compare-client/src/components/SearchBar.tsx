@@ -61,7 +61,7 @@ export const SearchBar: React.FC<Props> = ({ onSearch }) => {
         checkedSources: [],
     });
 
-    console.log('SearchBar state: ' + JSON.stringify(state));
+    // console.log('SearchBar state: ' + JSON.stringify(state));
     const handleSendSearchRequest = async () => {
         const res = await sendSearchRequest(process.env.REACT_APP_TMP_USER_ID || '', state.searchBoxText.trim(), state.checkedSources)
     };

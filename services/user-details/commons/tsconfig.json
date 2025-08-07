@@ -6,7 +6,7 @@
     "noEmitOnError": true,
     "outDir": "./utils/dist",
     "allowImportingTsExtensions": true,
-    // "noEmit": true,
+    "noEmit": true,
     "incremental": true,
     "baseUrl": "../.",
     "sourceMap": true,

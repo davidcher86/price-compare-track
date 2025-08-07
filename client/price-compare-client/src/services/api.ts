@@ -103,3 +103,27 @@ export const retrieveScrapeResultsData = async (userId: string, scrapeRequestId:
 
     return await res.json();
 };
+
+export const deleteScrapeRequest = async (userId: string, scrapeRequestId: string): Promise<any> => {
+    const URI = `${process.env.REACT_APP_USER_DETAILS_SERVICE_HOST}${process.env.REACT_APP_USER_DETAILS_SERVICE_DELETE_SCRAPE_DATA_ENDPOINT}`;
+
+    if (!URI) {
+        throw new Error("URI base URL is not defined");
+    }
+
+    const response = await fetch(URI, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'userId': userId,
+            'scrapeId': scrapeRequestId
+        },
+        body: JSON.stringify({ payload: { scrapeRequestId } })
+    });
+
+    if (!response.ok) {
+      return false;
+    }
+
+    return true;
+};

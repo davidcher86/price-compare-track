@@ -127,7 +127,7 @@ export default function PriceCompareHome() {
     const handleRetriveScrapeDataResult = async (scrapeRequestId: string) => {
         setIsLoading(true);
         const items = await retrieveScrapeResultsData(process.env.REACT_APP_TMP_USER_ID || '', scrapeRequestId);
-        // console.log('res 3', items);
+        console.log('handleRetriveScrapeDataResult');
 
         setSscrapeDataScrapeResult(items);
         setIsLoading(false);

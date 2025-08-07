@@ -144,6 +144,24 @@ functions:
           path: /user-details/scrape-data-result
           method: post
 
+  delete-user-scrape:
+    architecture: x86_64
+    handler: functions/delete-user-scrape/handler.deleteScrape
+    timeout: 29
+    environment:
+      RESULT_DB_TABLE_NAME: ${self:custom.RESULT_DB_TABLE_NAME}
+    layers:
+      - { Ref: AwsStorageLambdaLayer }
+    package:
+      individually: true
+      include:
+        - functions/delete-user-scrape/**
+        - commons/**
+    events:
+      - http:
+          path: /user-details/scrape
+          method: delete
+
   get-user-scrape-history:
     architecture: x86_64
     handler: functions/get-user-scrapes/handler.getScrapeResultData

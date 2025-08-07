@@ -1,5 +1,5 @@
 import {DeleteItemCommand, DynamoDBClient, QueryCommandInput} from "@aws-sdk/client-dynamodb";
-import {DynamoDBDocumentClient, PutCommand, GetCommand, ScanCommand, QueryCommand} from "@aws-sdk/lib-dynamodb";
+import {DynamoDBDocumentClient, PutCommand, GetCommand, ScanCommand, QueryCommand, BatchWriteCommand} from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({ region: process.env.REGION });
 const ddb = DynamoDBDocumentClient.from(client);
@@ -64,6 +64,66 @@ export const retrieveScrapeHistory = async (
         console.error("Error retrieving results:", err);
         return [];
         // throw new Error(`Failed to retrieve results from DynamoDB: ${JSON.stringify(err)}`);
+    }
+};
+
+export const deleteScrapeResults = async (
+    scrapeRequestId: string
+): Promise<any> => {
+    try {
+        const tableName = process.env.RESULT_DB_TABLE_NAME;
+        console.log('deleting records from DynamoDB table: ' + tableName + ' scrapeRequestId: ' + scrapeRequestId);
+
+        console.log(`Deleting records for scrapeRequestId: ${scrapeRequestId}`);
+        const queryResult = await ddb.send(new QueryCommand({
+            TableName: tableName,
+            IndexName: "scrape-request-id-index",
+            KeyConditionExpression: "scrapeRequestId = :scrapeRequestId",
+            ExpressionAttributeValues: {
+                ":scrapeRequestId": scrapeRequestId,
+            },
+        }));
+
+        if (!queryResult.Items || queryResult.Items.length === 0) {
+            console.log('No records found for scrapeRequestId:', scrapeRequestId);
+            return { success: true, message: 'No records found to delete' };
+        }
+
+        // Use BatchWriteItem for efficient deletion (up to 25 items per batch)
+        const items = queryResult.Items;
+        const batches = [];
+        
+        // Split items into batches of 25
+        for (let i = 0; i < items.length; i += 25) {
+            const batch = items.slice(i, i + 25);
+            batches.push(batch);
+        }
+
+        let totalDeleted = 0;
+        
+        for (const batch of batches) {
+            const deleteRequests = batch.map(item => ({
+                DeleteRequest: {
+                    Key: {
+                        scrapeId: item.scrapeId
+                    }
+                }
+            }));
+
+            await ddb.send(new BatchWriteCommand({
+                RequestItems: {
+                    [tableName!]: deleteRequests
+                }
+            }));
+            
+            totalDeleted += batch.length;
+        }
+
+        console.log(`Successfully deleted ${totalDeleted} records for scrapeRequestId:`, scrapeRequestId);
+        return { success: true, deletedCount: totalDeleted };
+    } catch (err) {
+        console.error("Error deleting scrape results:", err);
+        return { success: false, error: JSON.stringify(err) };
     }
 };
 
