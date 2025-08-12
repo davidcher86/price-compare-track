@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { retrieveScrapeHistoryList, deleteScrapeRequest } from "src/services/api";
 import { ReactComponent as DeleteIcon } from '../logos/delete-icon.svg';
+import moment from "moment";
 
 interface SearchHistoryListProps {
     selectedHistoryItem: any;
@@ -113,13 +114,16 @@ interface SearchHistoryItemProps {
 
 const SearchHistoryItem: React.FC<SearchHistoryItemProps> = ({ item, selectedHistoryItem, handleDeleteScrape, handleSelectedItem }) => {
     const sourcesString = item.value.map((entry: { source: string; }) => entry.source).join(", ");
+    const scrapeDt = item.value.length > 0 ? item.value[0].scrapeDate : null;
+    const scrpaeDate = scrapeDt !== null ? moment(scrapeDt).format('h:mm  d/mm/yyyy') : "No scrape date";
     const query = item.value.length > 0 ? item.value[0].query : "No query";
 
     return (
         <div key={item.key} style={(selectedHistoryItem && item.key === selectedHistoryItem.key) ? {backgroundColor: "rgba(248, 225, 168, 1)"} : {backgroundColor: "rgba(153, 191, 245, 1)"} } className="flex flex-row w-90 h-18 w-11/12 shadow-lg item-borders cursor-pointer" onClick={() => handleSelectedItem(item)}>
-            <div className="flex flex-col w-11/12 h-18 justify-start items-start p-2">
-                <p className="text-xl font-normal text-center w-full theme-font text-lg font-medium">{query}</p>
-                <p className="mx-2.5 text-sm font-normal text-left w-full theme-font p-1">{`sources: [${sourcesString}]`}</p>
+            <div className="flex flex-col w-11/12 h-28 justify-start items-start p-2">
+                <p className="flex flex-1 text-xs text-black text-center w-full h-6 theme-font">{scrpaeDate}</p>
+                <p className="text-xl font-normal text-center w-full theme-font">{query}</p>
+                <p className="mx-0.5 text-sm font-normal text-left w-full theme-font p-1">{`sources: [${sourcesString}]`}</p>
             </div>
             <div className="flex justify-end m-3">
                 <DeleteIcon className="cursor-pointer" onClick={(e) => {
