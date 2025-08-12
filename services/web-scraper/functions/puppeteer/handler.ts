@@ -26,7 +26,7 @@ export const handleSqsMessage = async (event: any) => {
 
 const scrape = async (event: any) => {
     console.log('event for scrape:' + JSON.stringify(event));
-    const {scrapeId, scrapeInfo, query, userId, scrapeRequestId, scrapeDt} = event;
+    const {scrapeId, scrapeInfo, query, userId, scrapeRequestId, scrapeDate} = event;
     console.log("scrapeInfo: " + JSON.stringify(scrapeInfo));
 
     try {
@@ -77,7 +77,7 @@ const scrape = async (event: any) => {
             bucketKey: bucketKey,
             userId: userId,
             scrapeInfo: scrapeInfo,
-            scrapeDt: scrapeDt,
+            scrapeDate: scrapeDate,
             startScrapeDt: startScrapeDt,
             endScrapeDt: endScrapeDt,
             query: query,
@@ -95,7 +95,7 @@ const scrape = async (event: any) => {
     } catch (error: ErrorMessage | any) {
         console.error('Error during scraping:', error);
         await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(event, 'SCRAPE_FAILED', `Error: ${error.message}`));
-        throw new Error('Scrape process failed, error: ' + error);
+        // throw new Error('Scrape process failed, error: ' + error);
     }
 }
 

@@ -18,7 +18,7 @@ export const handleSqsMessage = async (event: any) => {
 const save = async (event: any) => {
     console.log('event to save:' + JSON.stringify(event));
 
-    const {scrapeRequestId, scrapeId, scrapeInfo, userId, query, bucketKey, scrapeDt, startScrapeDt, endScrapeDt} = event;
+    const {scrapeRequestId, scrapeId, scrapeInfo, userId, query, bucketKey, scrapeDate, startScrapeDt, endScrapeDt} = event;
 
     try {
         const bucketName = process.env.STAGE === 'prod'
@@ -37,9 +37,8 @@ const save = async (event: any) => {
             scrapeId: scrapeId,
             scrapeRequestId: scrapeRequestId,
             userId: userId,
-            scrapeDate: new Date().toISOString(),
             query: query,
-            scrapeDt: scrapeDt, 
+            scrapeDate: scrapeDate, 
             startScrapeDt: startScrapeDt, 
             endScrapeDt: endScrapeDt,
             source: scrapeInfo.name,

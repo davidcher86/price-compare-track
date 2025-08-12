@@ -10,10 +10,7 @@ export abstract class ScrapeConfigReader implements ScrapeConfigDataInterface {
 
     public getExtractArgs(): any {
         try {
-            console.log("getExtractArgs");
-            const configData = this.configData; // Assuming configData is already parsed JSON
-            // const fileContent = this.getConfigData();
-            // const configData = JSON.parse(fileContent);
+            const configData = this.configData;
             return configData?.extractArgs || null;
         } catch (error) {
             console.error('Error reading or parsing the config file:', error);
@@ -23,12 +20,7 @@ export abstract class ScrapeConfigReader implements ScrapeConfigDataInterface {
 
     public getUrl(): string | null {
         try {
-            console.log("getUrl");
-            const configData = this.configData; // Assuming configData is already parsed JSON
-
-            // const fileContent = fs.readFileSync(this.configData, 'utf-8');
-            // const configData = JSON.parse(fileContent);
-            console.log(configData?.url);
+            const configData = this.configData;
             return configData?.url || null;
         } catch (error) {
             console.error('Error reading or parsing the config file:', error);
@@ -38,11 +30,7 @@ export abstract class ScrapeConfigReader implements ScrapeConfigDataInterface {
 
     getListIdentifier(): string | null {
         try {
-            console.log("getListIdentifier");
-            const configData = this.configData; // Assuming configData is already parsed JSON
-
-            // const fileContent = fs.readFileSync(this.configData, 'utf-8');
-            // const configData = JSON.parse(fileContent);
+            const configData = this.configData;
             return configData?.listIdentifier || null;
         } catch (error) {
             console.error('Error reading or parsing listIdentifier arg:', error);
@@ -52,13 +40,7 @@ export abstract class ScrapeConfigReader implements ScrapeConfigDataInterface {
 
     getLoadSelector(): string | null {
         try {
-            console.log("getLoadSelector");
-            const configData = this.configData; // Assuming configData is already parsed JSON
-
-            // const fileContent = fs.readFileSync(this.configData, 'utf-8');
-            // const configData = JSON.parse(fileContent);
-            console.log(configData?.loadSelector);
-
+            const configData = this.configData;
             return configData?.loadSelector || null;
         } catch (error) {
             console.error('Error reading or parsing loadSelector arg:', error);
@@ -68,8 +50,6 @@ export abstract class ScrapeConfigReader implements ScrapeConfigDataInterface {
 
     getConfigData(): any {
         try {
-            console.log("getConfigData");
-
             return this.configData;
         } catch (error) {
             console.error('Error reading or parsing the config file:', error);
@@ -79,12 +59,7 @@ export abstract class ScrapeConfigReader implements ScrapeConfigDataInterface {
 
     getDisableSec(): boolean | null {
         try {
-            console.log("getDisableSec");
-            const configData = this.configData; // Assuming configData is already parsed JSON
-
-            // const fileContent = fs.readFileSync(this.configData, 'utf-8');
-            // const configData = JSON.parse(fileContent);
-            console.log(configData?.disableSec);
+            const configData = this.configData;
             return configData?.disableSec || null;
         } catch (error) {
             console.error('Error reading or parsing disableSec arg:', error);
@@ -94,12 +69,7 @@ export abstract class ScrapeConfigReader implements ScrapeConfigDataInterface {
 
     getName(): string | null {
         try {
-            console.log("getName");
-            const configData = this.configData; // Assuming configData is already parsed JSON
-
-            // const fileContent = fs.readFileSync(this.configData, 'utf-8');
-            // const configData = JSON.parse(fileContent);
-            console.log(configData?.name);
+            const configData = this.configData;
             return configData?.name || null;
         } catch (error) {
             console.error('Error reading or parsing loadSenamelector arg:', error);

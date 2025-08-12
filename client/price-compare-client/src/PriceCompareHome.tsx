@@ -33,7 +33,7 @@ export default function PriceCompareHome() {
     const handleRetrieveUserScrpaeHistory = async (userId: string) => {
         try {
           const items = await retrieveScrapeHistoryList(process.env.REACT_APP_TMP_USER_ID || '');
-          console.log('handleRetrieveUserScrpaeHistory', items);
+          // console.log('handleRetrieveUserScrpaeHistory', items);
           const grouped = items.reduce((acc: any, item: any) => {
               if (!acc[item.scrapeRequestId]) {
                 acc[item.scrapeRequestId] = [];
@@ -41,11 +41,12 @@ export default function PriceCompareHome() {
               acc[item.scrapeRequestId].push(item);
               return acc;
           }, {} as Record<string, any[]>);
-          // console.log(grouped);
+
           const output = Object.entries(grouped).map(([key, value]) => ({
               key,
               value: value as HistoricalDataValueItem[] // Explicitly type the value
           }));
+          console.log('retrieveScrapeHistoryList', output);
           setHistoricalData(output);
           return output;
         } catch (error) {
@@ -127,7 +128,7 @@ export default function PriceCompareHome() {
     const handleRetriveScrapeDataResult = async (scrapeRequestId: string) => {
         setIsLoading(true);
         const items = await retrieveScrapeResultsData(process.env.REACT_APP_TMP_USER_ID || '', scrapeRequestId);
-        console.log('handleRetriveScrapeDataResult');
+        console.log('handleRetriveScrapeDataResult', items);
 
         setSscrapeDataScrapeResult(items);
         setIsLoading(false);

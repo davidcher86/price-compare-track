@@ -12,11 +12,10 @@ export const sendMessageToQueue = async (
             QueueUrl: queueUrl,
             MessageBody: JSON.stringify(messageBody),
         });
-        console.log(`sending ${JSON.stringify(messageBody)} to queue ${queueUrl}`);
         const response = await sqsClient.send(command);
         return response.MessageId || "Unknown";
     } catch (error) {
-        console.error(`Error sending message to SQS queue: ${error}`);
+        console.error(`Error sending message to SQS queue: ${JSON.stringify(error)}`);
         throw error;
     }
 };
