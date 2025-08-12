@@ -31,8 +31,8 @@ provider:
       Resource: "*"
 
 plugins:
-  - serverless-offline
   - serverless-dotenv-plugin
+  - serverless-offline
 
 custom:
   # WS_CONNECTIONS_TABLE_NAME: ${env:WS_CONNECTIONS_TABLE_NAME}-${self:provider.stage}

@@ -71,7 +71,7 @@ interface SourceResultData {
 
 const SourceResults: React.FC<{ sourceResult: SourceResultData }> = ({ sourceResult }) => {
     const [isOpen, setIsOpen] = useState(false);
-    console.log(isOpen);
+    // console.log(isOpen);
     return (
         <div className="bg-blue-200 m-2 rounded-md p-1 max-w-xl">
             <div className="flex flex-row my-2">

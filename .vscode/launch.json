@@ -47,6 +47,89 @@
                 "${workspaceFolder}/**/*.js"
             ],
             "console": "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug User Details Service",
+            "cwd": "${workspaceFolder}/services/user-details",
+            "runtimeExecutable": "npx",
+            "runtimeArgs": ["sls", "offline", "--config", "serverless-user-details.yml", "--stage", "dev"],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_OPTIONS": "--inspect",
+                "SERVERLESS_ACCESS_KEY": "AKNbxhdX1M13emgwQ8sMSAY4zL5mIQE2XWq4lB7Zm5UPl",
+                "LOCAL_PORT": "4002",
+                "PROFILE": "dev",
+                "REGION": "eu-central-1",
+                "RESULT_DB_TABLE_NAME": "user-scrape-results",
+                "WS_CONNECTIONS_TABLE_NAME": "ws-scrape-result-connections",
+                "WS_CONNECTIONS_DOMAIN": "x76cc6nvj2.execute-api.eu-central-1.amazonaws.com"
+            },
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Web Scraper Service",
+            "cwd": "${workspaceFolder}/services/web-scraper",
+            "runtimeExecutable": "npx",
+            "runtimeArgs": ["sls", "offline", "--stage", "dev"],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_OPTIONS": "--inspect",
+                "SERVERLESS_ACCESS_KEY": "AKNbxhdX1M13emgwQ8sMSAY4zL5mIQE2XWq4lB7Zm5UPl",
+                "AWS_ACCOUNT_ID": "048895294059",
+                "LOCAL_PORT": "5002",
+                "REGION": "eu-central-1",
+                "SERVICE_NAME": "web-scraper",
+                "BRIGHT_DATA_SERVICE_ENABLED_LIST": "amazon,aliexpress,newegg,ebay",
+                "S3_RAW_HTML_RESULT_BUCKET_NAME": "sls-scrape-html-raw-results",
+                "S3_EXTRACTED_DATA_BUCKET_NAME": "sls-scrape-extracted-data",
+                "SQS_SCRAPE_REQUEST": "accept-scrape-request-queue",
+                "SQS_HTML_RAW_DATA_RESULT": "html-raw-data-results-queue",
+                "SQS_EXTRACTED_DATA": "extracted-data-results-queue",
+                "SQS_SCRAPE_DLQ": "scrape-dlq",
+                "RESULT_DB_TABLE_NAME": "user-scrape-results",
+                "SECRET_MANAGER_ADDRESS": "prod/price-compare/secure-config",
+                "SECRET_MANAGER_KEY": "BRIGHTDATA_WSS",
+                "WS_CONNECTIONS_TABLE_NAME": "ws-scrape-result-connections",
+                "WS_CONNECTIONS_DOMAIN": "scrape/notifications"
+            },
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug React Client",
+            "cwd": "${workspaceFolder}/client/price-compare-client",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["start"],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "console": "integratedTerminal"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Debug All Services",
+            "configurations": [
+                "Debug React Client",
+                "Debug User Details Service", 
+                "Debug Web Scraper Service"
+            ],
+            "stopAll": true
         }
     ]
 }

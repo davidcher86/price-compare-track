@@ -1,0 +1,23 @@
+{
+  "name": "price-compare-track",
+  "version": "1.0.0",
+  "description": "Price comparison and tracking application",
+  "private": true,
+  "scripts": {
+    "start": "npm run start:separate-terminals",
+    "start:concurrently": "concurrently --kill-others-on-fail --prefix-colors \"blue,green,yellow\" --prefix \"[{name}]\" --names \"CLIENT,USER-DETAILS,WEB-SCRAPER\" \"npm run start:client\" \"npm run start:user-details\" \"npm run start:web-scraper\"",
+    "start:separate-terminals": "osascript -e 'tell app \"Terminal\" to do script \"cd `pwd`/client/price-compare-client && npm start\"' && osascript -e 'tell app \"Terminal\" to do script \"cd `pwd`/services/user-details && export \\$(cat .env | grep -v '^#' | grep -v '^$' | xargs) && npx sls offline --config serverless-user-details.yml --stage dev\"' && osascript -e 'tell app \"Terminal\" to do script \"cd `pwd`/services/web-scraper && export \\$(cat .env | grep -v '^#' | grep -v '^$' | xargs) && npx sls offline --stage dev\"'",
+    "start:client": "cd client/price-compare-client && npm start",
+    "start:user-details": "cd services/user-details && export $(cat .env | grep -v '^#' | grep -v '^$' | xargs) && npx sls offline --config serverless-user-details.yml --stage dev",
+    "start:web-scraper": "cd services/web-scraper && export $(cat .env | grep -v '^#' | grep -v '^$' | xargs) && npx sls offline --stage dev",
+    "install:all": "npm install && cd client/price-compare-client && npm install && cd ../../services/user-details && npm install && cd ../web-scraper && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  },
+  "keywords": [
+    "price-comparison",
+    "web-scraping",
+    "serverless"
+  ]
+}

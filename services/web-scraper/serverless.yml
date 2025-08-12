@@ -203,6 +203,7 @@ functions:
       BRIGHT_DATA_SERVICE_ENABLED_LIST: ${self:provider.environment.BRIGHT_DATA_SERVICE_ENABLED_LIST}
       SECRET_MANAGER_ADDRESS: ${env:SECRET_MANAGER_ADDRESS}
       SECRET_MANAGER_KEY: ${env:SECRET_MANAGER_KEY}
+      SQS_SCRAPE_DLQ: ${self:custom.SQS_SCRAPE_DLQ}
     layers:
       - { Ref: UuidLibLambdaLayer }
       - { Ref: AwsDataTransferLambdaLayer }
@@ -276,6 +277,7 @@ functions:
     environment:
       STAGE: ${self:provider.stage}
       REGION: ${self:provider.region}
+      SQS_SCRAPE_REQUEST: ${self:custom.SQS_SCRAPE_REQUEST}
     events:
       - sqs:
           arn:
