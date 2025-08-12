@@ -53,7 +53,7 @@ export const retrieveScrapeHistory = async (
             ExpressionAttributeValues: {
                 ":userId": userId, // Bind the value for userId
             },
-            ProjectionExpression: "scrapeRequestId, userId, #query, #source, scrapeDate",
+            ProjectionExpression: "scrapeRequestId, userId, #query, #source, scrapeDt, endScrapeDt, startScrapeDt",
             ExpressionAttributeNames: {
                 "#query": "query", // Alias for the reserved keyword
                 "#source": "source",

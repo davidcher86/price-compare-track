@@ -8,7 +8,8 @@
     "outDir": "./functions/formScrape",
     "declaration": false,
     "noEmitOnError": true,
-    "incremental": true
+    "incremental": true,
+    "noEmit": true
   },
   "include": ["./*.ts", "../../../../layers/**/*.ts", "./../*.ts", "../../commons/*.ts", "../../commons/**/*.ts"],
   "exclude": []

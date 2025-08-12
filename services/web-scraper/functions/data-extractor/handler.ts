@@ -27,7 +27,7 @@ export const handleSqsMessage = async (event: any) => {
 const extract = async (event: any) => {
     console.log('event for scrape:' + JSON.stringify(event));
 
-    const {scrapeId, scrapeInfo, userId, query, bucketKey, scrapeRequestId, scrapeDt, startScrapeDt, endScrapeDt} = event;
+    const {scrapeId, scrapeInfo, userId, query, bucketKey, scrapeRequestId, scrapeDate, startScrapeDt, endScrapeDt} = event;
     console.log(`scrapeInfo: ${JSON.stringify(scrapeInfo)}, userId: ${userId}, query: ${JSON.stringify(query)}`);
 
     // const dlqSqsUrl =  process.env.STAGE === 'prod'
@@ -112,7 +112,7 @@ const extract = async (event: any) => {
             bucketKey: saveExtractedBucketKey,
             userId: userId,
             scrapeInfo: scrapeInfo,
-            scrapeDt: scrapeDt, 
+            scrapeDate: scrapeDate, 
             startScrapeDt: startScrapeDt, 
             endScrapeDt: endScrapeDt,
             query: query,

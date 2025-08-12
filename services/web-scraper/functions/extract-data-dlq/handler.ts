@@ -16,7 +16,7 @@ export const handleSqsMessage = async (event: any) => {
 
 export const handleMsg = async (payload: any) => {
     try {
-
+        const {} = payload;
         // const body = JSON.parse(event.body);
         console.log(`payload: `);
         console.log(payload);
@@ -26,13 +26,24 @@ export const handleMsg = async (payload: any) => {
             case 'SCRAPE_FAILED':
                 console.log(`scrape failed, error: ${payload.error}`);
                 console.log(`resending to accept scrape request queue for re-scraping`);
-                if (payload.triesCount === undefined || payload.triesCount < 3) {
-                    payload.event.triesCount = payload.triesCount ? payload.triesCount + 1 : 1;
-                    await sendMessageToQueue(getAccepetScrapeRequestSqsName(), payload);
+                if (payload.triesCount === undefined) {
+                    payload.triesCount = 1;
+                    console.log(`Initializing triesCount to 1 for payload: ${JSON.stringify(payload)}`);
+                    // await sendMessageToQueue(getAccepetScrapeRequestSqsName(), payload);
+                    //TODO: return websocket message for re-scraping
+                } else if (payload.triesCount < 3) {
+                    payload.triesCount = payload.triesCount + 1;
+                    console.log(`Incrementing triesCount to ${payload.triesCount} for payload: ${JSON.stringify(payload)}`);
+                    // await sendMessageToQueue(getAccepetScrapeRequestSqsName(), payload);
+                    //TODO: return websocket message for re-scraping
                 } else {
                     console.log(`Max retries reached for payload: ${JSON.stringify(payload)}`);
+                    break; 
                     // TODO: return websocket message for failed scraping
                 }
+
+                console.log(`resending to accept scrape request queue for re-scraping`);
+                await sendMessageToQueue(getAccepetScrapeRequestSqsName(), payload);
                 break;
             // case 'EXTRACT_DATA_FAILED':
             //     console.log(`extract data failed, error: ${body.error}`);

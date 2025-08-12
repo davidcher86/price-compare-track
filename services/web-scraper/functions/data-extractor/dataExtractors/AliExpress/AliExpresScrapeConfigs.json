@@ -18,7 +18,7 @@
     },
     {
       "keyName": "image",
-      "selector": ".ml_mn img",
+      "selector": "a img[src]",
       "type": "img"
     },
     {

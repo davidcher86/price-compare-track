@@ -28,14 +28,12 @@ export const formScrapeRequest = async (event: any) => {
                 scrapeId: scrapeId,
                 scrapeInfo: scrapeSourceInfo,
                 userId: userId,
-                scrapeDt: scrapeDt,
+                scrapeDate: scrapeDt,
                 query: query,
                 triesCount: 1
             }
-            
-            console.log(`SQS Message: ${JSON.stringify(sqsPayload)}`);
-            const sqsResponse = await sendMessageToQueue(getAccepetScrapeRequestSqsName(), sqsPayload);
-            console.log(`SQS Response: ${sqsResponse}`);
+            console.log(scrapeSourceInfo.name);
+            await sendMessageToQueue(getAccepetScrapeRequestSqsName(), sqsPayload);
         }
 
         return {
