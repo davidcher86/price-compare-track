@@ -20,6 +20,7 @@ export const formScrapeRequest = async (event: any) => {
         const scrapeDt = new Date().toISOString();
 
         for (const scrapeSourceInfo of scrapeSources) {
+            await new Promise(resolve => setTimeout(resolve, 1500));
             console.log(`sendingMessageTooQueue ${JSON.stringify(scrapeSourceInfo)}`);
 
             const scrapeId = uuid4();
