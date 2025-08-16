@@ -23,7 +23,7 @@ export const getScrapeData = async (event: any) => {
         console.log(`Making query with userId: "${userId}" and scrapeRequestId: "${scrapeRequestId}"`);
         const result = await retrieveScrapeResult(userId, scrapeRequestId);
 
-        console.log("Query result:", JSON.stringify(result, null, 2));
+        console.log(`Query found ${result.length} records`);
         if (!result.Items || result.Items.length === 0) {
             console.log("No items found in result");
             return {

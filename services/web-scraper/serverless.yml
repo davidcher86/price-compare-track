@@ -87,7 +87,7 @@ resources:
         RedrivePolicy:
           deadLetterTargetArn:
             Fn::GetAtt: [DLQ, Arn]
-          maxReceiveCount: 1
+          maxReceiveCount: 3
 
     ScrapeHtmlRawDataQueue:
       Type: AWS::SQS::Queue
@@ -107,7 +107,8 @@ resources:
         RedrivePolicy:
           deadLetterTargetArn:
             Fn::GetAtt: [DLQ, Arn]
-          maxReceiveCount: 1
+          maxReceiveCount: 3
+
     DLQ:
       Type: AWS::SQS::Queue
       Properties:
@@ -185,7 +186,6 @@ functions:
 
   scraper:
     handler: functions/puppeteer/handler.handleSqsMessage
-    reservedConcurrency: 4
     package:
       individually: true
       include:

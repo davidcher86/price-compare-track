@@ -2,8 +2,9 @@
   "name": "Ebay",
   "url": "https://www.ebay.com/sch/i.html?_nkw={query}",
   "loadSelector": ".srp-results.srp-list",
-  "listIdentifier": ".s-item__wrapper.clearfix",
+  "listIdentifier": "li.s-item, li.s-card",
   "brightDataSupport" : false,
+  "hrefHost": "https://www.ebay.com",
   "extractArgs": [
     {
       "keyName": "name",
@@ -12,13 +13,18 @@
     },
     {
       "keyName": "price",
-      "selector": ".s-item__price",
+      "selector": "span.s-item__price, span.s-card__price",
       "type": "price"
     },
     {
       "keyName": "image",
-      "selector": "img[alt]",
-      "type": "src"
+      "selector": ".s-item__image-wrapper img[src], .su-media__image a img[src]",
+      "type": "img"
+    },
+    {
+      "keyName": "href",
+      "selector": ".s-item__image a, .su-media__image a",
+      "type": "href"
     }
   ]
 }

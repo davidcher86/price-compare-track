@@ -1,12 +1,12 @@
 import {ScraperInterface} from "./interfaces/ScraperInterface.ts";
+import {BanggoodScrapeConfigReader} from "./sourcesScrapeConfigs/Banggood/BanggoodScrapeConfigReader.ts"
 import {NewEggScrapeConfigReader} from "./sourcesScrapeConfigs/NewEgg/NewEggScrapeConfigReader.ts";
 import {AliExpressScrapeConfigReader} from "./sourcesScrapeConfigs/AliExpress/AliExpressScrapeConfigReader.ts";
 import {EbayScrapeConfigReader} from "./sourcesScrapeConfigs/Ebay/EbayScrapeConfigReader.ts";
 import {AmazonScrapeConfigReader} from "./sourcesScrapeConfigs/Amazon/AmazonScrapeConfigReader.ts";
 import {PuppeteerScrapeService} from "./utils/PuppeteerScrapeService.ts";
 import { v4 as uuid4 } from "uuid";
-import {savePayload} from "../../commons/utils/S3Service.ts";
-import * as process from "node:process";
+import {savePayload, getScrapeHtmlRawResultsBucketName} from "../../commons/utils/S3Service.ts";
 import {getSecretValue} from "../../commons/utils/SecretManager.ts";
 import {sendMessageToQueue, getDlqSqsName, generateDlqSqsPayload, getHtmlRawResultSqsName} from "../../commons/utils/SQSService.ts";
 
@@ -30,8 +30,6 @@ const scrape = async (event: any) => {
     console.log("scrapeInfo: " + JSON.stringify(scrapeInfo));
 
     try {
-        // throw new Error("scrapeInfo or query is undefined");
-
         if (scrapeInfo == undefined || query == undefined)
             throw new Error("scrapeInfo or query is undefined");
 
@@ -40,6 +38,10 @@ const scrape = async (event: any) => {
         console.log("scrapeInfo.name " + scrapeInfo.name);
 
         switch (scrapeInfo.name.toLowerCase()) {
+            case 'banggood':
+                console.log("using Banggood scrape configs")
+                scrapeService = new PuppeteerScrapeService(new BanggoodScrapeConfigReader());
+                break;
             case 'newegg':
                 console.log("using NewEgg scrape configs")
                 scrapeService = new PuppeteerScrapeService(new NewEggScrapeConfigReader());
@@ -50,7 +52,6 @@ const scrape = async (event: any) => {
                 break;
             case 'amazon':
                 console.log("using Amazon scrape configs")
-                // new PuppeteerScrapeListService(null, null);
                 scrapeService = new PuppeteerScrapeService(new AmazonScrapeConfigReader());
                 break;
             case 'aliexpress':
@@ -65,9 +66,7 @@ const scrape = async (event: any) => {
         const endScrapeDt = new Date().toISOString();
 
         const bucketKey = `${scrapeInfo.name.replace(/\s+/g, "")}-${userId}-${uuid4()}`;
-        const bucketName = process.env.STAGE === 'prod'
-            ? (process.env.S3_RAW_HTML_RESULT_BUCKET_NAME || '')
-            : "sls-scrape-html-raw-results-prod";
+        const bucketName = getScrapeHtmlRawResultsBucketName();
         await savePayload(html, bucketName, bucketKey, 'text/html');
 
         const sqsPayload = {
@@ -84,8 +83,6 @@ const scrape = async (event: any) => {
             triesCount: 1
         }
 
-        // const sqsUrl = getHtmlRawResultSqsName()
-
         // console.log("sqsPayload: " + JSON.stringify(sqsPayload) + " to " + sqsUrl);
         await sendMessageToQueue(getHtmlRawResultSqsName(), sqsPayload);
         return {
@@ -95,7 +92,6 @@ const scrape = async (event: any) => {
     } catch (error: ErrorMessage | any) {
         console.error('Error during scraping:', error);
         await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(event, 'SCRAPE_FAILED', `Error: ${error.message}`));
-        // throw new Error('Scrape process failed, error: ' + error);
     }
 }
 

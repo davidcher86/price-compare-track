@@ -156,7 +156,7 @@ export const retrieveScrapeResult = async (
         
         const result = await ddb.send(new QueryCommand(queryParams));
         
-        console.log('DynamoDB Query Result:', JSON.stringify(result, null, 2));
+        // console.log('DynamoDB Query Result:', JSON.stringify(result, null, 2));
         
         // Filter results by userId on the client side for security
         if (result.Items && result.Items.length > 0) {
@@ -234,8 +234,7 @@ export const retrieveUserWebsocket = async (
               createDt: item.createDt,
             };
         }) || [];
-        console.log('records');
-        console.log(records);
+
         return records;
     } catch (err) {
         console.error("Error restrieving user websocket results:", err);

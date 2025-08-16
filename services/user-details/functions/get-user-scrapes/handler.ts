@@ -14,11 +14,11 @@ export const getScrapeResultData = async (event: any) => {
     }
 
     try {
-        const userScrapeResultsTableName = process.env.RESULT_DB_TABLE_NAME || '';
-        const userScrapeResultsRecord = { userId: userId };
+        // const userScrapeResultsTableName = process.env.RESULT_DB_TABLE_NAME || '';
+        // const userScrapeResultsRecord = { userId: userId };
         const result = await retrieveScrapeHistory(userId);
 
-        console.log("Fetched user scrape results: ", JSON.stringify(result));
+        // console.log("Fetched user scrape results: ", JSON.stringify(result));
         if (!result.Items) {
             return {
                 statusCode: 404,

@@ -3,12 +3,13 @@
   "disableSec": false,
   "url": "https://www.amazon.com/s?k={query}",
   "loadSelector": "#search",
-  "listIdentifier": ".puisg-row",
+  "listIdentifier": "[data-asin][data-component-type=\"s-search-result\"]",
   "brightDataSupport" : true,
+  "hrefHost": "https://www.amazon.com",
   "extractArgs": [
     {
       "keyName": "name",
-      "selector": ".s-line-clamp-2",
+      "selector": "h2 a span",
       "type": "text"
     },
     {
@@ -18,8 +19,13 @@
     },
     {
       "keyName": "image",
-      "selector": ".s-image",
-      "type": "src"
+      "selector": "img.s-image",
+      "type": "img"
+    },
+    {
+      "keyName": "href",
+      "selector": "a.a-link-normal",
+      "type": "href"
     }
   ]
 }

@@ -80,6 +80,24 @@ export const deletePayload = async (bucketName: string, bucketKey: string) => {
     }
 };
 
+export const getUserScrapeResultsBucketName = () => {
+    return process.env.STAGE === 'prod'
+            ? (process.env.RESULT_DB_TABLE_NAME || '')
+            : "user-scrape-results-prod";
+};
+
+export const getScrapeExtractedDataBucketName = () => {
+    return process.env.STAGE === 'prod'
+            ? (process.env.S3_EXTRACTED_DATA_BUCKET_NAME || '')
+            : "sls-scrape-extracted-data-prod";
+};
+
+export const getScrapeHtmlRawResultsBucketName = () => {
+    return process.env.STAGE === 'prod'
+            ? (process.env.S3_RAW_HTML_RESULT_BUCKET_NAME || '')
+            : "sls-scrape-html-raw-results-prod";
+};
+
 export const savePayload = async (
     payload: any,
     bucketName: string,

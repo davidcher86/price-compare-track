@@ -1,5 +1,4 @@
 import React, { ReactNode, useState, useReducer } from "react";
-import Checkbox from "./Checkbox";
 import { ReactComponent as SearchButton } from '../logos/search-button.svg';
 import { ReactComponent as AmazonLogo } from '../logos/amazon-logo.svg';
 import { ReactComponent as EbayLogo } from '../logos/ebay-logo.svg';
@@ -30,25 +29,31 @@ const stores: ScrapeSourceOption[] = [
     { name: 'newegg', label: 'NewEgg', order: 2, logo: <NewEggLogo /> },
     { name: 'aliexpress', label: 'AliExpress', order: 3, logo: <AliExpressLogo /> },
     { name: 'ebay', label: 'eBay', order: 4, logo: <EbayLogo /> },
+    { name: 'banggood', label: 'Banggood', order: 5, logo: <EbayLogo /> },
 ];
 
 function reducer(state: any , action: any) {
     // console.log('reducer: ' + JSON.stringify(action));
     switch (action.type) {
         case 'SET_SEARCH_BOX_TEXT':
-            // console.log('set search box text: ' + action.payload);
             return { ...state, searchBoxText: action.payload };
-        case 'TOGGLE_SEARCH_RESOURCES':
-            console.log(action.payload)
+        case 'TOGGLE_SEARCH_RESOURCES': {
             const sourceId = action.payload.name;
-            console.log(sourceId)
+
             const sourceExists = state.checkedSources.some((source: CheckedSource) => source.name === sourceId);
-            console.log(sourceExists);
-            const checkedSources = sourceExists
-                ? state.checkedSources.filter((source: CheckedSource) => source.name !== sourceId)
-                : [...state.checkedSources, { name: sourceId, order: action.payload.order }];
+
+            let checkedSources = state.checkedSources;
+            
+            if (sourceExists) {
+                // Remove the source if it exists
+                checkedSources = state.checkedSources.filter((source: CheckedSource) => source.name !== sourceId);
+            } else if (state.checkedSources.length < 4) {
+                // Only add if we have less than 4 sources already
+                checkedSources = [...state.checkedSources, { name: sourceId, order: action.payload.order }];
+            }
                 console.log(checkedSources);
             return { ...state, checkedSources };
+        }
 
         default:
             return state;

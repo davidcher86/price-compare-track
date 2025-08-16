@@ -3,7 +3,7 @@
     {
       "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",
       "receiptHandle": "MessageReceiptHandle",
-      "body": "{\"scrapeRequestId\":\"382a459c-9f97-43c1-bdb6-066d5132895e\",\"scrapeId\":\"702f926e-f771-472a-89e4-d60621a2d93e\",\"scrapeInfo\":{\"name\":\"amazon\",\"order\":1},\"userId\":\"9962a416-504d-4b82-87f6-94a536aa27da\",\"scrapeDt\":\"2025-07-27T09:41:35.953Z\",\"query\":\"mouse\"}",
+      "body": "{\"scrapeRequestId\":\"382a459c-9f97-43c1-bdb6-066d5132895e\",\"scrapeId\":\"702f926e-f771-472a-89e4-d60621a2d93e\",\"scrapeInfo\":{\"name\":\"banggood\",\"order\":1},\"userId\":\"9962a416-504d-4b82-87f6-94a536aa27da\",\"scrapeDt\":\"2025-07-27T09:41:35.953Z\",\"query\":\"mouse\"}",
       "attributes": {
         "ApproximateReceiveCount": "1",
         "SentTimestamp": "1523232000000",

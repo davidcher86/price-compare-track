@@ -1,7 +1,6 @@
 import { postToHttpApiGateway } from "../../commons/utils/ApiGatewayService.ts";
 import {saveRecord} from "../../commons/utils/DynamoDBService.ts";
-import {deletePayload, retrievePayload} from "../../commons/utils/S3Service.ts";
-import process from "node:process";
+import {deletePayload, retrievePayload, getScrapeExtractedDataBucketName, getUserScrapeResultsBucketName} from "../../commons/utils/S3Service.ts";
 
 export const handleSqsMessage = async (event: any) => {
     console.log('Received SQS event:', JSON.stringify(event));
@@ -21,17 +20,13 @@ const save = async (event: any) => {
     const {scrapeRequestId, scrapeId, scrapeInfo, userId, query, bucketKey, scrapeDate, startScrapeDt, endScrapeDt} = event;
 
     try {
-        const bucketName = process.env.STAGE === 'prod'
-            ? (process.env.S3_EXTRACTED_DATA_BUCKET_NAME || '')
-            : "sls-scrape-extracted-data-prod";
+        const bucketName = getScrapeExtractedDataBucketName();
 
         const rawPayload = await retrievePayload(bucketName, bucketKey);
 
         console.log(`Saving results for scrapeRequestId: ${scrapeRequestId}, userId: ${userId}, query: ${JSON.stringify(query)}`);
 
-        const tableName = process.env.STAGE === 'prod'
-            ? (process.env.RESULT_DB_TABLE_NAME || '')
-            : "user-scrape-results-prod";
+        const tableName = getUserScrapeResultsBucketName();
 
         const scrapeResultRecord = {
             scrapeId: scrapeId,
@@ -49,7 +44,7 @@ const save = async (event: any) => {
 
         await deletePayload(bucketName, bucketKey);
 
-        await sendClientNotification(userId, "SCRAPE_COMPLETED");
+        await sendClientNotification(userId, `{"status": "SCRAPE_COMPLETED", "source": "${scrapeInfo.name}"}`);
 
         return {
             statusCode: 200,

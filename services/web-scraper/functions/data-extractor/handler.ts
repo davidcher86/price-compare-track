@@ -3,13 +3,15 @@ import {NewEggScrapeConfigReader} from "./dataExtractors/NewEgg/NewEggScrapeConf
 import {AliExpressScrapeConfigReader} from "./dataExtractors/AliExpress/AliExpressScrapeConfigReader.ts";
 import {SimpleExtractData} from "./dataExtractors/SimpleExtractData.ts";
 import {AmazonExtractData} from "./dataExtractors/Amazon/AmazonExtractor.ts";
+import {BanggoodScrapeConfigReader} from "./dataExtractors/Banggood/BanggoodScrapeConfigReader.ts";
+import { BanggoodExtractData } from "./dataExtractors/Banggood/BanggoodExtractor.ts";
 import {EbayScrapeConfigReader} from "./dataExtractors/Ebay/EbayScrapeConfigReader.ts";
 import {AmazonScrapeConfigReader} from "./dataExtractors/Amazon/AmazonScrapeConfigReader.ts";
 import {ExtractDataInterface} from "./interfaces/ExtractDataInterface.ts";
 import {EbayExtractData} from "./dataExtractors/Ebay/EbayExtractData.ts";
 import process from "node:process";
 import {NewEggExtractData} from "./dataExtractors/NewEgg/NewEggExtractData.ts";
-import { retrievePayload, deletePayload, savePayload } from '../../commons/utils/S3Service.ts';
+import { retrievePayload, deletePayload, savePayload, getScrapeExtractedDataBucketName } from '../../commons/utils/S3Service.ts';
 import {sendMessageToQueue, getDlqSqsName, getExtractDataSqsName, generateDlqSqsPayload} from "../../commons/utils/SQSService.ts";
 
 export const handleSqsMessage = async (event: any) => {
@@ -30,10 +32,6 @@ const extract = async (event: any) => {
     const {scrapeId, scrapeInfo, userId, query, bucketKey, scrapeRequestId, scrapeDate, startScrapeDt, endScrapeDt} = event;
     console.log(`scrapeInfo: ${JSON.stringify(scrapeInfo)}, userId: ${userId}, query: ${JSON.stringify(query)}`);
 
-    // const dlqSqsUrl =  process.env.STAGE === 'prod'
-    // ? `https://sqs.${process.env.REGION}.amazonaws.com/${process.env.AWS_ACCOUNT_ID}/${process.env.SQS_SCRAPE_DLQ}`
-    // : `https://sqs.${process.env.REGION}.amazonaws.com/${process.env.AWS_ACCOUNT_ID}/scrape-dlq-prod`;
-
     try {
         if (scrapeInfo == undefined || query == undefined || userId == undefined) {
             throw new Error("scrapeInfo, query or userId is undefined");
@@ -46,9 +44,7 @@ const extract = async (event: any) => {
 
     // try {
         console.log('event:', JSON.stringify(event));
-        const bucketName = process.env.STAGE === 'prod'
-            ? (process.env.S3_RAW_HTML_RESULT_BUCKET_NAME || '')
-            : "sls-scrape-html-raw-results-prod";
+        const bucketName = getScrapeExtractedDataBucketName();
 
         const html = await retrievePayload(bucketName, bucketKey);
         if (html.length === 0) {
@@ -66,6 +62,10 @@ const extract = async (event: any) => {
         console.log("scrapeInfo.name " + scrapeInfo.name);
 
         switch (scrapeInfo.name.toLowerCase()) {
+            case 'banggood':
+                console.log("using Banggood scrape configs")
+                extractDataService = new BanggoodExtractData(new BanggoodScrapeConfigReader());
+                break;
             case 'newegg':
                 console.log("using NewEgg scrape configs")
                 extractDataService = new NewEggExtractData(new NewEggScrapeConfigReader());
@@ -96,15 +96,9 @@ const extract = async (event: any) => {
         }
         
         console.log(`Extracted results: ${JSON.stringify(results)}`);
-        const saveExtractedBucketName = process.env.STAGE === 'prod'
-            ? (process.env.S3_EXTRACTED_DATA_BUCKET_NAME || '')
-            : "sls-scrape-extracted-data-prod";
+        const saveExtractedBucketName = getScrapeExtractedDataBucketName();
         const saveExtractedBucketKey = bucketKey + '-extracted';
         await savePayload(JSON.stringify(results), saveExtractedBucketName, saveExtractedBucketKey, 'text/html');
-
-        // const sqsUrl = process.env.STAGE === 'prod'
-        //     ? `https://sqs.${process.env.REGION}.amazonaws.com/${process.env.AWS_ACCOUNT_ID}/${process.env.SQS_EXTRACTED_DATA}`
-        //     : `https://sqs.${process.env.REGION}.amazonaws.com/${process.env.AWS_ACCOUNT_ID}/extracted-data-results-queue-prod`;
 
         const sqsPayload = {
             scrapeRequestId: scrapeRequestId,
@@ -133,7 +127,6 @@ const extract = async (event: any) => {
             statusCode: 500,
             body: JSON.stringify({ message: error}),
         }
-        // throw error;
     }
 }
 
