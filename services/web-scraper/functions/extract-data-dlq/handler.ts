@@ -1,5 +1,4 @@
-import {sendMessageToQueue, getAccepetScrapeRequestSqsName} from "../../commons/utils/SQSService.ts";
-import process from "node:process";
+import {sendMessageToQueue, getAccepetScrapeRequestSqsName} from "@shared-commons/utils/SQSService.ts";
 import { v4 as uuid4 } from "uuid";
 
 export const handleSqsMessage = async (event: any) => {

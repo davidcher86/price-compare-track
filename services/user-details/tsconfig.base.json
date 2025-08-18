@@ -1,20 +1,20 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "commonjs",
+    "module": "Node16",
     "outDir": "dist",
-    "rootDir": ".",
+    "rootDir": "../",
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Node16",
     "strict": true,
-    "baseUrl": ".",
+    "baseUrl": "./"
+  },
+  "paths": {
+    "@shared-commons/*": ["../commons/*"]
   },
   "include": ["functions/get-scrape-result/**/*.ts", 
               "functions/get-user-scrapes/**/*.ts", 
               "functions/add-user/**/*.ts", 
               "functions/update-user/**/*.ts", 
-              "commons/**/*.ts"],
-  "paths": {
-    "@utils/*": ["../utils/*"]
-  }
+              "../commons/**/*.ts"]
 }

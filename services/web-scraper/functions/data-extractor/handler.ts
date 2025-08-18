@@ -9,10 +9,9 @@ import {EbayScrapeConfigReader} from "./dataExtractors/Ebay/EbayScrapeConfigRead
 import {AmazonScrapeConfigReader} from "./dataExtractors/Amazon/AmazonScrapeConfigReader.ts";
 import {ExtractDataInterface} from "./interfaces/ExtractDataInterface.ts";
 import {EbayExtractData} from "./dataExtractors/Ebay/EbayExtractData.ts";
-import process from "node:process";
 import {NewEggExtractData} from "./dataExtractors/NewEgg/NewEggExtractData.ts";
-import { retrievePayload, deletePayload, savePayload, getScrapeExtractedDataBucketName } from '../../commons/utils/S3Service.ts';
-import {sendMessageToQueue, getDlqSqsName, getExtractDataSqsName, generateDlqSqsPayload} from "../../commons/utils/SQSService.ts";
+import { retrievePayload, deletePayload, savePayload, getScrapeExtractedDataBucketName, getScrapeHtmlRawResultsBucketName } from '@shared-commons/utils/S3Service.ts';
+import {sendMessageToQueue, getDlqSqsName, getExtractDataSqsName, generateDlqSqsPayload} from "@shared-commons/utils/SQSService.ts";
 
 export const handleSqsMessage = async (event: any) => {
     console.log('Received SQS event:', JSON.stringify(event));
@@ -44,7 +43,7 @@ const extract = async (event: any) => {
 
     // try {
         console.log('event:', JSON.stringify(event));
-        const bucketName = getScrapeExtractedDataBucketName();
+        const bucketName = getScrapeHtmlRawResultsBucketName();
 
         const html = await retrievePayload(bucketName, bucketKey);
         if (html.length === 0) {

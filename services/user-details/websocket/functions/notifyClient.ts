@@ -1,5 +1,5 @@
-import {retrieveUserWebsocket, deleteUserWebesocket} from "../../commons/utils/DynamoDBService.ts";
-import {postToWebSocketConnection} from "../../commons/utils/ApiGatewayService.ts";
+import {retrieveUserWebsocket, deleteUserWebesocket} from "./../../../commons/utils/DynamoDBService";
+import {postToWebSocketConnection} from "./../../../commons/utils/ApiGatewayService";
 
 export const handler = async (event: any) => {
     console.log('event')

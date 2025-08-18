@@ -3,13 +3,18 @@
   "compilerOptions": {
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "baseUrl": "./",
+    "baseUrl": "../../",
     "sourceMap": true,
     "outDir": "./functions/data-extractor/dist",
     "declaration": false,
     "noEmitOnError": true,
     "incremental": true,
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "shared/*": ["../../../layers/aws-sdk/storage/nodejs/shared/*"],
+      "@commons/*": ["commons/*"],
+      "@shared-commons/*": ["../commons/*"]
+    }
   },
   "include": ["../../commons/**/*.ts","./../*.ts","./*.ts","./../*.json","./*.json"],
   "exclude": []

@@ -1,5 +1,4 @@
-import {retrieveScrapeHistory} from '../../commons/utils/DynamoDBService'
-// import {retrieveScrapeHistory} from '@utils/aws-sdk/DynamoDBService';
+import {retrieveScrapeHistory} from '../../../commons/utils/DynamoDBService'
 
 export const getScrapeResultData = async (event: any) => {
     const userId = event.headers?.userId;
@@ -14,8 +13,6 @@ export const getScrapeResultData = async (event: any) => {
     }
 
     try {
-        // const userScrapeResultsTableName = process.env.RESULT_DB_TABLE_NAME || '';
-        // const userScrapeResultsRecord = { userId: userId };
         const result = await retrieveScrapeHistory(userId);
 
         // console.log("Fetched user scrape results: ", JSON.stringify(result));

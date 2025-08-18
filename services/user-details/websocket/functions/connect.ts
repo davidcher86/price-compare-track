@@ -1,4 +1,4 @@
-import {saveUserWebsocket} from "../../commons/utils/DynamoDBService.ts";
+import {saveUserWebsocket} from "./../../../commons/utils/DynamoDBService";
 
 export const handler = async (event: any) => {
     const connectionId = event.requestContext.connectionId;

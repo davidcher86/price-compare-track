@@ -3,14 +3,17 @@
   "compilerOptions": {
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "baseUrl": "./",
+    "baseUrl": "../../",
     "sourceMap": true,
-    "outDir": "./functions/get-user-scrapes/dist",
+    "outDir": "./dist",
     "declaration": false,
     "noEmitOnError": true,
     "incremental": true, 
     "noEmit": true,
+    "paths": {
+      "@shared-commons/*": ["../commons/*"]
+    }
   },
-  "include": ["../../commons/**/*.ts", "./../*.ts", "./*.ts", "./../*.json", "./*.json"],
+  "include": ["../commons/**/*.ts", "./*.ts", "../*.ts", "./*.json", "../*.json"],
   "exclude": []
 }

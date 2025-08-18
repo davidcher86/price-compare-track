@@ -1,5 +1,5 @@
 import {ScrapeConfigReader} from "../abstract/ScrapeConfigReader.ts";
-import config from "./../../../../commons/scrape-source-configs/BanggoodScrapeConfigs.json";
+import config from "@commons/scrape-source-configs/BanggoodScrapeConfigs.json";
 
 export class BanggoodScrapeConfigReader extends ScrapeConfigReader {
 

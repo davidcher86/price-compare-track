@@ -3,13 +3,18 @@
   "compilerOptions": {
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "baseUrl": "./",
+    "baseUrl": "../../",
     "sourceMap": true,
     "outDir": "./functions/save-scrape-result/dist",
     "declaration": false,
     "noEmitOnError": true,
     "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "shared/*": ["../../../layers/aws-sdk/storage/nodejs/shared/*"],
+      "@commons/*": ["commons/*"],
+      "@shared-commons/*": ["../commons/*"]
+    }
   },
   "include": ["./../*.ts","./*.ts", "../../commons/*.ts", "../../commons/**/*.ts","./../*.json","./*.json"],
   "exclude": []

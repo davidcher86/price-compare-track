@@ -1,6 +1,6 @@
-import { postToHttpApiGateway } from "../../commons/utils/ApiGatewayService.ts";
-import {saveRecord} from "../../commons/utils/DynamoDBService.ts";
-import {deletePayload, retrievePayload, getScrapeExtractedDataBucketName, getUserScrapeResultsBucketName} from "../../commons/utils/S3Service.ts";
+import { postToHttpApiGateway } from "@shared-commons/utils/ApiGatewayService";
+import {saveRecord} from "@shared-commons/utils/DynamoDBService";
+import {deletePayload, retrievePayload, getScrapeExtractedDataBucketName, getUserScrapeResultsBucketName} from "@shared-commons/utils/S3Service";
 
 export const handleSqsMessage = async (event: any) => {
     console.log('Received SQS event:', JSON.stringify(event));
@@ -42,7 +42,7 @@ const save = async (event: any) => {
         
         await saveRecord(tableName,scrapeResultRecord);
 
-        await deletePayload(bucketName, bucketKey);
+        // await deletePayload(bucketName, bucketKey);
 
         await sendClientNotification(userId, `{"status": "SCRAPE_COMPLETED", "source": "${scrapeInfo.name}"}`);
 

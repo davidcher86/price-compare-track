@@ -1,7 +1,6 @@
 import * as cheerio from "cheerio";
 import {ExtractDataInterface} from "../interfaces/ExtractDataInterface.ts";
 import {ScrapeConfigDataInterface} from "../interfaces/ScrapeConfig.ts";
-import {sendMessageToQueue, getDlqSqsName, generateDlqSqsPayload} from "../../../commons/utils/SQSService.ts";
 
 export class SimpleExtractData implements ExtractDataInterface {
 

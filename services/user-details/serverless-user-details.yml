@@ -186,6 +186,9 @@ functions:
       include:
         - websocket/**
         - commons/**
+    layers:
+      - { Ref: AwsStorageLambdaLayer }
+      - { Ref: AwsDataTransferLambdaLayer }
     events:
       - websocket:
           route: $connect
@@ -198,6 +201,9 @@ functions:
       include:
         - websocket/**
         - commons/**
+    layers:
+      - { Ref: AwsStorageLambdaLayer }
+      - { Ref: AwsDataTransferLambdaLayer }
     events:
       - websocket:
           route: $disconnect
@@ -220,6 +226,9 @@ functions:
       include:
         - websocket/**
         - commons/**
+    layers:
+      - { Ref: AwsStorageLambdaLayer }
+      - { Ref: AwsDataTransferLambdaLayer }
     environment:
       STAGE: ${self:provider.stage}
       LOCAL_PORT: ${env:LOCAL_PORT}

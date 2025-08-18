@@ -1,4 +1,4 @@
-import {deleteUserWebesocket} from "../../commons/utils/DynamoDBService.ts";
+import {deleteUserWebesocket} from "./../../../commons/utils/DynamoDBService.ts";
 
 export const handler = async (event: any) => {
     const connectionId = event.requestContext.connectionId;

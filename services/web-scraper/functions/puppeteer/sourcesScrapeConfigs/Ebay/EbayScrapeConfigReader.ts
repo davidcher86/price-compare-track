@@ -1,5 +1,5 @@
 import {ScrapeConfigReader} from "../abstract/ScrapeConfigReader.ts";
-import config from "./../../../../commons/scrape-source-configs/EbayScrapeConfigs.json";
+import config from "@commons/scrape-source-configs/EbayScrapeConfigs.json";
 
 export class EbayScrapeConfigReader extends ScrapeConfigReader {
 

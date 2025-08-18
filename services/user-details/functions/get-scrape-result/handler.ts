@@ -1,4 +1,4 @@
-import {retrieveScrapeResult} from '../../commons/utils/DynamoDBService'
+import {retrieveScrapeResult} from '../../../commons/utils/DynamoDBService'
 
 export const getScrapeData = async (event: any) => {
     const body = JSON.parse(event.body);

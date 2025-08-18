@@ -1,44 +1,58 @@
-import {DeleteItemCommand, DynamoDBClient, QueryCommandInput} from "@aws-sdk/client-dynamodb";
-import {DynamoDBDocumentClient, PutCommand, GetCommand, ScanCommand, QueryCommand, BatchWriteCommand} from "@aws-sdk/lib-dynamodb";
+import {DynamoDBClient, DeleteItemCommand} from "@aws-sdk/client-dynamodb";
+import {DynamoDBDocumentClient, PutCommand, ScanCommand, QueryCommand, BatchWriteCommand, DeleteCommand} from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({ region: process.env.REGION });
 const ddb = DynamoDBDocumentClient.from(client);
 
-// export const saveRecord = async (
-//     tableName: string,
-//     record: any
-// ): Promise<void> => {
-//     try {
-//         console.log('Adding result-set to DynamoDB: to' + tableName);
-//         await ddb.send(new PutCommand({
-//             TableName: tableName,
-//             Item: record,
-//         }));
+export const saveRecord = async (
+    tableName: string,
+    record: any
+): Promise<void> => {
+    try {
+        console.log('Adding result-set to DynamoDB: ' + tableName);
+        await ddb.send(new PutCommand({
+            TableName: tableName,
+            Item: record,
+        }));
 
-//         console.log('new record added to table:', tableName);
-//     } catch (err) {
-//         console.error("Error adding results:", err);
-//         throw new Error(`Failed to save results to DynamoDB: ${JSON.stringify(err)}`);
-//     }
-// };
+        console.log('new record added to table:', tableName);
+    } catch (err) {
+        console.error("Error adding results:", err);
+        throw new Error(`Failed to save results to DynamoDB: ${JSON.stringify(err)}`);
+    }
+};
 
-// export const deleteRecord = async (
-//     tableName: string,
-//     record: any
-// ): Promise<void> => {
-//     try {
-//         console.log('Adding record to DynamoDB: to table' + tableName);
-//         await ddb.send(new PutCommand({
-//             TableName: tableName,
-//             Item: record,
-//         }));
+export const deleteRecord = async (
+    tableName: string,
+    key: Record<string, any>
+): Promise<void> => {
+    try {
+        console.log('Deleting record from DynamoDB: ' + tableName);
+        await ddb.send(new DeleteCommand({
+            TableName: tableName,
+            Key: key,
+        }));
 
-//         console.log('new record added to table:', tableName);
-//     } catch (err) {
-//         console.error("Error adding results:", err);
-//         throw new Error(`Failed to save results to DynamoDB: ${JSON.stringify(err)}`);
-//     }
-// };
+        console.log('Record deleted from table:', tableName);
+    } catch (err) {
+        console.error("Error deleting record:", err);
+        throw new Error(`Failed to delete record from DynamoDB: ${JSON.stringify(err)}`);
+    }
+};
+
+export const retrieveAllTableRecord = async (
+    tableName: string
+): Promise<any> => {
+    try {
+        console.log('returning all records from DynamoDB table: ' + tableName);
+        return await ddb.send(new ScanCommand({
+            TableName: tableName
+        }));
+    } catch (err) {
+        console.error("Error adding results:", err);
+        throw new Error(`Failed to save results to DynamoDB: ${JSON.stringify(err)}`);
+    }
+};
 
 export const retrieveScrapeHistory = async (
     userId: any
@@ -63,7 +77,6 @@ export const retrieveScrapeHistory = async (
     } catch (err) {
         console.error("Error retrieving results:", err);
         return [];
-        // throw new Error(`Failed to retrieve results from DynamoDB: ${JSON.stringify(err)}`);
     }
 };
 
@@ -156,8 +169,6 @@ export const retrieveScrapeResult = async (
         
         const result = await ddb.send(new QueryCommand(queryParams));
         
-        // console.log('DynamoDB Query Result:', JSON.stringify(result, null, 2));
-        
         // Filter results by userId on the client side for security
         if (result.Items && result.Items.length > 0) {
             const filteredItems = result.Items.filter(item => 
@@ -237,7 +248,7 @@ export const retrieveUserWebsocket = async (
 
         return records;
     } catch (err) {
-        console.error("Error restrieving user websocket results:", err);
+        console.error("Error retrieving user websocket results:", err);
         return [];
     }
 };

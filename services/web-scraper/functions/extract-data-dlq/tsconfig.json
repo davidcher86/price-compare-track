@@ -9,7 +9,12 @@
     "declaration": false,
     "noEmitOnError": true,
     "incremental": true,
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "shared/*": ["../../../layers/aws-sdk/storage/nodejs/shared/*"],
+      "@commons/*": ["commons/*"],
+      "@shared-commons/*": ["../commons/*"]
+    }
   },
   "include": ["./*.ts", "../../../../layers/**/*.ts", "./../*.ts", "../../commons/*.ts", "../../commons/**/*.ts"],
   "exclude": []

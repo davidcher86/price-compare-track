@@ -2,9 +2,9 @@ import {ScraperInterface} from "../interfaces/ScraperInterface.ts";
 import {ScrapeConfigDataInterface} from "../interfaces/ScrapeConfig.ts";
 import puppeteerCore from "puppeteer-core";
 import process from "node:process";
-import {getSecretValue} from "../../../commons/utils/SecretManager.ts";
-
+import {getSecretValue} from "@shared-commons/utils/SecretManager.ts";
 const chromium = require("@sparticuz/chromium");
+
 const brightDataServices: string[] = process.env.BRIGHT_DATA_SERVICE_ENABLED_LIST?.split(',') ?? [];
 
 class AbstractScrapeHandler {

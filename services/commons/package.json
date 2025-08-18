@@ -1,0 +1,15 @@
+{
+  "name": "shared-commons",
+  "version": "1.0.0",
+  "description": "Shared utilities for price-compare-track services",
+  "main": "index.js",
+  "devDependencies": {
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.864.0",
+    "@aws-sdk/client-dynamodb": "^3.846.0",
+    "@aws-sdk/client-secrets-manager": "^3.846.0",
+    "@aws-sdk/client-sqs": "^3.846.0",
+    "@aws-sdk/lib-dynamodb": "^3.846.0",
+    "@types/node": "^22.14.1",
+    "typescript": "^5.8.3"
+  }
+}

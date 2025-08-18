@@ -3,7 +3,7 @@
   "compilerOptions": {
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "baseUrl": "./",
+    "baseUrl": "../../",
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./",
@@ -12,7 +12,12 @@
     "module": "Node16",
     "moduleResolution": "node16",
     "incremental": true,
-    "tsBuildInfoFile": ".tsbuildinfo"
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "paths": {
+      "shared/*": ["../../../layers/aws-sdk/storage/nodejs/shared/*"],
+      "@commons/*": ["commons/*"],
+      "@shared-commons/*": ["../commons/*"]
+    }
   },
   "include": ["./../*.ts","./*.ts"],
   "exclude": []

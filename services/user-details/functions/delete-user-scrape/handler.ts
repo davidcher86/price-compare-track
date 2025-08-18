@@ -1,4 +1,4 @@
-import {retrieveScrapeResult, deleteScrapeResults} from '../../commons/utils/DynamoDBService'
+import {retrieveScrapeResult, deleteScrapeResults} from '../../../commons/utils/DynamoDBService'
 
 export const deleteScrape = async (event: any) => {
     const body = JSON.parse(event.body);

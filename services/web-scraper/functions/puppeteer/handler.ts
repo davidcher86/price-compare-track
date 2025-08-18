@@ -6,9 +6,9 @@ import {EbayScrapeConfigReader} from "./sourcesScrapeConfigs/Ebay/EbayScrapeConf
 import {AmazonScrapeConfigReader} from "./sourcesScrapeConfigs/Amazon/AmazonScrapeConfigReader.ts";
 import {PuppeteerScrapeService} from "./utils/PuppeteerScrapeService.ts";
 import { v4 as uuid4 } from "uuid";
-import {savePayload, getScrapeHtmlRawResultsBucketName} from "../../commons/utils/S3Service.ts";
-import {getSecretValue} from "../../commons/utils/SecretManager.ts";
-import {sendMessageToQueue, getDlqSqsName, generateDlqSqsPayload, getHtmlRawResultSqsName} from "../../commons/utils/SQSService.ts";
+import {savePayload, getScrapeHtmlRawResultsBucketName} from "@shared-commons/utils/S3Service.ts";
+import {getSecretValue} from "@shared-commons/utils/SecretManager.ts";
+import {sendMessageToQueue, getDlqSqsName, generateDlqSqsPayload, getHtmlRawResultSqsName} from "@shared-commons/utils/SQSService.ts";
 
 export const handleSqsMessage = async (event: any) => {
     console.log('Received SQS event:', JSON.stringify(event));
@@ -91,7 +91,7 @@ const scrape = async (event: any) => {
         }
     } catch (error: ErrorMessage | any) {
         console.error('Error during scraping:', error);
-        await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(event, 'SCRAPE_FAILED', `Error: ${error.message}`));
+        await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(event, 'SCRAPE_FAILED', `Error: ${error}`));
     }
 }
 

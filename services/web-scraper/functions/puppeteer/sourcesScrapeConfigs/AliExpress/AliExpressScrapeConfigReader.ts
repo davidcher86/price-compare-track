@@ -1,5 +1,5 @@
 import {ScrapeConfigReader} from "../abstract/ScrapeConfigReader.ts";
-import config from "./../../../../commons/scrape-source-configs/AliExpressScrapeConfigs.json";
+import config from "@commons/scrape-source-configs/AliExpressScrapeConfigs.json";
 
 export class AliExpressScrapeConfigReader extends ScrapeConfigReader {
 

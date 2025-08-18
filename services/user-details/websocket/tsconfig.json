@@ -3,14 +3,17 @@
   "compilerOptions": {
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "baseUrl": "./",
+    "baseUrl": "../../",
     "sourceMap": true,
     "outDir": "./websocket/dist",
     "declaration": false,
     "noEmitOnError": true,
     "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "@shared-commons/*": ["commons/*"]
+    }
   },
-  "include": ["../commons/**/*.ts","./../*.ts","./*.ts","./../*.json","./*.json"],
+  "include": ["commons/**/*.ts","./../*.ts","./*.ts","./../*.json","./*.json"],
   "exclude": []
 }

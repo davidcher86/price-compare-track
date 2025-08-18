@@ -17,9 +17,7 @@ export const retrievePayload = async (bucketName: string, bucketKey: string) => 
         });
         const payload = await client.send(command);
 
-        // const body = await streamToString(payload.Body as ReadableStream);
         const body = await streamToString(payload.Body as Readable);
-
         return body || '';
     } catch (error) {
         console.error(`Error retrieving payload: ${JSON.stringify(error)}`);

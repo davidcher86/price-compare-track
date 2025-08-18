@@ -1,13 +1,10 @@
-// import { Lambda } from 'aws-sdk';
-import {postToHttpApiGateway} from '../../commons/utils/ApiGatewayService.ts';
-import { handler as notifyClientHandler } from "../functions/notifyClient.ts";
+import {postToHttpApiGateway} from './../../../commons/utils/ApiGatewayService';
+import { handler as notifyClientHandler } from "../functions/notifyClient";
 export const handler = async (event) => {
     try {
-        // console.log('sending');
         const userId = event.headers?.userId;
 
-        const functionName = 'sls-user-details-prod-notifyClient'; // Replace with your actual function name or ARN
-        
+        const functionName = 'sls-user-details-prod-notifyClient';
         const res = process.env.TAGE === 'prod'
             ? await postToHttpApiGateway(functionName, { userId: userId, message: 'Hello from another function!' })
             : await notifyClientHandler({ message: "hhhh", body: JSON.stringify({userId: userId}) }); 

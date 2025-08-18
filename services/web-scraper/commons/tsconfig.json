@@ -8,9 +8,9 @@
     "allowImportingTsExtensions": true,
     "noEmit": true,
     "incremental": true,
-    "baseUrl": "../.",
-    "sourceMap": true,
+    "baseUrl": "../",
+    "sourceMap": true
   },
-  "extends": ["../tsconfig.base.json"],
-  "include": ["./**/*"]
+  "extends": "../tsconfig.base.json",
+  "include": ["**/*"]
 }
