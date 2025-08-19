@@ -1,5 +1,6 @@
 import {SearchBar} from './components/SearchBar';
 import {SearchHistoryList} from './components/SearchHistoryList';
+import {SimpleButton} from './components/Buttons';
 import {SearchResults} from './components/SearchResults';
 import {sendSearchRequest} from "./services/api";
 import { useState, useEffect } from "react";
@@ -135,31 +136,33 @@ export default function PriceCompareHome() {
     }
 
     return (
-        // <div id='main-window' className="flex h-screen w-screen flex-col overflow-clip">
-        <div id='main-window' className="flex h-screen w-screen flex-col">
-            <div id="main-nav-bar" className="flex flex-row justify-between h-20  p-4 border-b border-sky-500">
-                <div id="logo" className="flex  w-10 h-full justify-self-start bg-gray-200">
+        <div id='main-window' className="flex h-screen w-screen flex-col overflow-hidden">
+            <div id="main-nav-bar" className="flex flex-row justify-between h-20 p-4 border-b border-sky-500 flex-shrink-0">
+                <div id="logo" className="flex w-10 h-full justify-self-start bg-gray-200">
                     logo
                 </div>
                 <div className="items-center justify-self-end">
-                    {/* <button className="p-4 bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded-lg">Add to Edge</button> */}
-                    <button className="p-4 text-sm theme-font">Register</button>
-                    <button className="p-4 text-sm theme-font">Sign-In</button>
+                  <SimpleButton label="Register" additionalClasses={'ml-2 mr-2'} onClick={() => console.log('Register clicked')} />
+                  <SimpleButton label="Sign-In" additionalClasses={'ml-2 mr-2'} onClick={() => console.log('Sign-In clicked')} />
                 </div>
             </div>
 
-            <div id="content-component" className="flex flex-row h-full">
+            <div id="content-component" className="flex flex-row flex-1 min-h-0">
                 <SearchHistoryList selectedHistoryItem={selectedHistoryItem} handleSelectedItem={handleSelectedItem} handleRetrieveUserScrpaeHistory={handleRetrieveUserScrpaeHistory} historicalData={historicalData} onSelectScrapeData={handleRetriveScrapeDataResult}/>
-                <div id="earch-scrape-result-content"  className="flex flex-col 0 w-4/5 h-full">
+                <div id="earch-scrape-result-content"  className="flex flex-col w-4/5 flex-1 min-h-0">
 
-                    <div id="scrape-bar-header" className="flex flex-col w-full h-28 m-3.5 justify-center">
+                    <div id="scrape-bar-header" className="flex flex-col w-full mt-2 h-20 justify-center flex-shrink-0">
                       <p className="block text-xl font-large font-semibold mb-4 text-center theme-font ">Little Compare Tool</p>
-                        <p className="block text-xl font-medium mb-4 text-center theme-font">Compare largest online stores - Maximize Your Savings</p>
+                      <p className="block text-xl font-medium text-center theme-font">Compare largest online stores - Maximize Your Savings</p>
                     </div>
                     
-                    <SearchBar onSearch={handleSearch} />
+                    <div className="flex-shrink-0">
+                        <SearchBar onSearch={handleSearch} />
+                    </div>
                     
-                    <SearchResults resultData={scrapeDataScrapeResult}/>
+                    <div className="flex-1 min-h-0">
+                        <SearchResults resultData={scrapeDataScrapeResult}/>
+                    </div>
                 </div>
             </div>
         </div>

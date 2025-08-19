@@ -18,8 +18,8 @@
     @apply border-sky-600 border-2;
 }
 
-.rem-100 {
-    height: 100rem;
+.rem-40 {
+    height: 40rem;
 }
 
 .borders-color-blue {
@@ -45,4 +45,12 @@
 
 .scrape-history-item {
     overflow: clip;
+}
+
+.price-compare-app-wrapper {
+   verflow: clip;
+}
+
+#root {
+    @apply overflow-clip;
 }

@@ -77,14 +77,13 @@ export const SearchBar: React.FC<Props> = ({ onSearch }) => {
     
     
     return (
-        <div id="search-form" className="flex flex-col bg-black-700 w-full rem-100 theme-border">
-            <div id="search-bar" className="flex flex-row h-12 items-center w-3/6 h-18 mt-5 mb-5 mr-auto ml-auto theme-input-frame rounded-2xl">
-                <TextInput className={""} placeholder="Search Stores Online" onChange={handleChangeSearchInput} />
-                <div className="w-5 mr-5"><SearchButton /></div>
+        <div id="search-form" className="flex flex-col bg-black-700 w-full theme-border">
+            <div className="flex flex-row justify-between items-center">
+                <div id="search-bar" className="flex flex-row h-12 items-center w-3/6 h-18 mt-5 mb-5 mr-auto ml-auto theme-input-frame rounded-2xl">
+                    <TextInput className={""} placeholder="Search Stores Online" onChange={handleChangeSearchInput} />
+                    <div className="w-5 mr-5"><SearchButton className="cursor-pointer" onClick={handleSendSearchRequest} /></div>
+                </div>
             </div>
-
-            <button onClick={handleSendSearchRequest} className="p-4 text-sm">Search</button>
-
             <div id="scrape-source-bar" className="flex flex-row justify-center m-4">
                 {stores.map((store, i) => (
                     <div onClick={() => dispatch({ type: 'TOGGLE_SEARCH_RESOURCES', payload: {name: store.name, order: store.order} })} key={i} style={{ opacity: state.checkedSources.some((source: CheckedSource) => source.name === store.name) ? 1 : 0.3 }} className={`flex flex-col items-center bg-gray-500 m-4 w-28 text-center item-borders cursor-pointer`}>

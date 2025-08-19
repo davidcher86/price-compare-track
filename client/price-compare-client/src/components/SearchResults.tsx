@@ -55,9 +55,12 @@ function sourceScrapeDataColumn(item: ScapeSourceData) {
     const scrapeResults = JSON.parse(JSON.parse(item.results));
 
     return (
-        <div id="scrape-source-item" className="flex flex-col overflow-auto w-full h-full items-center">
-            <p className="text-xl text-center w-full theme-font font-bold">{item.source}</p>
-            {scrapeResults.map((item: SourceResultData) => <SourceResults sourceResult={item} />)}
+        <div id="scrape-source-item" className="flex flex-col w-full h-full items-center">
+            <p className="text-xl text-center w-full theme-font font-bold absolute">{item.source}</p>
+            <div className="mt-8 overflow-auto ">
+                {scrapeResults.map((item: SourceResultData) => <SourceResults sourceResult={item} />)}
+            </div>
+        
         </div>
     );
 }
