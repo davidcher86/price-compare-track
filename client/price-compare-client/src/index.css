@@ -51,6 +51,6 @@
    verflow: clip;
 }
 
-#root {
+body {
     @apply overflow-clip;
 }

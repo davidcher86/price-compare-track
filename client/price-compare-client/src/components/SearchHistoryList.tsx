@@ -70,10 +70,12 @@ export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ selectedHi
     }
 
     return (
-        <div id="search-bar"  className="flex flex-col w-1/5 h-full gap-3 theme-border overflow-auto items-center">
+        <div id="search-bar"  className="flex flex-col w-1/5 h-full pl-3 gap-3 theme-border overflow-hidden items-center">
             <YesNoModal isOpen={isModalOpen} onYes={handleModalYes} onNo={handleModalNo} />
-            <p className="text-xl font-normal text-center theme-font pt-5 pb-3">{"search history".toUpperCase()}</p>
-            {historicalData.map((item) => <SearchHistoryItem key={item.key} item={item} selectedHistoryItem={selectedHistoryItem} handleSelectedItem={handleSelectedItem} setItemForDeletion={setItemForDeletion} />)}
+            <p className="text-xl font-normal text-center theme-font h-10 pt-5 pb-3">{"search history".toUpperCase()}</p>
+            <div className="overflow-auto">   
+                {historicalData.map((item) => <SearchHistoryItem key={item.key} item={item} selectedHistoryItem={selectedHistoryItem} handleSelectedItem={handleSelectedItem} setItemForDeletion={setItemForDeletion} />)}
+            </div>
         </div>
     );
 }
@@ -93,17 +95,24 @@ const SearchHistoryItem: React.FC<SearchHistoryItemProps> = ({ item, selectedHis
     const query = item.value.length > 0 ? item.value[0].query : "No query";
 
     return (
-        <div key={item.key} style={(selectedHistoryItem && item.key === selectedHistoryItem.key) ? {backgroundColor: "rgba(248, 225, 168, 1)"} : {backgroundColor: "rgba(153, 191, 245, 1)"} } className="flex flex-row w-90 h-18 w-11/12 shadow-lg item-borders cursor-pointer" onClick={() => handleSelectedItem(item)}>
-            <div className="flex flex-col w-11/12 h-28 justify-start items-start p-2">
-                <p className="flex flex-1 text-xs text-black text-center w-full h-6 theme-font">{scrapeDate}</p>
-                <p className="text-xl font-normal text-center w-full theme-font">{query}</p>
-                <p className="mx-0.5 text-sm font-normal text-left w-full theme-font p-1">{`sources: [${sourcesString}]`}</p>
+        <div key={item.key} style={(selectedHistoryItem && item.key === selectedHistoryItem.key) ? {backgroundColor: "rgba(248, 225, 168, 1)"} : {backgroundColor: "rgba(153, 191, 245, 1)"} } className="flex flex-col w-90 h-18 w-11/12 shadow-lg item-borders cursor-pointer" onClick={() => handleSelectedItem(item)}>
+            <div className="flex flex-row">
+                <div className="flex flex-col w-10/12 justify-start items-start p-2">
+                    <p className="flex text-xs text-black text-center m-1 h-6 theme-font">{scrapeDate}</p>
+                    
+                </div>
+
+                <div className="m-3">
+                    <DeleteIcon className="cursor-pointer" onClick={(e) => {
+                        e.stopPropagation();
+                        setItemForDeletion(item);
+                    }}/>
+                </div>
             </div>
-            <div className="flex justify-end m-3">
-                <DeleteIcon className="cursor-pointer" onClick={(e) => {
-                    e.stopPropagation();
-                    setItemForDeletion(item);
-                }}/>
+            <div className="flex flex-col justify-end">
+                <p className="text-xl font-normal pt-2 pl-2 text-center w-full theme-font">{query}</p>
+
+                <p className="mx-0.5 text-sm font-normal text-left w-full theme-font p-1 m-1">{`sources: [${sourcesString}]`}</p>
             </div>
         </div>
     );
