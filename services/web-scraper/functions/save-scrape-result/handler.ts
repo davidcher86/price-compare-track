@@ -40,9 +40,9 @@ const save = async (event: any) => {
             results: JSON.stringify(rawPayload),
         };
         
-        // await saveRecord(tableName,scrapeResultRecord);
+        await saveRecord(tableName,scrapeResultRecord);
 
-        // await deletePayload(bucketName, bucketKey);
+        await deletePayload(bucketName, bucketKey);
 
         await sendClientNotification(userId, `{"status": "SCRAPE_COMPLETED", "source": "${scrapeInfo.name}"}`);
 
