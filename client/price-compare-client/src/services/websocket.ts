@@ -11,6 +11,10 @@ class WebSocketService {
   private ws: WebSocket | null = null;
   private config: WebSocketConfig | null = null;
 
+  setConfig(config: WebSocketConfig): void {
+    this.config = config;
+  }
+
   connect(config: WebSocketConfig): WebSocket {
     this.config = config;
     

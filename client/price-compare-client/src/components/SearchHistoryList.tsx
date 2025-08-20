@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { retrieveScrapeHistoryList, deleteScrapeRequest } from "src/services/api";
 import { ReactComponent as DeleteIcon } from '../logos/delete-icon.svg';
 import {YesNoModal} from "./Modals";
-import { useToast } from "./Toasts";
+import { useNotification } from "./Notifications";
 import moment from "moment";
 
 interface SearchHistoryListProps {
@@ -23,7 +23,7 @@ interface HistoricalDataValueItem  {
 
 export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ selectedHistoryItem, handleSelectedItem, handleRetrieveUserScrpaeHistory, onSelectScrapeData, historicalData }) => {
 
-    const { addToast } = useToast();
+    const { addNotification } = useNotification();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<any>(null);
 
@@ -47,7 +47,7 @@ export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ selectedHi
             
             // Optionally, you can refresh the history list after deletion
         } catch (error) {
-            addToast("Error deleting scrape history item", "error");
+            addNotification("Error deleting scrape history item", "error");
             console.error('Failed to delete scrape:', error);
         }
     }

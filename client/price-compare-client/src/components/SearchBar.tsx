@@ -5,7 +5,7 @@ import { ReactComponent as EbayLogo } from '../logos/ebay-logo.svg';
 import { ReactComponent as NewEggLogo } from '../logos/newegg-logo.svg';
 import { ReactComponent as AliExpressLogo } from '../logos/aliexpress-logo.svg';
 import { sendSearchRequest } from "src/services/api";
-import { useToast } from "./Toasts";
+import { useNotification } from "./Notifications";
 import TextInput from "./TextInput";
 
 
@@ -64,7 +64,7 @@ function reducer(state: any , action: any) {
 }
 
 export const SearchBar: React.FC<Props> = ({ onSearch }) => {
-    const { addToast } = useToast();
+    const { addNotification } = useNotification();
     const [state, dispatch] = useReducer(reducer, {
         searchBoxText: '',
         checkedSources: [],
@@ -79,9 +79,9 @@ export const SearchBar: React.FC<Props> = ({ onSearch }) => {
     const handleSendSearchRequest = async () => {
         try {
             await sendSearchRequest(process.env.REACT_APP_TMP_USER_ID || '', state.searchBoxText.trim(), state.checkedSources)
-            addToast("Search request sent successfully", "success");
+            addNotification("Search request sent successfully", "success");
         } catch (error) {
-            addToast("Error sending search request", "error");
+            addNotification("Error sending search request", "error");
             console.error('Error sending search request:', error);
         }
     };

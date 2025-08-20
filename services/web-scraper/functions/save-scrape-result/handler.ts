@@ -40,7 +40,7 @@ const save = async (event: any) => {
             results: JSON.stringify(rawPayload),
         };
         
-        await saveRecord(tableName,scrapeResultRecord);
+        // await saveRecord(tableName,scrapeResultRecord);
 
         // await deletePayload(bucketName, bucketKey);
 

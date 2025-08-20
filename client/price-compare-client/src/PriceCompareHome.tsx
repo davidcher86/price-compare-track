@@ -2,12 +2,16 @@ import {SearchBar} from './components/SearchBar';
 import {SearchHistoryList} from './components/SearchHistoryList';
 import {SimpleButton} from './components/Buttons';
 import {SearchResults} from './components/SearchResults';
+import LoadingSpinner from "./components/LoadingSpinner";
 import {sendSearchRequest} from "./services/api";
 import { ReactComponent as AppLogo } from './logos/app-logo.svg';
-import { useToast } from "./components/Toasts";
-import { useState, useEffect } from "react";
+import { useNotification } from "./components/Notifications";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {retrieveScrapeResultsData,retrieveScrapeHistoryList} from "./services/api";
 import webSocketService from "./services/websocket";
+import { useFetchData } from './hooks';
+import { useLoading } from "./components/LoadingSpinner";
+import { log } from 'console';
 
 interface HistoricalDataValueItem  {
   scrapeDate: string,
@@ -22,45 +26,54 @@ interface HistoricalDataItem {
   value: HistoricalDataValueItem[]; // Replace `any` with the actual type of items in the value array
 }
 
+interface ScrapeSuccessNotification {
+  status: string;
+  source?: string; // Replace `any` with the actual type of items in the value array
+}
+
 export default function PriceCompareHome() {
 
-    const { addToast } = useToast();
-    const [scrapeDataScrapeResult, setScrapeDataScrapeResult] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [historicalData, setHistoricalData] = useState<any[]>([]);
-    const [selectedHistoryItem, setSelectedHistoryItem] = useState<HistoricalDataItem | null>(null);
+  const { showLoading, hideLoading } = useLoading();
+  const { data, setData } = useFetchData<HistoricalDataValueItem[]>(() => retrieveScrapeHistoryList(process.env.REACT_APP_TMP_USER_ID || ''), "Fetching Data...", "Error retrieving scrape history", [])
+  // console.log('data2', data);
+  const { addNotification } = useNotification();
+  const [scrapeDataScrapeResult, setScrapeDataScrapeResult] = useState([]);
+  const [selectedHistoryItem, setSelectedHistoryItem] = useState<HistoricalDataItem | null>(null);
 
-    const handleSelectedItem = (item: any) => {
-      // console.log('handleSelectedItem called with item:', item);
-      // console.log('selected', item);
-      setSelectedHistoryItem(item);
+  console.log('data', data);
+  // Use ref to store setData to avoid dependency issues
+  const setDataRef = useRef(setData);
+  setDataRef.current = setData;
+
+  const handleSelectedItem = (item: any) => {
+    setSelectedHistoryItem(item);
   }
 
-    const handleRetrieveUserScrapeHistory = async (userId: string) => {
-        try {
-          const items = await retrieveScrapeHistoryList(process.env.REACT_APP_TMP_USER_ID || '');
-
-          const grouped = items.reduce((acc: any, item: any) => {
-              if (!acc[item.scrapeRequestId]) {
-                acc[item.scrapeRequestId] = [];
-              }
-              acc[item.scrapeRequestId].push(item);
-              return acc;
-          }, {} as Record<string, any[]>);
-
-          const output = Object.entries(grouped).map(([key, value]) => ({
-              key,
-              value: value as HistoricalDataValueItem[]
-          }));
-          console.log('retrieveScrapeHistoryList', output);
-          setHistoricalData(output);
-          return output;
-        } catch (error) {
-          addToast("Error retrieving scrape history", "error");
-          console.error('Error retrieving scrape history:', error);
-          return [];
-        }
+  const handleNotification = (notification: ScrapeSuccessNotification) => {
+    switch (notification.status) {
+      case "SCRAPE_COMPLETED":
+        addNotification(`Scrape completed successfully for ${notification.source}`, "success");
+        console.log("Scrape successful:", notification);
+        break;
+      default:
+        console.warn("Unknown notification status:", notification);
     }
+  };
+
+  const handleRetrieveUserScrapeHistory = useCallback(async (userId: string) => {
+    try {
+      showLoading("Retrieving data...");
+      const items = await retrieveScrapeHistoryList(process.env.REACT_APP_TMP_USER_ID || '');
+      setData(items);
+      return items;
+    } catch (error) {
+      addNotification("Error retrieving scrape history", "error");
+      console.error('Error retrieving scrape history:', error);
+      return [];
+    } finally {
+      hideLoading();
+    }
+  }, [showLoading, setData, addNotification, hideLoading]);
 
     useEffect(() => {
       if (selectedHistoryItem !== null && selectedHistoryItem.key !==undefined) {
@@ -69,21 +82,27 @@ export default function PriceCompareHome() {
     }, [selectedHistoryItem]);
 
     useEffect(() => {
-        handleRetrieveUserScrapeHistory(process.env.REACT_APP_TMP_USER_ID || '');
-        
         const userId = process.env.REACT_APP_TMP_USER_ID || '';
         const domain = process.env.REACT_APP_WEBSOCKET_DOMAIN || '';
 
         webSocketService.connect({
           userId,
           domain,
-          onMessage: (data) => {
-            handleRetrieveUserScrapeHistory(userId)
-              .then((records) => {
-                if (records.length > 0) {
-                  setSelectedHistoryItem(records[0]);
-                }
-              });
+          onMessage: async (data) => {
+            console.log('WebSocket message received, refreshing data...', data);
+            try {
+              const notificationBody: ScrapeSuccessNotification = JSON.parse(data);
+              // Fetch fresh data without showing loading spinner (to avoid infinite loop)
+              const freshItems = await retrieveScrapeHistoryList(process.env.REACT_APP_TMP_USER_ID || '');
+              // Update the data state with fresh items from WebSocket notification
+              setDataRef.current(freshItems);
+              handleNotification(notificationBody);
+              if (freshItems.length > 0) {
+                setSelectedHistoryItem(freshItems[0]);
+              }
+            } catch (error) {
+              console.error('Error updating data from WebSocket:', error);
+            }
           }
         });
 
@@ -92,27 +111,26 @@ export default function PriceCompareHome() {
           cleanupBeforeUnload();
           webSocketService.disconnect();
         };
-      }, []);
+      }, []); // Empty dependency array - WebSocket should only connect once
 
     const handleSearch = async (scrapeRequestId: string) => {
-        setIsLoading(true);
         try {
           await retrieveScrapeResultsData(process.env.REACT_APP_TMP_USER_ID || '', scrapeRequestId);
         } catch (error) {
-          addToast("Error retrieving scrape results", "error");
+          addNotification("Error retrieving scrape results", "error");
           console.error('Error retrieving scrape results:', error);
         } finally {
-          setIsLoading(false);
+          // setIsLoading(false);
         }
     }
 
     const handleRetrieveScrapeDataResult = async (scrapeRequestId: string) => {
-        setIsLoading(true);
+        // setIsLoading(true);
         const items = await retrieveScrapeResultsData(process.env.REACT_APP_TMP_USER_ID || '', scrapeRequestId);
         console.log('handleRetriveScrapeDataResult', items);
 
         setScrapeDataScrapeResult(items);
-        setIsLoading(false);
+        // setIsLoading(false);
     }
 
     return (
@@ -130,7 +148,7 @@ export default function PriceCompareHome() {
             </div>
 
             <div id="content-component" className="flex flex-row flex-1 min-h-0">
-                <SearchHistoryList selectedHistoryItem={selectedHistoryItem} handleSelectedItem={handleSelectedItem} handleRetrieveUserScrpaeHistory={handleRetrieveUserScrapeHistory} historicalData={historicalData} onSelectScrapeData={handleRetrieveScrapeDataResult}/>
+                <SearchHistoryList selectedHistoryItem={selectedHistoryItem} handleSelectedItem={handleSelectedItem} handleRetrieveUserScrpaeHistory={handleRetrieveUserScrapeHistory} historicalData={data ? data : []} onSelectScrapeData={handleRetrieveScrapeDataResult}/>
                 <div id="earch-scrape-result-content"  className="flex flex-col w-4/5 flex-1 min-h-0">
 
                     <div id="scrape-bar-header" className="flex flex-col w-full mt-2 h-20 justify-center flex-shrink-0">

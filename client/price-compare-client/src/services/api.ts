@@ -59,9 +59,17 @@ export const sendSearchRequest = async (userId: string, query: string, sources: 
   return res.data;
 };
 
+interface HistoricalDataValueItem  {
+  scrapeDate: string,
+  source: string,
+  scrapeRequestId: string,
+  query: string,
+  userId: string
+}
+
 export const retrieveScrapeHistoryList = async (userId: string): Promise<any> => {
     const URI = `${process.env.REACT_APP_USER_DETAILS_SERVICE_HOST}${process.env.REACT_APP_USER_DETAILS_SERVICE_USERHISTORY_ENDPOINT || "/search-history"}`;
-
+  console.log(`Retrieving scrape history for userId: ${userId}`);
     if (!URI) {
       throw new Error("URI base URL is not defined");
     }
@@ -75,7 +83,21 @@ export const retrieveScrapeHistoryList = async (userId: string): Promise<any> =>
       throw new Error("Search request failed");
     }
   
-    return await res.json();
+    const body = await res.json();
+    const grouped = body.reduce((acc: any, item: any) => {
+          if (!acc[item.scrapeRequestId]) {
+            acc[item.scrapeRequestId] = [];
+          }
+          acc[item.scrapeRequestId].push(item);
+          return acc;
+      }, {} as Record<string, any[]>);
+
+      const output = Object.entries(grouped).map(([key, value]) => ({
+          key,
+          value: value as HistoricalDataValueItem[]
+      }));
+
+    return output;
 };
 
 export const retrieveScrapeResultsData = async (userId: string, scrapeRequestId: string): Promise<any> => {
