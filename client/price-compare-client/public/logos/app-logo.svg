@@ -1,0 +1,28 @@
+<svg width="90" height="45" viewBox="0 0 900 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title>YPCT - Price Compare And Track Logo</title>
+  <desc>Minimal cropped logo with a green price tag and teal checkmark, wordmark YPCT, and tagline. Transparent background.</desc>
+
+  <!-- ICON: Price tag + checkmark -->
+  <g transform="translate(80,90) scale(0.75)">
+    <path d="M140 10 h160 a20 20 0 0 1 20 20 v130 a20 20 0 0 1-6 14 l-90 90 a30 30 0 0 1-42 0 L46 277 a30 30 0 0 1-9-21 V30 a20 20 0 0 1 20-20 z"
+          fill="#10B981"/>
+    <circle cx="290" cy="60" r="10" fill="#FFFFFF"/>
+    <text x="200" y="135" text-anchor="middle"
+          font-family="Inter, Poppins, 'Segoe UI', Helvetica, Arial, sans-serif"
+          font-weight="800" font-size="96" fill="#FFFFFF">$</text>
+    <path d="M40 250 l60 60 c6 6 16 6 22 0 l140-140 c6-6 6-16 0-22 l-8-8 c-6-6-16-6-22 0 L112 264 70 222 c-6-6-16-6-22 0 l-8 8 c-6 6-6 16 0 22z"
+          fill="#14B8A6"/>
+  </g>
+
+  <!-- WORDMARK -->
+  <g transform="translate(400,175) scale(0.75)">
+    <text x="0" y="0"
+          font-family="Inter, Poppins, 'Segoe UI', Helvetica, Arial, sans-serif"
+          font-weight="800" font-size="144" fill="#0F2A45" letter-spacing="4">YPCT</text>
+    <text x="0" y="90"
+          font-family="Inter, Poppins, 'Segoe UI', Helvetica, Arial, sans-serif"
+          font-weight="700" font-size="44" fill="#0F2A45" letter-spacing="2">
+      PRICE COMPARE &amp; TRACK
+    </text>
+  </g>
+</svg>

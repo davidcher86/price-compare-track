@@ -1,10 +1,11 @@
-import React, { ReactNode, useState, useReducer } from "react";
+import React, { ReactNode, useState, useReducer, useEffect } from "react";
 import { ReactComponent as SearchButton } from '../logos/search-button.svg';
 import { ReactComponent as AmazonLogo } from '../logos/amazon-logo.svg';
 import { ReactComponent as EbayLogo } from '../logos/ebay-logo.svg';
 import { ReactComponent as NewEggLogo } from '../logos/newegg-logo.svg';
 import { ReactComponent as AliExpressLogo } from '../logos/aliexpress-logo.svg';
 import { sendSearchRequest } from "src/services/api";
+import { useToast } from "./Toasts";
 import TextInput from "./TextInput";
 
 
@@ -37,6 +38,8 @@ function reducer(state: any , action: any) {
     switch (action.type) {
         case 'SET_SEARCH_BOX_TEXT':
             return { ...state, searchBoxText: action.payload };
+        case 'SET_VALID_REQUEST':
+            return { ...state, validRequest: action.payload };
         case 'TOGGLE_SEARCH_RESOURCES': {
             const sourceId = action.payload.name;
 
@@ -61,14 +64,26 @@ function reducer(state: any , action: any) {
 }
 
 export const SearchBar: React.FC<Props> = ({ onSearch }) => {
+    const { addToast } = useToast();
     const [state, dispatch] = useReducer(reducer, {
         searchBoxText: '',
         checkedSources: [],
+        validRequest: false
     });
 
-    // console.log('SearchBar state: ' + JSON.stringify(state));
+    useEffect(() => {
+        const isValid = state.searchBoxText.trim() !== '' && state.checkedSources.length > 0;
+        dispatch({ type: 'SET_VALID_REQUEST', payload: isValid });
+    }, [state.searchBoxText, state.checkedSources]);
+
     const handleSendSearchRequest = async () => {
-        const res = await sendSearchRequest(process.env.REACT_APP_TMP_USER_ID || '', state.searchBoxText.trim(), state.checkedSources)
+        try {
+            await sendSearchRequest(process.env.REACT_APP_TMP_USER_ID || '', state.searchBoxText.trim(), state.checkedSources)
+            addToast("Search request sent successfully", "success");
+        } catch (error) {
+            addToast("Error sending search request", "error");
+            console.error('Error sending search request:', error);
+        }
     };
 
     const handleChangeSearchInput = async (value: string) => {
@@ -81,7 +96,7 @@ export const SearchBar: React.FC<Props> = ({ onSearch }) => {
             <div className="flex flex-row justify-between items-center">
                 <div id="search-bar" className="flex flex-row h-12 items-center w-3/6 h-18 mt-5 mb-5 mr-auto ml-auto theme-input-frame rounded-2xl">
                     <TextInput className={""} placeholder="Search Stores Online" onChange={handleChangeSearchInput} />
-                    <div className="w-5 mr-5"><SearchButton className="cursor-pointer" onClick={handleSendSearchRequest} /></div>
+                    <div className="w-5 mr-5"><SearchButton className={state.validRequest ? `cursor-pointer` : `cursor-not-allowed pointer-events-none opacity-30`} onClick={handleSendSearchRequest} /></div>
                 </div>
             </div>
             <div id="scrape-source-bar" className="flex flex-row justify-center m-4">

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { retrieveScrapeHistoryList, deleteScrapeRequest } from "src/services/api";
 import { ReactComponent as DeleteIcon } from '../logos/delete-icon.svg';
 import {YesNoModal} from "./Modals";
+import { useToast } from "./Toasts";
 import moment from "moment";
 
 interface SearchHistoryListProps {
@@ -22,6 +23,7 @@ interface HistoricalDataValueItem  {
 
 export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ selectedHistoryItem, handleSelectedItem, handleRetrieveUserScrpaeHistory, onSelectScrapeData, historicalData }) => {
 
+    const { addToast } = useToast();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<any>(null);
 
@@ -45,6 +47,7 @@ export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ selectedHi
             
             // Optionally, you can refresh the history list after deletion
         } catch (error) {
+            addToast("Error deleting scrape history item", "error");
             console.error('Failed to delete scrape:', error);
         }
     }
@@ -95,7 +98,7 @@ const SearchHistoryItem: React.FC<SearchHistoryItemProps> = ({ item, selectedHis
     const query = item.value.length > 0 ? item.value[0].query : "No query";
 
     return (
-        <div key={item.key} style={(selectedHistoryItem && item.key === selectedHistoryItem.key) ? {backgroundColor: "rgba(248, 225, 168, 1)"} : {backgroundColor: "rgba(153, 191, 245, 1)"} } className="flex flex-col w-90 h-18 w-11/12 shadow-lg item-borders cursor-pointer" onClick={() => handleSelectedItem(item)}>
+        <div key={item.key} style={(selectedHistoryItem && item.key === selectedHistoryItem.key) ? {backgroundColor: "rgba(248, 225, 168, 1)"} : {backgroundColor: "rgba(153, 191, 245, 1)"} } className="flex flex-col w-90 h-18 w-11/12 shadow-lg item-borders cursor-pointer mt-1 mb-1" onClick={() => handleSelectedItem(item)}>
             <div className="flex flex-row">
                 <div className="flex flex-col w-10/12 justify-start items-start p-2">
                     <p className="flex text-xs text-black text-center m-1 h-6 theme-font">{scrapeDate}</p>
