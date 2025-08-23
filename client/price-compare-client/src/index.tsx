@@ -5,6 +5,7 @@ import reportWebVitals from './reportWebVitals';
 import PriceCompareHome from "./PriceCompareHome";
 import { NotificationProvider } from './components/Notifications';
 import { LoadingSpinnerProvider } from "./components/LoadingSpinner";
+import { PopUpProvider } from './components/Modals';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -13,9 +14,11 @@ root.render(
   // <React.StrictMode>
 
   <LoadingSpinnerProvider>
-    <NotificationProvider>
-      <PriceCompareHome />
-    </NotificationProvider>
+    <PopUpProvider>
+      <NotificationProvider>
+        <PriceCompareHome />
+      </NotificationProvider>
+    </PopUpProvider>  
   </LoadingSpinnerProvider>
   // </React.StrictMode>
 );

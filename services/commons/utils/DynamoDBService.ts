@@ -1,4 +1,4 @@
-import {DynamoDBClient, DeleteItemCommand} from "@aws-sdk/client-dynamodb";
+import {DynamoDBClient, DeleteItemCommand, PutItemCommand} from "@aws-sdk/client-dynamodb";
 import {DynamoDBDocumentClient, PutCommand, ScanCommand, QueryCommand, BatchWriteCommand, DeleteCommand} from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({ region: process.env.REGION });
@@ -270,5 +270,78 @@ export const deleteUserWebesocket = async (
     } catch (err) {
         console.error("Error deleting records:", err);
         throw new Error(`Failed to delete records from DynamoDB table: ${process.env.WS_CONNECTIONS_TABLE_NAME}`);
+    }
+};
+
+interface PriceTrackItem {
+    id: string;
+    userId: string;
+    source: string;
+    img: string;
+    scrapeEngine?: string;
+    createDt: string;
+    iteration: number;
+    iterationType: string;
+    iterationStart: string;
+    enabled: string; // This will be converted to "true"/"false" string when stored in DynamoDB
+    href?: string;
+    name?: string;
+}
+
+const getPriceTrackScheduledItemsTableName = () => {
+    return process.env.STAGE === 'prod'
+            ? (process.env.PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME || '')
+            : "scheduled-price-tracks-prod";
+};
+
+export const addPriceTrackRecord = async (
+    priceTrackItem: PriceTrackItem
+): Promise<any> => {
+    try {
+        const tableName = getPriceTrackScheduledItemsTableName();
+
+        console.log('adding new price track item to DynamoDB table: ' + tableName);
+        
+        // Convert boolean to string for DynamoDB GSI compatibility (S type)
+        const item = {
+            ...priceTrackItem,
+            enabled: priceTrackItem.enabled ? "true" : "false"
+        };
+        
+        await ddb.send(new PutCommand({
+            TableName: tableName,
+            Item: item,
+        }));
+
+        console.log('new record added to table:', tableName);
+    } catch (err) {
+        console.error("Full error details:", err);
+        throw new Error(`Failed to add new price track results from DynamoDB: ${JSON.stringify(err)}`);
+    }
+};
+
+export const retrievePriceTrackScheduledItems = async (
+    userId: any
+): Promise<any> => {
+    try {
+        const tableName = process.env.PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME || '';
+        console.log('returning all records from DynamoDB table: ' + tableName + ' userId: ' + userId);
+        return await ddb.send(new QueryCommand({
+            TableName: tableName,
+            IndexName: "user-id-index", // Specify the GSI name
+            KeyConditionExpression: "userId = :userId", // Query condition
+            ExpressionAttributeValues: {
+                ":userId": userId, // Bind the value for userId
+            },
+            // ProjectionExpression: "scrapeRequestId, userId, #query, #source, scrapeDate, endScrapeDt, startScrapeDt",
+            // ExpressionAttributeNames: {
+            //     "#query": "query", // Alias for the reserved keyword
+            //     "#source": "source",
+            // },
+            ScanIndexForward: false,
+        }));
+    } catch (err) {
+        console.error("Error retrieving results:", err);
+        return [];
     }
 };

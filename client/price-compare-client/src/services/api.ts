@@ -142,10 +142,49 @@ export const deleteScrapeRequest = async (userId: string, scrapeRequestId: strin
         },
         body: JSON.stringify({ payload: { scrapeRequestId } })
     });
-
+    
     if (!response.ok) {
       return false;
     }
 
     return true;
+};
+
+interface PriceTrackItem {
+    source: string;
+    name: string;
+    scrapeEngine?: string;
+    iteration: number;
+    img: string;
+    iterationType: string;
+    iterationStart: string;
+    href: string;
+    enabled: string;
+}
+
+export const addItemPriceTrack = async (userId: string, priceTrackItem: PriceTrackItem): Promise<any> => {
+    // const payload: ScrapeHDataResult = {
+    //     scrapeRequestId: scrapeRequestId,
+    // };
+
+    const URI = `${process.env.REACT_APP_PRICE_TRACK_SERVICE_HOST}${process.env.REACT_APP_PRICE_TRACK_ADD_SCHEDULED_ITEM_ENDPOINT}`;
+
+    if (!URI) {
+      throw new Error("URI base URL is not defined");
+    }
+    console.log(JSON.stringify({ priceTrackItem }));
+
+    const res = await fetch(URI, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "userId": userId },
+      body: JSON.stringify({ priceTrackItem }),
+    });
+
+    // console.log('request body: ' + JSON.stringify({ payload }));
+    // if (!res.ok) {
+    //   return [];
+    //   // throw new Error("Scrape data result request failed");
+    // }
+
+    return await res.json();
 };

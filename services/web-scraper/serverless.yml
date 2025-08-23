@@ -1,9 +1,7 @@
 org: davidcher
 service: web-scraper
 
-
 frameworkVersion: '4'
-
 
 provider:
   name: aws

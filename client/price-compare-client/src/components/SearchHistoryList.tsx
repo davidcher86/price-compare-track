@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { retrieveScrapeHistoryList, deleteScrapeRequest } from "src/services/api";
 import { ReactComponent as DeleteIcon } from '../logos/delete-icon.svg';
-import {YesNoModal} from "./Modals";
+import { usePopUp } from './Modals';
 import { useNotification } from "./Notifications";
 import moment from "moment";
 
@@ -23,32 +23,47 @@ interface HistoricalDataValueItem  {
 
 export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ selectedHistoryItem, handleSelectedItem, handleRetrieveUserScrpaeHistory, onSelectScrapeData, historicalData }) => {
 
+    const { openModal } = usePopUp();
     const { addNotification } = useNotification();
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [itemToDelete, setItemToDelete] = useState<any>(null);
-
-    const setItemForDeletion = (item: any) => {
-        setItemToDelete(item);  
-        setIsModalOpen(true);
-    }
 
     const handleDeleteScrape = async (item: any) => {
         const scrapeRequestId = item.key;
         const userId = process.env.REACT_APP_TMP_USER_ID || '';
         
         try {
-            console.log(`Deleting scrape with ID: ${scrapeRequestId} for user: ${userId}`);
-            const requestSuccess = await deleteScrapeRequest(userId, scrapeRequestId);
-
-            console.log('Scrape deleted successfully for user:', userId, 'and scrapeRequestId:', scrapeRequestId);
-
-            if (requestSuccess) 
-                await handleRetrieveUserScrpaeHistory(process.env.REACT_APP_TMP_USER_ID || '');
-            
-            // Optionally, you can refresh the history list after deletion
+            openModal({
+                title: "Delete Item",
+                message: "Are you sure you want to delete this item?",
+                onYes: () => {
+                    // Handle delete logic in a separate async function
+                    (async () => {
+                        try {
+                            // Actually delete the scrape
+                            console.log(`Deleting scrape with ID: ${scrapeRequestId} for user: ${userId}`);
+                            const requestSuccess = await deleteScrapeRequest(userId, scrapeRequestId);
+                            
+                            console.log('Scrape deleted successfully for user:', userId, 'and scrapeRequestId:', scrapeRequestId);
+                            
+                            if (requestSuccess) {
+                                await handleRetrieveUserScrpaeHistory(userId);
+                                addNotification("Scrape history item deleted successfully");
+                            } else {
+                                addNotification("Error deleting scrape history item", "error");
+                            }
+                        } catch (deleteError) {
+                            addNotification("Error deleting scrape history item", "error");
+                            console.error('Failed to delete scrape:', deleteError);
+                        }
+                    })();
+                },
+                onNo: () => {
+                    // Handle cancel (optional, modal will close automatically)
+                    console.log('Delete cancelled');
+                }
+            });
         } catch (error) {
-            addNotification("Error deleting scrape history item", "error");
-            console.error('Failed to delete scrape:', error);
+            addNotification("Error opening delete confirmation", "error");
+            console.error('Failed to open modal:', error);
         }
     }
 
@@ -56,28 +71,14 @@ export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ selectedHi
         if (selectedHistoryItem) {
             onSelectScrapeData(selectedHistoryItem.key);
         }
-    }, [selectedHistoryItem]);
-
-    const handleModalYes = async (): Promise<void> => {
-        console.log('Modal Yes clicked for item:', itemToDelete);
-        if (itemToDelete) {
-            await handleDeleteScrape(itemToDelete);
-        }
-        setItemToDelete(null);  
-        setIsModalOpen(false);
-    }
-
-    const handleModalNo = (): void => {
-        setItemToDelete(null);  
-        setIsModalOpen(false);
-    }
+    }, [selectedHistoryItem, onSelectScrapeData]);
 
     return (
         <div id="search-bar"  className="flex flex-col w-1/5 h-full pl-3 gap-3 theme-border overflow-hidden items-center">
-            <YesNoModal isOpen={isModalOpen} onYes={handleModalYes} onNo={handleModalNo} />
+            {/* <YesNoModal isOpen={isModalOpen} onYes={handleModalYes} onNo={handleModalNo} /> */}
             <p className="text-xl font-normal text-center theme-font h-10 pt-5 pb-3">{"search history".toUpperCase()}</p>
             <div className="overflow-auto">   
-                {historicalData.map((item) => <SearchHistoryItem key={item.key} item={item} selectedHistoryItem={selectedHistoryItem} handleSelectedItem={handleSelectedItem} setItemForDeletion={setItemForDeletion} />)}
+                {historicalData.map((item) => <SearchHistoryItem key={item.key} item={item} selectedHistoryItem={selectedHistoryItem} handleSelectedItem={handleSelectedItem} handleDeleteScrape={handleDeleteScrape} />)}
             </div>
         </div>
     );
@@ -87,10 +88,10 @@ interface SearchHistoryItemProps {
     item: any;
     selectedHistoryItem: any;
     handleSelectedItem: (item: any) => void;
-    setItemForDeletion: (item: any) => void;
+    handleDeleteScrape: (item: any) => Promise<void>;
 }
 
-const SearchHistoryItem: React.FC<SearchHistoryItemProps> = ({ item, selectedHistoryItem, handleSelectedItem, setItemForDeletion }) => {
+const SearchHistoryItem: React.FC<SearchHistoryItemProps> = ({ item, selectedHistoryItem, handleSelectedItem, handleDeleteScrape }) => {
     const sourcesString = item.value.map((entry: { source: string; }) => entry.source).join(", ");
     const scrapeDt = item.value.length > 0 ? item.value[0].scrapeDate : null;
 
@@ -108,7 +109,7 @@ const SearchHistoryItem: React.FC<SearchHistoryItemProps> = ({ item, selectedHis
                 <div className="m-3">
                     <DeleteIcon className="cursor-pointer" onClick={(e) => {
                         e.stopPropagation();
-                        setItemForDeletion(item);
+                        handleDeleteScrape(item);
                     }}/>
                 </div>
             </div>

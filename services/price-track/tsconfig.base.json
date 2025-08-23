@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "strict": true,
+    "rootDir": "../",
+    "baseUrl": "./",
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": true,
+    "noEmitOnError": true,
+    "incremental": true,
+    "moduleResolution": "Node16",
+    "module": "Node16"
+  },
+  "paths": {
+    "@commons/*": ["commons/**"],
+    "@shared-commons/*": ["../commons/**"]
+  },
+  "include": ["./**/*.ts", 
+              "../../layers/**/*.ts", 
+              "functions/add-price-track/**/*.ts", 
+              "functions/delete-price-track/**/*.ts", 
+              "functions/update-price-track/**/*.ts", 
+              "commons/**/*.ts",
+              "../commons/**/*.ts"]
+}

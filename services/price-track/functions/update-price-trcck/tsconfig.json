@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "baseUrl": "../../",
+    "sourceMap": true,
+    "outDir": "./functions/update-price-track",
+    "declaration": false,
+    "noEmitOnError": true,
+    "incremental": true,
+    "noEmit": true
+  },
+  "include": ["./*.ts", "../../../../layers/**/*.ts", "./../*.ts", "../../commons/*.ts", "../../../../commons/**/*.ts"],
+  "exclude": []
+}

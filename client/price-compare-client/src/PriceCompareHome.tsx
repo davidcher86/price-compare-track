@@ -37,7 +37,7 @@ export default function PriceCompareHome() {
   const { data, setData } = useFetchData<HistoricalDataValueItem[]>(() => retrieveScrapeHistoryList(process.env.REACT_APP_TMP_USER_ID || ''), "Fetching Data...", "Error retrieving scrape history", [])
   // console.log('data2', data);
   const { addNotification } = useNotification();
-  const [scrapeDataScrapeResult, setScrapeDataScrapeResult] = useState([]);
+  const [scrapeDataResult, setScrapeDataResult] = useState([]);
   const [selectedHistoryItem, setSelectedHistoryItem] = useState<HistoricalDataItem | null>(null);
 
   console.log('data', data);
@@ -49,37 +49,84 @@ export default function PriceCompareHome() {
     setSelectedHistoryItem(item);
   }
 
-  const handleNotification = (notification: ScrapeSuccessNotification) => {
+  const handleNotification = useCallback((notification: ScrapeSuccessNotification) => {
     switch (notification.status) {
       case "SCRAPE_COMPLETED":
         addNotification(`Scrape completed successfully for ${notification.source}`, "success");
-        console.log("Scrape successful:", notification);
         break;
       default:
         console.warn("Unknown notification status:", notification);
     }
-  };
+  }, [addNotification]);
+
+  // Use refs to store stable references to avoid dependency issues
+  const showLoadingRef = useRef(showLoading);
+  const hideLoadingRef = useRef(hideLoading);
+  const addNotificationRef = useRef(addNotification);
+  
+  // Update refs on each render
+  showLoadingRef.current = showLoading;
+  hideLoadingRef.current = hideLoading;
+  addNotificationRef.current = addNotification;
 
   const handleRetrieveUserScrapeHistory = useCallback(async (userId: string) => {
+    console.log('handleRetrieveUserScrapeHistory called');
     try {
-      showLoading("Retrieving data...");
+      showLoadingRef.current("Retrieving data...");
       const items = await retrieveScrapeHistoryList(process.env.REACT_APP_TMP_USER_ID || '');
       setData(items);
       return items;
     } catch (error) {
-      addNotification("Error retrieving scrape history", "error");
+      addNotificationRef.current("Error retrieving scrape history", "error");
       console.error('Error retrieving scrape history:', error);
       return [];
     } finally {
-      hideLoading();
+      hideLoadingRef.current();
     }
-  }, [showLoading, setData, addNotification, hideLoading]);
+  }, [setData]); // Only depend on setData which should be stable
+
+  const handleRetrieveScrapeDataResult = useCallback(async (scrapeRequestId: string) => {
+      console.log('handleRetrieveScrapeDataResult called with ID:', scrapeRequestId);
+      try{
+          showLoadingRef.current("Retrieving data...");
+          const items = await retrieveScrapeResultsData(process.env.REACT_APP_TMP_USER_ID || '', scrapeRequestId);
+          console.log('handleRetriveScrapeDataResult', items);
+
+          setScrapeDataResult(items);
+      } catch (error) {
+          addNotificationRef.current("Error retrieving scrape results", "error");
+          console.error('Error retrieving scrape results:', error);
+      } finally {
+          hideLoadingRef.current();
+      }
+  }, []); // No dependencies - function is now stable
+
+    // Extract the key to avoid unnecessary re-renders
+    const selectedItemKey = selectedHistoryItem?.key;
+    
+    // Add ref to track previous key to prevent duplicate calls
+    const prevKeyRef = useRef<string | undefined>(undefined);
 
     useEffect(() => {
-      if (selectedHistoryItem !== null && selectedHistoryItem.key !==undefined) {
-          handleRetrieveScrapeDataResult(selectedHistoryItem.key);
+      console.log('useEffect triggered - selectedItemKey:', selectedItemKey, 'prevKey:', prevKeyRef.current);
+      if (selectedItemKey && selectedItemKey !== prevKeyRef.current) {
+          console.log('Calling handleRetrieveScrapeDataResult for key:', selectedItemKey);
+          handleRetrieveScrapeDataResult(selectedItemKey);
+          prevKeyRef.current = selectedItemKey;
       }
-    }, [selectedHistoryItem]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedItemKey]); // Removed handleRetrieveScrapeDataResult dependency since it's now stable
+
+    const handleSearch = async (scrapeRequestId: string) => {
+        try {
+          await retrieveScrapeResultsData(process.env.REACT_APP_TMP_USER_ID || '', scrapeRequestId);
+        } catch (error) {
+          addNotification("Error retrieving scrape results", "error");
+          console.error('Error retrieving scrape results:', error);
+        } finally {
+          // setIsLoading(false);
+        }
+    }
 
     useEffect(() => {
         const userId = process.env.REACT_APP_TMP_USER_ID || '';
@@ -111,27 +158,7 @@ export default function PriceCompareHome() {
           cleanupBeforeUnload();
           webSocketService.disconnect();
         };
-      }, []); // Empty dependency array - WebSocket should only connect once
-
-    const handleSearch = async (scrapeRequestId: string) => {
-        try {
-          await retrieveScrapeResultsData(process.env.REACT_APP_TMP_USER_ID || '', scrapeRequestId);
-        } catch (error) {
-          addNotification("Error retrieving scrape results", "error");
-          console.error('Error retrieving scrape results:', error);
-        } finally {
-          // setIsLoading(false);
-        }
-    }
-
-    const handleRetrieveScrapeDataResult = async (scrapeRequestId: string) => {
-        // setIsLoading(true);
-        const items = await retrieveScrapeResultsData(process.env.REACT_APP_TMP_USER_ID || '', scrapeRequestId);
-        console.log('handleRetriveScrapeDataResult', items);
-
-        setScrapeDataScrapeResult(items);
-        // setIsLoading(false);
-    }
+      }, [handleNotification]); // Include handleNotification dependency
 
     return (
         <div id='main-window' className="flex h-screen w-screen flex-col overflow-hidden">
@@ -160,7 +187,7 @@ export default function PriceCompareHome() {
                     </div>
                     
                     <div className="flex-1 min-h-0">
-                        <SearchResults resultData={scrapeDataScrapeResult}/>
+                        <SearchResults resultData={scrapeDataResult}/>
                     </div>
                 </div>
             </div>

@@ -23,7 +23,7 @@ custom:
   RESULT_DB_TABLE_NAME: ${env:RESULT_DB_TABLE_NAME}-${self:provider.stage}
   S3_RAW_HTML_RESULT_BUCKET_NAME: ${env:S3_RAW_HTML_RESULT_BUCKET_NAME}-${self:provider.stage}
   S3_EXTRACTED_DATA_BUCKET_NAME: ${env:S3_EXTRACTED_DATA_BUCKET_NAME}-${self:provider.stage}
-
+  PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME: ${env:PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME}-${self:provider.stage}
 
 resources:
   Resources:
@@ -64,6 +64,43 @@ resources:
               Action: s3:GetObject
               Resource: !Join ['', ['arn:aws:s3:::', !Ref ReactAppBucket, '/*']]
 
+    PriceTrackScheduledScrapesTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: ${self:custom.PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: enabled
+            AttributeType: S
+          - AttributeName: createdDt
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: user-id-index
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+              - AttributeName: createdDt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: user-enabled-index
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+              - AttributeName: enabled
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
+
+      
     WsScrapeStatusConnectionsTable:
       Type: AWS::DynamoDB::Table
       DeletionPolicy: Retain

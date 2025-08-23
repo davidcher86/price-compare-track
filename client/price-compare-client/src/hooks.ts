@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLoading } from "./components/LoadingSpinner";
+import { useNotification } from "./components/Notifications";
 
 
 export const useFetchData = <T>(
@@ -8,6 +9,7 @@ export const useFetchData = <T>(
   failNotification: string,
   dependencies: any[] = []
 ) => {
+  const { addNotification } = useNotification();
   const { showLoading, hideLoading } = useLoading();
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
@@ -22,7 +24,10 @@ export const useFetchData = <T>(
         if (isMounted) setData(result);
       })
       .catch(err => {
-        if (isMounted) setError(err);
+        if (isMounted) {
+          setError(err);
+          addNotification(failNotification, "error");
+        }
       })
       .finally(() => {
         if (isMounted) hideLoading();
@@ -35,20 +40,3 @@ export const useFetchData = <T>(
 
   return { data, setData, error };
 }
-// export const useFetchData2 = (url: string) => {
-//     const { showLoading, hideLoading } = useLoading();
-//     const [data, setData] = useState(null);
-
-//     showLoading("Fetching Data...");
-
-//   useEffect(() => {
-//     fetch(url)
-//       .then((res) => res.json())
-//       .then((data) => {
-//         setData(data);
-//         hideLoading();
-//       });
-//   }, [url]);
-
-//   return [data];
-// };
