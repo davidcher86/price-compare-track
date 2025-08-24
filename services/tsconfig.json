@@ -1,0 +1,52 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "baseUrl": "./",
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "allowJs": false,
+    "checkJs": false,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "paths": {
+      "@commons/*": ["./commons/*"],
+      "@layers/*": ["./layers/*"],
+      "@user-details/*": ["./user-details/*"],
+      "@web-scraper/*": ["./web-scraper/*"],
+      "@price-track/*": ["./price-track/*"]
+    }
+  },
+  "include": [
+    "./**/*.ts",
+    "./**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/node_modules",
+    "**/dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.js",
+    "**/*.jsx"
+  ],
+  "references": [
+    { "path": "./commons" },
+    { "path": "./user-details" },
+    { "path": "./web-scraper" },
+    { "path": "./price-track" }
+  ]
+}

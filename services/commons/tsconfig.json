@@ -10,11 +10,12 @@
     "baseUrl": ".",
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "resolveJsonModule": true
   },
   "include": [
     "**/*.ts"
-  ],
+, "../price-track/price-track-machine/handlers/scrape-site/scraper/PuppeteerScrapeSingleItemService.ts", "../web-scraper/functions/puppeteer/utils/PuppeteerScrapeListService.ts"  ],
   "exclude": [
     "node_modules",
     "dist"
