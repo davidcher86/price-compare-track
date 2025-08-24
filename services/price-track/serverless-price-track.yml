@@ -140,17 +140,24 @@ functions:
           method: post
           cors: true
 
-  # getScrapeList:
-  #   handler: price-track-machine/handlers/get-scrape-list/getScrapeList.handler
-  #   timeout: 30
+  getScrapeList:
+    handler: price-track-machine/handlers/get-scrape-list/handler.getScrapeList
+    timeout: 60
+    layers:
+      - { Ref: AwsStorageLambdaLayer }
+    package:
+      include:
+        - price-track-machine/handlers/get-scrape-list/**
 
-  # scrapeSite:
-  #   handler: price-track-machine/handlers/scrape-site/scrapeSite.handler
-  #   timeout: 30
-  #   package:
-  #     include:
-  #       - price-track-machine/handlers/scrape-site/node_modules/**
-  #       - price-track-machine/handlers/scrape-site/**
+  scrapeSite:
+    handler: price-track-machine/handlers/scrape-site/handler.scrapeSite
+    timeout: 30
+    layers:
+      - { Ref: UuidLibLambdaLayer }
+      - { Ref: ChromiumLambdaLayer }
+    package:
+      include:
+        - price-track-machine/handlers/scrape-site/**
 
   # extractData:
   #   handler: price-track-machine/handlers/extract-data/scrapeFromData.handler
@@ -160,65 +167,104 @@ functions:
   #   handler: price-track-machine/handlers/update-price-track/updateHistoryData.handler
   #   timeout: 30
 
-# stepFunctions:
-#   validate: true
-#   stateMachines:
-#     scrapePriceTrackMachine:
-#       name: priceTrackRecord
-#       loggingConfig:
-#         level: ALL
-#         includeExecutionData: true
-#         destinations:
-#           - Fn::GetAtt: [ SLSLogGroup, Arn ]
-#       definition:
-#         Comment: "Scrape price tracking pipeline state machine"
-#         StartAt: GetScrapeList
-#         States:
-#           GetScrapeList:
-#             Type: Task
-#             Resource:
-#               Fn::GetAtt: [ GetScrapeListLambdaFunction, Arn ]
-#             ResultPath: "$.stepGetScrapeListResult"
-#             Next: iterateScrapeList
+stepFunctions:
+  validate: true
+  stateMachines:
+    priceTrackMachine:
+      name: priceTrackRecord
+      loggingConfig:
+        level: ALL
+        includeExecutionData: true
+        destinations:
+          - Fn::GetAtt: [ SLSLogGroup, Arn ]
+      definition:
+        Comment: "Scrape price tracking pipeline state machine"
+        StartAt: ScrapeSite
+        states:
+          ScrapeSite:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [ ScrapeSiteLambdaFunction, Arn ]
+            Parameters:
+              "scrapeInfo.$": "$.scrapeInfo"
+              "userId.$": "$.userId"
+            ResultPath: "$.stepScrapeSiteResult"
+            TimeoutSeconds: 30
+            Next: ExtractData
 
-#           iterateScrapeList:
-#             Type: Map
-#             ItemsPath: "$.stepGetScrapeListResult.scrapeList"
-#             Parameters:
-#               "scrapeInfo.$": "$$.Map.Item.Value"
-#               "userId.$": "$.stepGetScrapeListResult.userId"
-#             MaxConcurrency: 5
-#             Iterator:
-#               StartAt: ScrapeSite
-#               States:
+          # ExtractData:
+          #   Type: Task
+          #   Resource:
+          #     Fn::GetAtt: [ ExtractDataLambdaFunction, Arn ]
+          #   InputPath: "$.stepScrapeSiteResult"
+          #   ResultPath: "$.stepExtractDataResult"
+          #   Next: SavePriceTrackData
 
-#                 ScrapeSite:
-#                   Type: Task
-#                   Resource:
-#                     Fn::GetAtt: [ ScrapeSiteLambdaFunction, Arn ]
-#                   Parameters:
-#                     "scrapeInfo.$": "$.scrapeInfo"
-#                     "userId.$": "$.userId"
-#                   ResultPath: "$.stepScrapeSiteResult"
-#                   TimeoutSeconds: 30
-#                   Next: ExtractData
+          # SavePriceTrackData:
+          #   Type: Task
+          #   Resource:
+          #     Fn::GetAtt: [ UpdateHistoryDataLambdaFunction, Arn ]
+          #   InputPath: "$.stepExtractDataResult"
+          #   ResultPath: "$.stepSavePriceTrackData"
+          #   End: true
 
-#                 ExtractData:
-#                   Type: Task
-#                   Resource:
-#                     Fn::GetAtt: [ ExtractDataLambdaFunction, Arn ]
-#                   InputPath: "$.stepScrapeSiteResult"
-#                   ResultPath: "$.stepExtractDataResult"
-#                   Next: SavePriceTrackData
+      End: true
 
-#                 SavePriceTrackData:
-#                   Type: Task
-#                   Resource:
-#                     Fn::GetAtt: [ UpdateHistoryDataLambdaFunction, Arn ]
-#                   InputPath: "$.stepExtractDataResult"
-#                   ResultPath: "$.stepSavePriceTrackData"
-#                   End: true
-#             End: true
+    scrapePriceTrackMachine:
+      name: priceTrackRecord
+      loggingConfig:
+        level: ALL
+        includeExecutionData: true
+        destinations:
+          - Fn::GetAtt: [ SLSLogGroup, Arn ]
+      definition:
+        Comment: "Scrape price tracking pipeline state machine"
+        StartAt: GetScrapeList
+        States:
+          GetScrapeList:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [ GetScrapeListLambdaFunction, Arn ]
+            ResultPath: "$.stepGetScrapeListResult"
+            Next: iterateScrapeList
+
+          iterateScrapeList:
+            Type: Map
+            ItemsPath: "$.stepGetScrapeListResult.scrapeList"
+            Parameters:
+              "scrapeInfo.$": "$$.Map.Item.Value"
+              # "userId.$": "$.stepGetScrapeListResult.userId"
+            MaxConcurrency: 5
+            Iterator:
+              StartAt: ScrapeSite
+              States:
+
+                ScrapeSite:
+                  Type: Task
+                  Resource:
+                    Fn::GetAtt: [ ScrapeSiteLambdaFunction, Arn ]
+                  Parameters:
+                    "scrapeInfo.$": "$.scrapeInfo"
+                    "userId.$": "$.userId"
+                  ResultPath: "$.stepScrapeSiteResult"
+                  TimeoutSeconds: 30
+                  Next: ExtractData
+
+                ExtractData:
+                  Type: Task
+                  Resource:
+                    Fn::GetAtt: [ ExtractDataLambdaFunction, Arn ]
+                  InputPath: "$.stepScrapeSiteResult"
+                  ResultPath: "$.stepExtractDataResult"
+                  Next: SavePriceTrackData
+
+                SavePriceTrackData:
+                  Type: Task
+                  Resource:
+                    Fn::GetAtt: [ UpdateHistoryDataLambdaFunction, Arn ]
+                  InputPath: "$.stepExtractDataResult"
+                  ResultPath: "$.stepSavePriceTrackData"
+                  End: true
 
 package:
   individually: true

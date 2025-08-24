@@ -1,0 +1,31 @@
+{
+  "name": "Amazon",
+  "disableSec": false,
+  "url": "https://www.amazon.com/s?k={query}",
+  "loadSelector": "#search",
+  "listIdentifier": "[data-asin][data-component-type=\"s-search-result\"]",
+  "brightDataSupport" : true,
+  "hrefHost": "https://www.amazon.com",
+  "extractArgs": [
+    {
+      "keyName": "name",
+      "selector": "h2 a span",
+      "type": "text"
+    },
+    {
+      "keyName": "price",
+      "selector": ".a-price .a-offscreen",
+      "type": "price"
+    },
+    {
+      "keyName": "image",
+      "selector": "img.s-image",
+      "type": "img"
+    },
+    {
+      "keyName": "href",
+      "selector": "a.a-link-normal",
+      "type": "href"
+    }
+  ]
+}

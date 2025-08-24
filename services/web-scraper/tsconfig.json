@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "declaration": false,
+    "noEmitOnError": true,
+    "incremental": true,
+    "noEmit": true
+  },
+  "include": [
+    "./**/*.ts",
+    "../../layers/**/*.ts",
+    "../commons/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
+}

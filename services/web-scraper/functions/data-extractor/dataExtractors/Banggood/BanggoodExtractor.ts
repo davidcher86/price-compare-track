@@ -1,10 +1,10 @@
 import {CheerioAPI} from "cheerio";
-import {SimpleExtractData} from "../SimpleExtractData.ts";
-import {ScrapeConfigReader} from "../abstract/ScrapeConfigReader.ts";
+import {SimpleExtractData} from "../SimpleExtractData";
+import {ScrapeConfigDataInterface} from "../../../../../commons/scrapers/interfaces/ScrapeConfig";
 
 export class BanggoodExtractData extends SimpleExtractData {
 
-    constructor(scrapeConfigReader: ScrapeConfigReader) {
+    constructor(scrapeConfigReader: ScrapeConfigDataInterface) {
         super(scrapeConfigReader)
     }
 

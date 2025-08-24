@@ -1,4 +1,6 @@
-export abstract class ScrapeConfigReader {
+import {ScrapeConfigDataInterface} from "../../../../../commons/scrapers/interfaces/ScrapeConfig";
+
+export abstract class ScrapeConfigReader implements ScrapeConfigDataInterface {
     protected configData: any;
 
     protected constructor(configData: any) {

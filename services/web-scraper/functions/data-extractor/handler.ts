@@ -1,17 +1,17 @@
-import {AliExpressExtractData} from "./dataExtractors/AliExpress/AliEpressDataExtractor.ts";
-import {NewEggScrapeConfigReader} from "./dataExtractors/NewEgg/NewEggScrapeConfigReader.ts";
-import {AliExpressScrapeConfigReader} from "./dataExtractors/AliExpress/AliExpressScrapeConfigReader.ts";
-import {SimpleExtractData} from "./dataExtractors/SimpleExtractData.ts";
-import {AmazonExtractData} from "./dataExtractors/Amazon/AmazonExtractor.ts";
-import {BanggoodScrapeConfigReader} from "./dataExtractors/Banggood/BanggoodScrapeConfigReader.ts";
-import { BanggoodExtractData } from "./dataExtractors/Banggood/BanggoodExtractor.ts";
-import {EbayScrapeConfigReader} from "./dataExtractors/Ebay/EbayScrapeConfigReader.ts";
-import {AmazonScrapeConfigReader} from "./dataExtractors/Amazon/AmazonScrapeConfigReader.ts";
-import {ExtractDataInterface} from "./interfaces/ExtractDataInterface.ts";
-import {EbayExtractData} from "./dataExtractors/Ebay/EbayExtractData.ts";
-import {NewEggExtractData} from "./dataExtractors/NewEgg/NewEggExtractData.ts";
-import { retrievePayload, deletePayload, savePayload, getScrapeExtractedDataBucketName, getScrapeHtmlRawResultsBucketName } from '@shared-commons/utils/S3Service.ts';
-import {sendMessageToQueue, getDlqSqsName, getExtractDataSqsName, generateDlqSqsPayload} from "@shared-commons/utils/SQSService.ts";
+import {AliExpressExtractData} from "./dataExtractors/AliExpress/AliEpressDataExtractor";
+import {NewEggScrapeConfigReader} from "../../../commons/scrapers/sourcesScrapeConfigs/NewEgg/NewEggScrapeConfigReader";
+import {AliExpressScrapeConfigReader} from "../../../commons/scrapers/sourcesScrapeConfigs/AliExpress/AliExpressScrapeConfigReader";
+import {SimpleExtractData} from "./dataExtractors/SimpleExtractData";
+import {AmazonExtractData} from "./dataExtractors/Amazon/AmazonExtractor";
+import {BanggoodScrapeConfigReader} from "../../../commons/scrapers/sourcesScrapeConfigs/Banggood/BanggoodScrapeConfigReader";
+import { BanggoodExtractData } from "./dataExtractors/Banggood/BanggoodExtractor";
+import {EbayScrapeConfigReader} from "../../../commons/scrapers/sourcesScrapeConfigs/Ebay/EbayScrapeConfigReader";
+import {AmazonScrapeConfigReader} from "../../../commons/scrapers/sourcesScrapeConfigs/Amazon/AmazonScrapeConfigReader";
+import {ExtractDataInterface} from "./interfaces/ExtractDataInterface";
+import {EbayExtractData} from "./dataExtractors/Ebay/EbayExtractData";
+import {NewEggExtractData} from "./dataExtractors/NewEgg/NewEggExtractData";
+import { retrievePayload, deletePayload, savePayload, getScrapeExtractedDataBucketName, getScrapeHtmlRawResultsBucketName } from '../../../commons/utils/S3Service';
+import {sendMessageToQueue, getDlqSqsName, getExtractDataSqsName, generateDlqSqsPayload} from "../../../commons/utils/SQSService";
 
 export const handleSqsMessage = async (event: any) => {
     console.log('Received SQS event:', JSON.stringify(event));

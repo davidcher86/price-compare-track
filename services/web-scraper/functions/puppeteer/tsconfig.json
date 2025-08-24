@@ -13,7 +13,7 @@
     "paths": {
       "shared/*": ["../../../layers/aws-sdk/storage/nodejs/shared/*"],
       "@commons/*": ["commons/*"],
-      "@shared-commons/*": ["../commons/*"]
+      "@shared-commons/*": ["../../../commons/*"]
     }
   },
   "include": ["./../*.ts","./*.ts", "../../commons/*.ts", "../../commons/**/*.ts"],

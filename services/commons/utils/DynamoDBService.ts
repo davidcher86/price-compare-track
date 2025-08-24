@@ -277,7 +277,6 @@ interface PriceTrackItem {
     id: string;
     userId: string;
     source: string;
-    img: string;
     scrapeEngine?: string;
     createDt: string;
     iteration: number;
@@ -322,11 +321,11 @@ export const addPriceTrackRecord = async (
 
 export const retrievePriceTrackScheduledItems = async (
     userId: any
-): Promise<any> => {
+): Promise<PriceTrackItem[]> => {
     try {
         const tableName = process.env.PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME || '';
         console.log('returning all records from DynamoDB table: ' + tableName + ' userId: ' + userId);
-        return await ddb.send(new QueryCommand({
+        const queryResult = await ddb.send(new QueryCommand({
             TableName: tableName,
             IndexName: "user-id-index", // Specify the GSI name
             KeyConditionExpression: "userId = :userId", // Query condition
@@ -340,8 +339,65 @@ export const retrievePriceTrackScheduledItems = async (
             // },
             ScanIndexForward: false,
         }));
+        
+        const response: PriceTrackItem[] = queryResult.Items as PriceTrackItem[] || [];
+
+        return response;
     } catch (err) {
         console.error("Error retrieving results:", err);
         return [];
     }
 };
+
+// generate a method to get all records in scheduled-scrapes that has enabled as true
+// export const retrieveEnabledPriceTrackScheduledItems = async (
+//     userId: any
+// ): Promise<PriceTrackItem[]> => {
+//     try {
+//         const tableName = process.env.PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME || '';
+//         console.log('returning all enabled records from DynamoDB table: ' + tableName + ' userId: ' + userId);
+//         const queryResult = await ddb.send(new QueryCommand({
+//             TableName: tableName,
+//             IndexName: "user-id-index", // Specify the GSI name
+//             KeyConditionExpression: "userId = :userId", // Query condition
+//             FilterExpression: "enabled = :enabled",
+//             ExpressionAttributeValues: {
+//                 ":userId": userId, // Bind the value for userId
+//                 ":enabled": "true",
+//             },
+//             ScanIndexForward: false,
+//         }));
+
+//         const response: PriceTrackItem[] = queryResult.Items as PriceTrackItem[] || [];
+
+//         return response;
+//     } catch (err) {
+//         console.error("Error retrieving results:", err);
+//         return [];
+//     }
+// };
+
+//generate a method that retrieve  all price track items that are enabled. do not consider any userId parameter
+export const retrieveAllEnabledPriceTrackItems = async (): Promise<PriceTrackItem[]> => {
+    try {
+        const tableName = process.env.PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME || '';
+        console.log('returning all enabled records from DynamoDB table: ' + tableName);
+        const queryResult = await ddb.send(new QueryCommand({
+            TableName: tableName,
+            IndexName: "user-id-index", // Specify the GSI name
+            KeyConditionExpression: "userId = :userId", // Query condition
+            FilterExpression: "enabled = :enabled",
+            ExpressionAttributeValues: {
+                ":enabled": "true",
+            },
+            ScanIndexForward: false,
+        }));
+
+        const response: PriceTrackItem[] = queryResult.Items as PriceTrackItem[] || [];
+
+        return response;
+    } catch (err) {
+        console.error("Error retrieving results:", err);
+        return [];
+    }
+}

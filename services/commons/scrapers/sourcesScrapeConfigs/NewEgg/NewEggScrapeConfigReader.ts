@@ -1,5 +1,5 @@
-import {ScrapeConfigReader} from "../abstract/ScrapeConfigReader.ts";
-import config from '@commons/scrape-source-configs/NewEggScrapeConfigs.json';
+import {ScrapeConfigReader} from "../abstract/ScrapeConfigReader";
+import config from './NewEggScrapeConfigs.json';
 
 export class NewEggScrapeConfigReader extends ScrapeConfigReader {
 

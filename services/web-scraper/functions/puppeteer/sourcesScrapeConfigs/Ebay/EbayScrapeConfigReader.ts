@@ -1,11 +1,11 @@
-import {ScrapeConfigReader} from "../abstract/ScrapeConfigReader.ts";
-import config from "@commons/scrape-source-configs/EbayScrapeConfigs.json";
+// import {ScrapeConfigReader} from "../abstract/ScrapeConfigReader.ts";
+// import config from "@commons/scrape-source-configs/EbayScrapeConfigs.json";
 
-export class EbayScrapeConfigReader extends ScrapeConfigReader {
+// export class EbayScrapeConfigReader extends ScrapeConfigReader {
 
-    constructor() {
-        console.log("loading Ebay configs:");
-        console.log(config)
-        super(config);
-    }
-}
+//     constructor() {
+//         console.log("loading Ebay configs:");
+//         console.log(config)
+//         super(config);
+//     }
+// }

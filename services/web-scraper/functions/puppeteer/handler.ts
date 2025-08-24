@@ -1,14 +1,13 @@
-import {ScraperInterface} from "./interfaces/ScraperInterface.ts";
-import {BanggoodScrapeConfigReader} from "./sourcesScrapeConfigs/Banggood/BanggoodScrapeConfigReader.ts"
-import {NewEggScrapeConfigReader} from "./sourcesScrapeConfigs/NewEgg/NewEggScrapeConfigReader.ts";
-import {AliExpressScrapeConfigReader} from "./sourcesScrapeConfigs/AliExpress/AliExpressScrapeConfigReader.ts";
-import {EbayScrapeConfigReader} from "./sourcesScrapeConfigs/Ebay/EbayScrapeConfigReader.ts";
-import {AmazonScrapeConfigReader} from "./sourcesScrapeConfigs/Amazon/AmazonScrapeConfigReader.ts";
-import {PuppeteerScrapeService} from "./utils/PuppeteerScrapeService.ts";
+import {ScraperInterface} from "../../../commons/scrapers/interfaces/ScraperInterface";
+import {BanggoodScrapeConfigReader} from "../../../commons/scrapers/sourcesScrapeConfigs/Banggood/BanggoodScrapeConfigReader"
+import {NewEggScrapeConfigReader} from "../../../commons/scrapers/sourcesScrapeConfigs/NewEgg/NewEggScrapeConfigReader";
+import {AliExpressScrapeConfigReader} from "../../../commons/scrapers/sourcesScrapeConfigs/AliExpress/AliExpressScrapeConfigReader";
+import {EbayScrapeConfigReader} from "../../../commons/scrapers/sourcesScrapeConfigs/Ebay/EbayScrapeConfigReader";
+import {AmazonScrapeConfigReader} from "../../../commons/scrapers/sourcesScrapeConfigs/Amazon/AmazonScrapeConfigReader";
+import {PuppeteerScrapeListService} from "./utils/PuppeteerScrapeListService";
 import { v4 as uuid4 } from "uuid";
-import {savePayload, getScrapeHtmlRawResultsBucketName} from "@shared-commons/utils/S3Service.ts";
-import {getSecretValue} from "@shared-commons/utils/SecretManager.ts";
-import {sendMessageToQueue, getDlqSqsName, generateDlqSqsPayload, getHtmlRawResultSqsName} from "@shared-commons/utils/SQSService.ts";
+import {savePayload, getScrapeHtmlRawResultsBucketName} from "../../../commons/utils/S3Service";
+import {sendMessageToQueue, getDlqSqsName, generateDlqSqsPayload, getHtmlRawResultSqsName} from "../../../commons/utils/SQSService";
 
 export const handleSqsMessage = async (event: any) => {
     console.log('Received SQS event:', JSON.stringify(event));
@@ -35,34 +34,36 @@ const scrape = async (event: any) => {
 
         let scrapeService: ScraperInterface;
 
-        console.log("scrapeInfo.name " + scrapeInfo.name);
+        // console.log("scrapeInfo.name " + scrapeInfo.name);
 
         switch (scrapeInfo.name.toLowerCase()) {
             case 'banggood':
                 console.log("using Banggood scrape configs")
-                scrapeService = new PuppeteerScrapeService(new BanggoodScrapeConfigReader());
+                scrapeService = new PuppeteerScrapeListService(new BanggoodScrapeConfigReader());
                 break;
             case 'newegg':
                 console.log("using NewEgg scrape configs")
-                scrapeService = new PuppeteerScrapeService(new NewEggScrapeConfigReader());
+                scrapeService = new PuppeteerScrapeListService(new NewEggScrapeConfigReader());
                 break;
             case 'ebay':
                 console.log("using Ebay scrape configs")
-                scrapeService = new PuppeteerScrapeService(new EbayScrapeConfigReader());
+                scrapeService = new PuppeteerScrapeListService(new EbayScrapeConfigReader());
                 break;
             case 'amazon':
                 console.log("using Amazon scrape configs")
-                scrapeService = new PuppeteerScrapeService(new AmazonScrapeConfigReader());
+                scrapeService = new PuppeteerScrapeListService(new AmazonScrapeConfigReader());
                 break;
             case 'aliexpress':
             default:
                 console.log("using AliExpress scrape configs")
-                scrapeService = new PuppeteerScrapeService(new AliExpressScrapeConfigReader());
+                scrapeService = new PuppeteerScrapeListService(new AliExpressScrapeConfigReader());
                 break;
         }
 
         const startScrapeDt = new Date().toISOString();
-        const html = await scrapeService.start(query, scrapeInfo.userId, scrapeInfo);
+        
+        scrapeInfo.query = query;
+        const html = await scrapeService.start(scrapeInfo);
         const endScrapeDt = new Date().toISOString();
 
         const bucketKey = `${scrapeInfo.name.replace(/\s+/g, "")}-${userId}-${uuid4()}`;

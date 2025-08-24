@@ -1,11 +1,11 @@
-import {ScrapeConfigReader} from "../abstract/ScrapeConfigReader.ts";
-import config from "@commons/scrape-source-configs/BanggoodScrapeConfigs.json";
+// import {ScrapeConfigReader} from "../abstract/ScrapeConfigReader.ts";
+// import config from "@commons/scrape-source-configs/BanggoodScrapeConfigs.json";
 
-export class BanggoodScrapeConfigReader extends ScrapeConfigReader {
+// export class BanggoodScrapeConfigReader extends ScrapeConfigReader {
 
-    constructor() {
-        console.log("loading Banggood configs:");
-        console.log(config)
-        super(config);
-    }
-}
+//     constructor() {
+//         console.log("loading Banggood configs:");
+//         console.log(config)
+//         super(config);
+//     }
+// }

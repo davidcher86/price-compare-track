@@ -6,10 +6,12 @@
     "baseUrl": "./",
     "esModuleInterop": true,
     "allowImportingTsExtensions": true,
+    "noEmit": true,
     "noEmitOnError": true,
     "incremental": true,
-    "moduleResolution": "Node16",
-    "module": "Node16"
+    "moduleResolution": "Node",
+    "module": "CommonJS",
+    "resolveJsonModule": true
   },
   "paths": {
     "@commons/*": ["commons/**"],

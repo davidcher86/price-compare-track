@@ -1,0 +1,6 @@
+{
+  "headers": {
+    "userId": "test-user-123"
+  },
+  "body": "{\"priceTrackItem\":{\"source\":\"banggood\",\"scrapeEngine\":\"puppeteer\",\"iteration\":1,\"iterationType\":\"hourly\",\"iterationStart\":\"2025-08-22T15:16:37.663Z\",\"enabled\":true,\"href\":\"https://m.banggood.com/Drillpro-6Pcs-or-Set-250-000-Cuniform-GIB-Type-Quick-Change-Tool-Post-Tool-Holder-for-Lathe-Tools-p-1892554.html?rmmds=search&act_poa=SKUI43572&cur_warehouse=CN&tags=searchListProductcard&bid=84561&isPullAPP=1&forced_jump=1\",\"name\":\"Drillpro 6Pcs/Set 250-000 Cuniform GIB Type Quick Change Tool Post Tool Holder for Lathe Tools\"}}"
+}

@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "Node16",
+    "module": "CommonJS",
     "outDir": "dist",
     "rootDir": "../",
     "esModuleInterop": true,
-    "moduleResolution": "Node16",
+    "moduleResolution": "Node",
     "strict": true,
     "baseUrl": "./"
   },

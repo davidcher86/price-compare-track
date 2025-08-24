@@ -1,6 +1,6 @@
-import { postToHttpApiGateway } from "@shared-commons/utils/ApiGatewayService";
-import {saveRecord} from "@shared-commons/utils/DynamoDBService";
-import {deletePayload, retrievePayload, getScrapeExtractedDataBucketName, getUserScrapeResultsBucketName} from "@shared-commons/utils/S3Service";
+import { postToHttpApiGateway } from "../../../commons/utils/ApiGatewayService";
+import {saveRecord} from "../../../commons/utils/DynamoDBService";
+import {deletePayload, retrievePayload, getScrapeExtractedDataBucketName, getUserScrapeResultsBucketName} from "../../../commons/utils/S3Service";
 
 export const handleSqsMessage = async (event: any) => {
     console.log('Received SQS event:', JSON.stringify(event));

@@ -1,4 +1,4 @@
-import {sendMessageToQueue, getAccepetScrapeRequestSqsName} from "@shared-commons/utils/SQSService";
+import {sendMessageToQueue, getAccepetScrapeRequestSqsName} from "../../../commons/utils/SQSService";
 import { v4 as uuid4 } from "uuid";
 
 export const formScrapeRequest = async (event: any) => {

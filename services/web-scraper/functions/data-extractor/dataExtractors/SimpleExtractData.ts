@@ -1,6 +1,6 @@
 import * as cheerio from "cheerio";
-import {ExtractDataInterface} from "../interfaces/ExtractDataInterface.ts";
-import {ScrapeConfigDataInterface} from "../interfaces/ScrapeConfig.ts";
+import {ExtractDataInterface} from "../interfaces/ExtractDataInterface";
+import {ScrapeConfigDataInterface} from "../../../../commons/scrapers/interfaces/ScrapeConfig";
 
 export class SimpleExtractData implements ExtractDataInterface {
 
