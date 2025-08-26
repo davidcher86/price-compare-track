@@ -99,7 +99,7 @@ import {sendMessageToQueue, getDlqSqsName, generateDlqSqsPayload, getHtmlRawResu
 //     }
 // };
 
-interface PriceTrackItem {
+interface ScrapeItemEvent {
     id: string;
     userId: string;
     source: string;
@@ -109,21 +109,21 @@ interface PriceTrackItem {
     iterationType: string;
     iterationStart: string;
     enabled: string; // This will be converted to "true"/"false" string when stored in DynamoDB
-    href?: string;
+    href: string;
     name?: string;
 }
 
-export const scrapeSite = async (event: any) => {
-    console.log('event for scrape:' + JSON.stringify(event));
+export const scrapeSite = async (scrapeInfo: ScrapeItemEvent) => {
+    console.log('event for scrape:' + JSON.stringify(scrapeInfo));
 
-    const {scrapeInfo} = event;
+    // const {scrapeInfo} = event;
     console.log("scrapeInfo: " + JSON.stringify(scrapeInfo));
     try {
         let scrapeService: ScraperInterface;
 
-        console.log("scrapeInfo.name " + scrapeInfo.name);
+        console.log("scraping source " + scrapeInfo.source);
 
-        switch (scrapeInfo.name.toLowerCase()) {
+        switch (scrapeInfo.source.toLowerCase()) {
             case 'banggood':
                 console.log("using Banggood scrape configs")
                 scrapeService = new PuppeteerScrapeSingleItemService(new BanggoodScrapeConfigReader());
@@ -157,34 +157,15 @@ export const scrapeSite = async (event: any) => {
         await savePayload(html, bucketName, bucketKey, 'text/html');
 
         return {
+            scrapeInfo: scrapeInfo,
             bucketKey: bucketKey,
             startScrapeDt: startScrapeDt,
             endScrapeDt: endScrapeDt
         };
 
-        // const sqsPayload = {
-        //     scrapeRequestId: scrapeRequestId,
-        //     scrapeId: scrapeId,
-        //     status: "SCRAPE_RAW_HTML_COMPLETED",
-        //     bucketKey: bucketKey,
-        //     userId: userId,
-        //     scrapeInfo: scrapeInfo,
-        //     scrapeDate: scrapeDate,
-        //     startScrapeDt: startScrapeDt,
-        //     endScrapeDt: endScrapeDt,
-        //     query: query,
-        //     triesCount: 1
-        // }
-
-        // // console.log("sqsPayload: " + JSON.stringify(sqsPayload) + " to " + sqsUrl);
-        // await sendMessageToQueue(getHtmlRawResultSqsName(), sqsPayload);
-        // return {
-        //     statusCode: 200,
-        //     body: JSON.stringify({ message: "Scraping completed successfully" }),
-        // }
     } catch (error: ErrorMessage | any) {
         console.error('Error during scraping:', error);
-        await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(event, 'SCRAPE_FAILED', `Error: ${error}`));
+        await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(scrapeInfo, 'SCRAPE_FAILED', `Error: ${error}`));
     }
 }
 

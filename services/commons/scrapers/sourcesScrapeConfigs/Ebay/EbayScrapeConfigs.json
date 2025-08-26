@@ -3,6 +3,8 @@
   "url": "https://www.ebay.com/sch/i.html?_nkw={query}",
   "loadSelector": ".srp-results.srp-list",
   "listIdentifier": "li.s-item, li.s-card",
+  "singleItemPageLoadSelector": "#product-details",
+  "singleItemPagePriceTag": "#product-details",
   "brightDataSupport" : false,
   "hrefHost": "https://www.ebay.com",
   "extractArgs": [

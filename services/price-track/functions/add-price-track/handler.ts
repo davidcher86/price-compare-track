@@ -3,6 +3,7 @@ import { v4 as uuid4 } from "uuid";
 
 interface PriceTrackItem {
     id: string;
+    scrapeCode: string;
     userId: string;
     source: string;
     scrapeEngine?: string;
@@ -35,6 +36,7 @@ export const addPriceTrackItem = async (event: any) => {
 
         const newRecord: PriceTrackItem = {
             id: uuid4(),
+            scrapeCode: uuid4(),
             userId,
             source,
             scrapeEngine,

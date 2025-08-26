@@ -5,13 +5,17 @@ import {ScrapeConfigDataInterface} from "../../../../commons/scrapers/interfaces
 import {AbstractScrapeHandler} from '../../../../commons/scrapers/AbstractPuppeteerScrapeService';
 // const chromium = require("@sparticuz/chromium");
 
+interface ScrapeListInfo {
+    query?: string;
+}
+
 export class PuppeteerScrapeListService extends AbstractScrapeHandler {
 
     constructor(scrapeConfigDataInterface: ScrapeConfigDataInterface) {
         super(scrapeConfigDataInterface);
     }
 
-    protected async scrape(query: string) {
+    protected async scrape(scrapeInfo: ScrapeListInfo) {
         try {
             const disableSec = this.configData.getDisableSec();
             const url = this.configData.getUrl();
@@ -39,7 +43,7 @@ export class PuppeteerScrapeListService extends AbstractScrapeHandler {
             });
             page.on('console', (msg: any) => console.log('PAGE LOG:', msg.text()));
 
-            const searchUrl = this.constructUri(query, url);
+            const searchUrl = this.constructUri(scrapeInfo.query || '', url);
             console.log("scraping address: " + searchUrl);
 
             // await page.goto(searchUrl, {waitUntil: 'networkidle2'});

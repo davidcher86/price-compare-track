@@ -4,6 +4,8 @@
   "disableSec": true,
   "loadSelector": ".list-wrap",
   "listIdentifier": ".item-cell",
+  "singleItemPageLoadSelector": "#product-details",
+  "singleItemPagePriceTag": "#product-details",
   "brightDataSupport" : false,
   "hrefHost": "https://www.newegg.com",
   "extractArgs": [

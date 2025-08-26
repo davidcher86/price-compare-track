@@ -7,6 +7,15 @@ export abstract class ScrapeConfigReader implements ScrapeConfigDataInterface {
     protected constructor(configData: any) {
         this.configData = configData;
     }
+    getSingleItemPageLoadSelector(): string | null {
+        try {
+            const configData = this.configData;
+            return configData?.singleItemPageLoadSelector || null;
+        } catch (error) {
+            console.error('Error reading or parsing singleItemPageLoadSelector arg:', error);
+            return null;
+        }
+    }
 
     public getExtractArgs(): any {
         try {

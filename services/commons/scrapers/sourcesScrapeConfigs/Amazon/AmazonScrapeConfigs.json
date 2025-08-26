@@ -4,6 +4,8 @@
   "url": "https://www.amazon.com/s?k={query}",
   "loadSelector": "#search",
   "listIdentifier": "[data-asin][data-component-type=\"s-search-result\"]",
+  "singleItemPageLoadSelector": "#product-details",
+  "singleItemPagePriceTag": "#product-details",
   "brightDataSupport" : true,
   "hrefHost": "https://www.amazon.com",
   "extractArgs": [

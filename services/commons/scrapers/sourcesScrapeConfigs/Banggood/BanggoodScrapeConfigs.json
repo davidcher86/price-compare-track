@@ -4,6 +4,8 @@
   "url": "https://m.banggood.com/search/{query}.html?currency=USD",
   "loadSelector": ".product-list",
   "listIdentifier": ".product-list ul li",
+  "singleItemPageLoadSelector": "#product-details",
+  "singleItemPagePriceTag": "#product-details",
   "hrefHost": "https://m.banggood.com",
   "extractArgs": [
     {

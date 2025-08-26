@@ -7,4 +7,5 @@ export interface ScrapeConfigDataInterface {
     getDisableSec(): boolean | null
     getName(): string | null;
     getHrefHost(): string | null;
+    getSingleItemPageLoadSelector(): string | null;
 }

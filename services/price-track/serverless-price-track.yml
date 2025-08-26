@@ -1,6 +1,7 @@
 org: davidcher
-
 service: prices-track
+
+frameworkVersion: '4'
 
 provider:
   name: aws
@@ -38,8 +39,8 @@ provider:
 
 plugins:
   - serverless-offline
-  # - serverless-step-functions
-  # - serverless-step-functions-offline
+  - serverless-step-functions
+  - serverless-step-functions-offline
   - serverless-dotenv-plugin
 
 custom:
@@ -48,30 +49,21 @@ custom:
   S3_EXTRACTED_DATA_BUCKET_NAME: ${env:S3_EXTRACTED_DATA_BUCKET_NAME}-${self:provider.stage}
   PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME: ${env:PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME}-${self:provider.stage}
   PRICE_TRACK_RESULTS_TABLE_NAME: ${env:PRICE_TRACK_RESULTS_TABLE_NAME}-${self:provider.stage}
+  PRICE_TRACK_MACHINE: ${env:PRICE_TRACK_MACHINE}
   secrets:
     brightdataProxyUri: sls-fourth/brightdata/proxy/uri
   serverless-offline:
     httpPort: 5005
     lambdaPort: 5015
-  esbuild:
-    bundle: true
-    minify: true
-    sourcemap: true
-    target: node18
-    packager: npm
-    separateBuilds: true
-    platform: node
-    concurrency: 10
-    tsconfig: './tsconfig.base.json'
-    excludeDevDependencies: true
-    # include:
-    #   - price-track-machine/handlers/extract-data/**
-    #   - price-track-machine/handlers/get-scrape-list/**
-    #   - price-track-machine/handlers/scrape-site/**
-    #   - price-track-machine/handlers/update-price-track/**
-    resolveExtensions:
-      - .js
-      - .ts
+  build:
+    esbuild:
+      bundle: true
+      minify: true
+      sourcemap: true
+      target: node18
+      platform: node
+      concurrency: 10
+      exclude: ['node_modules']
   # stepFunctionsOffline:
   #   stateMachines:
   #     scrapePriceTrackMachine: scrapePriceTrackMachine
@@ -103,12 +95,12 @@ layers:
       include:
         - nodejs/**
 
-  awsStorage:
-    path: ../layers/aws-sdk/storage
-    name: aws-storage-layer-${sls:stage}
+  cheerio:
+    path: ../layers/cheerio
+    name: cheerio-layer-${sls:stage}
     compatibleRuntimes:
       - nodejs18.x
-    description: S3 and DynamoDB layer
+    description: Cheerio layer for HTML parsing
     package:
       include:
         - nodejs/**
@@ -119,6 +111,26 @@ layers:
     compatibleRuntimes:
       - nodejs18.x
     description: ApiGateWay & SQS layer
+    package:
+      include:
+        - nodejs/**
+
+  awsStorage:
+    path: ../layers/aws-sdk/storage
+    name: aws-storage-layer-${sls:stage}
+    compatibleRuntimes:
+      - nodejs18.x
+    description: S3 and DynamoDB layer
+    package:
+      include:
+        - nodejs/**
+
+  awsStepFunction:
+    path: ../layers/aws-sdk/step-function
+    name: aws-step-function-layer-${sls:stage}
+    compatibleRuntimes:
+      - nodejs18.x
+    description: Step Functions layer
     package:
       include:
         - nodejs/**
@@ -145,23 +157,32 @@ functions:
     timeout: 60
     layers:
       - { Ref: AwsStorageLambdaLayer }
-    package:
-      include:
-        - price-track-machine/handlers/get-scrape-list/**
-
+      - { Ref: AwsStepFunctionLambdaLayer }
+    environment:
+      STAGE: ${self:provider.stage}
+      REGION: ${self:provider.region}
+      PRICE_TRACK_MACHINE: ${self:custom.PRICE_TRACK_MACHINE}
+      PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME: ${self:custom.PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME}
+  
   scrapeSite:
     handler: price-track-machine/handlers/scrape-site/handler.scrapeSite
-    timeout: 30
+    timeout: 300
     layers:
       - { Ref: UuidLibLambdaLayer }
       - { Ref: ChromiumLambdaLayer }
-    package:
-      include:
-        - price-track-machine/handlers/scrape-site/**
+    environment:
+      STAGE: ${self:provider.stage}
+      REGION: ${self:provider.region}
+      S3_RAW_HTML_RESULT_BUCKET_NAME: ${self:custom.S3_RAW_HTML_RESULT_BUCKET_NAME}
 
-  # extractData:
-  #   handler: price-track-machine/handlers/extract-data/scrapeFromData.handler
-  #   timeout: 30
+  extractData:
+    handler: price-track-machine/handlers/extract-data/handler.extractData
+    timeout: 30
+    layers:
+      - { Ref: CheerioLambdaLayer }
+    environment:
+      STAGE: ${self:provider.stage}
+      REGION: ${self:provider.region}
 
   # updateHistoryData:
   #   handler: price-track-machine/handlers/update-price-track/updateHistoryData.handler
@@ -171,34 +192,41 @@ stepFunctions:
   validate: true
   stateMachines:
     priceTrackMachine:
-      name: priceTrackRecord
+      name: price-track-machine-${self:provider.stage}
       loggingConfig:
         level: ALL
         includeExecutionData: true
         destinations:
-          - Fn::GetAtt: [ SLSLogGroup, Arn ]
+          - Fn::GetAtt: [ PriceTrackLogGroup, Arn ]
       definition:
         Comment: "Scrape price tracking pipeline state machine"
         StartAt: ScrapeSite
-        states:
+        States:
           ScrapeSite:
             Type: Task
             Resource:
               Fn::GetAtt: [ ScrapeSiteLambdaFunction, Arn ]
-            Parameters:
-              "scrapeInfo.$": "$.scrapeInfo"
-              "userId.$": "$.userId"
+            # Parameters:
+            #   "scrapeInfo.$": "$.scrapeInfo"
+            #   "userId.$": "$.userId"
             ResultPath: "$.stepScrapeSiteResult"
             TimeoutSeconds: 30
             Next: ExtractData
+            # End: true
 
-          # ExtractData:
-          #   Type: Task
-          #   Resource:
-          #     Fn::GetAtt: [ ExtractDataLambdaFunction, Arn ]
-          #   InputPath: "$.stepScrapeSiteResult"
-          #   ResultPath: "$.stepExtractDataResult"
-          #   Next: SavePriceTrackData
+          ExtractData:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [ ExtractDataLambdaFunction, Arn ]
+            InputPath: "$.stepScrapeSiteResult"
+            # Parameters:
+            #   "scrapeInfo.$": "$.scrapeInfo"
+            #   "bucketKey.$": "$.bucketKey"
+            #   "startScrapeDt.$": "$.startScrapeDt"
+            #   "endScrapeDt.$": "$.endScrapeDt"
+            ResultPath: "$.stepExtractDataResult"
+            # Next: SavePriceTrackData
+            End: true
 
           # SavePriceTrackData:
           #   Type: Task
@@ -208,75 +236,75 @@ stepFunctions:
           #   ResultPath: "$.stepSavePriceTrackData"
           #   End: true
 
-      End: true
+      # End: true
 
-    scrapePriceTrackMachine:
-      name: priceTrackRecord
-      loggingConfig:
-        level: ALL
-        includeExecutionData: true
-        destinations:
-          - Fn::GetAtt: [ SLSLogGroup, Arn ]
-      definition:
-        Comment: "Scrape price tracking pipeline state machine"
-        StartAt: GetScrapeList
-        States:
-          GetScrapeList:
-            Type: Task
-            Resource:
-              Fn::GetAtt: [ GetScrapeListLambdaFunction, Arn ]
-            ResultPath: "$.stepGetScrapeListResult"
-            Next: iterateScrapeList
+    # scrapePriceTrackMachine:
+    #   name: priceTrackRecord
+    #   loggingConfig:
+    #     level: ALL
+    #     includeExecutionData: true
+    #     destinations:
+    #       - Fn::GetAtt: [ SLSLogGroup, Arn ]
+    #   definition:
+    #     Comment: "Scrape price tracking pipeline state machine"
+    #     StartAt: GetScrapeList
+    #     States:
+    #       GetScrapeList:
+    #         Type: Task
+    #         Resource:
+    #           Fn::GetAtt: [ GetScrapeListLambdaFunction, Arn ]
+    #         ResultPath: "$.stepGetScrapeListResult"
+    #         Next: iterateScrapeList
 
-          iterateScrapeList:
-            Type: Map
-            ItemsPath: "$.stepGetScrapeListResult.scrapeList"
-            Parameters:
-              "scrapeInfo.$": "$$.Map.Item.Value"
-              # "userId.$": "$.stepGetScrapeListResult.userId"
-            MaxConcurrency: 5
-            Iterator:
-              StartAt: ScrapeSite
-              States:
+    #       iterateScrapeList:
+    #         Type: Map
+    #         ItemsPath: "$.stepGetScrapeListResult.scrapeList"
+    #         Parameters:
+    #           "scrapeInfo.$": "$$.Map.Item.Value"
+    #           # "userId.$": "$.stepGetScrapeListResult.userId"
+    #         MaxConcurrency: 5
+    #         Iterator:
+    #           StartAt: ScrapeSite
+    #           States:
 
-                ScrapeSite:
-                  Type: Task
-                  Resource:
-                    Fn::GetAtt: [ ScrapeSiteLambdaFunction, Arn ]
-                  Parameters:
-                    "scrapeInfo.$": "$.scrapeInfo"
-                    "userId.$": "$.userId"
-                  ResultPath: "$.stepScrapeSiteResult"
-                  TimeoutSeconds: 30
-                  Next: ExtractData
+    #             ScrapeSite:
+    #               Type: Task
+    #               Resource:
+    #                 Fn::GetAtt: [ ScrapeSiteLambdaFunction, Arn ]
+    #               Parameters:
+    #                 "scrapeInfo.$": "$.scrapeInfo"
+    #                 "userId.$": "$.userId"
+    #               ResultPath: "$.stepScrapeSiteResult"
+    #               TimeoutSeconds: 30
+    #               Next: ExtractData
 
-                ExtractData:
-                  Type: Task
-                  Resource:
-                    Fn::GetAtt: [ ExtractDataLambdaFunction, Arn ]
-                  InputPath: "$.stepScrapeSiteResult"
-                  ResultPath: "$.stepExtractDataResult"
-                  Next: SavePriceTrackData
+    #             ExtractData:
+    #               Type: Task
+    #               Resource:
+    #                 Fn::GetAtt: [ ExtractDataLambdaFunction, Arn ]
+    #               InputPath: "$.stepScrapeSiteResult"
+    #               ResultPath: "$.stepExtractDataResult"
+    #               Next: SavePriceTrackData
 
-                SavePriceTrackData:
-                  Type: Task
-                  Resource:
-                    Fn::GetAtt: [ UpdateHistoryDataLambdaFunction, Arn ]
-                  InputPath: "$.stepExtractDataResult"
-                  ResultPath: "$.stepSavePriceTrackData"
-                  End: true
+    #             SavePriceTrackData:
+    #               Type: Task
+    #               Resource:
+    #                 Fn::GetAtt: [ UpdateHistoryDataLambdaFunction, Arn ]
+    #               InputPath: "$.stepExtractDataResult"
+    #               ResultPath: "$.stepSavePriceTrackData"
+    #               End: true
 
 package:
   individually: true
 
-# resources:
-#   Resources:
+resources:
+  Resources:
 #     ScrapedHtmlBucket:
 #       Type: AWS::S3::Bucket
 #       Properties:
 #         BucketName: ${env:BUCKET_NAME}
-#     SLSLogGroup:
-#       Type: AWS::Logs::LogGroup
-#       Properties:
-#         LogGroupName: /aws/lambda/sls-prices-track-machine
-#         RetentionInDays: 14
+    PriceTrackLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        LogGroupName: /aws/lambda/prices-track-machine-${sls:stage}
+        RetentionInDays: 14

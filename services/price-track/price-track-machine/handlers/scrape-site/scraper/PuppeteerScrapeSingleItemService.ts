@@ -2,18 +2,34 @@ import {AbstractScrapeHandler} from '../../../../../commons/scrapers/AbstractPup
 import {ScrapeConfigDataInterface} from "../../../../../commons/scrapers/interfaces/ScrapeConfig";
 // import puppeteerCore from "puppeteer-core";
 
+interface ScrapeInfo {
+    id: string;
+    scrapeCode: string;
+    userId: string;
+    source: string;
+    scrapeEngine?: string;
+    createDt: string;
+    iteration: number;
+    iterationType: string;
+    iterationStart: string;
+    enabled: string; // This will be converted to "true"/"false" string when stored in DynamoDB
+    href: string;
+    name?: string;
+    query?: string;
+}
+
 export class PuppeteerScrapeSingleItemService extends AbstractScrapeHandler {
 
     constructor(scrapeConfigDataInterface: ScrapeConfigDataInterface) {
         super(scrapeConfigDataInterface);
     }
 
-    protected async scrape(query: string) {
+    protected async scrape(scrapeInfo: ScrapeInfo) {
         try {
             const disableSec = this.configData.getDisableSec();
-            const url = this.configData.getUrl();
-            const loadSelector = this.configData.getLoadSelector();
-            const name = this.configData.getName();
+            // const url = this.configData.getUrl();
+            const loadSelector = this.configData.getSingleItemPageLoadSelector();
+            // const name = this.configData.getName();
 
             console.log('puppeteer start single item page scraping: ' + name);
             let page;
@@ -36,10 +52,10 @@ export class PuppeteerScrapeSingleItemService extends AbstractScrapeHandler {
             });
             page.on('console', (msg: any) => console.log('PAGE LOG:', msg.text()));
 
-            const searchUrl = this.constructUri(query, url);
-            console.log("scraping address: " + searchUrl);
+            // const searchUrl = this.constructUri(scrapeInfo.query || '', url);
+            console.log("scraping address: " + scrapeInfo.href);
 
-            await page.goto(searchUrl, {waitUntil: 'networkidle2', timeout: 60 * 60 * 1000});
+            await page.goto(scrapeInfo.href, {waitUntil: 'networkidle2', timeout: 60 * 60 * 1000});
             if (loadSelector == undefined || loadSelector === null) {
                 console.log('waiting for: ' + loadSelector);
                 await page.waitForSelector(loadSelector);

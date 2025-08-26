@@ -7,6 +7,22 @@ const chromium = require("@sparticuz/chromium");
 
 const brightDataServices: string[] = process.env.BRIGHT_DATA_SERVICE_ENABLED_LIST?.split(',') ?? [];
 
+interface ScrapeInfo {
+    id: string;
+    scrapeCode: string;
+    userId: string;
+    source: string;
+    scrapeEngine?: string;
+    createDt: string;
+    iteration: number;
+    iterationType: string;
+    iterationStart: string;
+    enabled: string; // This will be converted to "true"/"false" string when stored in DynamoDB
+    href?: string;
+    name?: string;
+    query?: string;
+}
+
 export abstract class AbstractScrapeHandler implements ScraperInterface {
     protected browser: any;
     protected configData: ScrapeConfigDataInterface;
@@ -31,7 +47,7 @@ export abstract class AbstractScrapeHandler implements ScraperInterface {
         }
     }
 
-    protected abstract scrape(query: string): Promise<any>;
+    protected abstract scrape(scrapeInfo: ScrapeInfo): Promise<any>;
 
     protected async closeBrowser(): Promise<void> {
         if (this.browser) {

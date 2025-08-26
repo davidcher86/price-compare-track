@@ -5,6 +5,8 @@
   "loadSelector": "#card-list",
   "disableSec": true,
   "listIdentifier": ".card-out-wrapper",
+  "singleItemPageLoadSelector": "#product-details",
+  "singleItemPagePriceTag": "#product-details",
   "extractArgs": [
     {
       "keyName": "name",

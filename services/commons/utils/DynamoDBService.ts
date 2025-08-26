@@ -275,6 +275,7 @@ export const deleteUserWebesocket = async (
 
 interface PriceTrackItem {
     id: string;
+    scrapeCode: string;
     userId: string;
     source: string;
     scrapeEngine?: string;
@@ -382,18 +383,15 @@ export const retrieveAllEnabledPriceTrackItems = async (): Promise<PriceTrackIte
     try {
         const tableName = process.env.PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME || '';
         console.log('returning all enabled records from DynamoDB table: ' + tableName);
-        const queryResult = await ddb.send(new QueryCommand({
+        const scanResult = await ddb.send(new ScanCommand({
             TableName: tableName,
-            IndexName: "user-id-index", // Specify the GSI name
-            KeyConditionExpression: "userId = :userId", // Query condition
             FilterExpression: "enabled = :enabled",
             ExpressionAttributeValues: {
                 ":enabled": "true",
             },
-            ScanIndexForward: false,
         }));
 
-        const response: PriceTrackItem[] = queryResult.Items as PriceTrackItem[] || [];
+        const response: PriceTrackItem[] = scanResult.Items as PriceTrackItem[] || [];
 
         return response;
     } catch (err) {

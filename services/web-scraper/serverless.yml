@@ -135,6 +135,16 @@ layers:
       include:
         - nodejs/**
 
+  cheerio:
+    path: ../layers/cheerio
+    name: cheerio-layer-${sls:stage}
+    compatibleRuntimes:
+      - nodejs18.x
+    description: Cheerio layer for HTML parsing
+    package:
+      include:
+        - nodejs/**
+
   awsStorage:
     path: ../layers/aws-sdk/storage
     name: aws-storage-layer-${sls:stage}
@@ -232,6 +242,7 @@ functions:
     layers:
       - { Ref: AwsDataTransferLambdaLayer }
       - { Ref: AwsStorageLambdaLayer }
+      - { Ref: CheerioLambdaLayer }
     timeout: 60
     events:
       - sqs:
