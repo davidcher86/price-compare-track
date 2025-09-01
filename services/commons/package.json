@@ -12,5 +12,8 @@
     "@aws-sdk/lib-dynamodb": "^3.846.0",
     "@types/node": "^22.14.1",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "puppeteer": "^24.18.0"
   }
 }

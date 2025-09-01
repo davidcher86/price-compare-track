@@ -2,9 +2,18 @@
   "name": "Ebay",
   "url": "https://www.ebay.com/sch/i.html?_nkw={query}",
   "loadSelector": ".srp-results.srp-list",
+  "loadWaitUntil": "domcontentloaded",
+  "loadTimeout": 120000,
   "listIdentifier": "li.s-item, li.s-card",
+  "singleItemLoadWaitUntil": "domcontentloaded",
+  "singleItemTimeout": 120000,
+  "singleItemPageWrapper": "#product-details",
   "singleItemPageLoadSelector": "#product-details",
   "singleItemPagePriceTag": "#product-details",
+  "blockedResources": [
+    "media",
+    "font"
+  ],
   "brightDataSupport" : false,
   "hrefHost": "https://www.ebay.com",
   "extractArgs": [

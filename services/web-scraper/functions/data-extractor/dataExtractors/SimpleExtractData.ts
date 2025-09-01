@@ -38,13 +38,14 @@ export class SimpleExtractData implements ExtractDataInterface {
         childElements.each((_, element) => {
             try {
                 let dynamicObject: any = {};
+                console.log($(element).html());
                 for (const arg of extractArgs) {
                     // console.log('arg:', JSON.stringify(arg));
                     let selector = arg.selector;
                     let key = arg.keyName;
                     let type = arg.type;
                     let value: string | null = '';
-
+                    
                     switch (type) {
                         case 'href':
                             value = this.extractHref($, element, selector, hrefHost);

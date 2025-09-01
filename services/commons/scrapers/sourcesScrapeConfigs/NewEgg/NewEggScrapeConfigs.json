@@ -3,9 +3,18 @@
   "url": "https://www.newegg.com/p/pl?d={query}",
   "disableSec": true,
   "loadSelector": ".list-wrap",
+  "loadWaitUntil": "domcontentloaded",
+  "loadTimeout": 120000,
   "listIdentifier": ".item-cell",
+  "singleItemLoadWaitUntil": "domcontentloaded",
+  "singleItemTimeout": 120000,
+  "singleItemPageWrapper": "#product-details",
   "singleItemPageLoadSelector": "#product-details",
   "singleItemPagePriceTag": "#product-details",
+  "blockedResources": [
+    "media",
+    "font"
+  ],
   "brightDataSupport" : false,
   "hrefHost": "https://www.newegg.com",
   "extractArgs": [

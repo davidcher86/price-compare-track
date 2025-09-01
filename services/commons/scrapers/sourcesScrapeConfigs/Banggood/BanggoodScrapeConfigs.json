@@ -1,26 +1,37 @@
 {
   "name": "Banggood",
   "disableSec": false,
-  "url": "https://m.banggood.com/search/{query}.html?currency=USD",
+  "url": "https://m.banggood.com/en/search/{query}.html?currency=USD",
   "loadSelector": ".product-list",
+  "loadWaitUntil": "domcontentloaded",
+  "loadTimeout": 120000,
   "listIdentifier": ".product-list ul li",
-  "singleItemPageLoadSelector": "#product-details",
-  "singleItemPagePriceTag": "#product-details",
+  "singleItemLoadWaitUntil": "domcontentloaded",
+  "singleItemTimeout": 120000,
+  "singleItemPageWrapper": "#pageDetails",
+  "singleItemPageLoadSelector": "#product-details #pageDetails",
+  "singleItemPagePriceSelector": ".price",
+  "singleItemPageNameSelector": ".products_name",
+  "singleItemPageImageSelector": ".details-slide-img",
+  "blockedResources": [
+    "media",
+    "font"
+  ],
   "hrefHost": "https://m.banggood.com",
   "extractArgs": [
     {
       "keyName": "name",
-      "selector": ".info-box p.name",
+      "selector": "span",
       "type": "text"
     },
     {
       "keyName": "price",
-      "selector": ".info .price",
+      "selector": ".price",
       "type": "price"
     },
     {
       "keyName": "image",
-      "selector": ".img-div img, .img-box img",
+      "selector": "img",
       "type": "img"
     },
     {

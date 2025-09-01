@@ -1,14 +1,14 @@
 import {CheerioAPI} from "cheerio";
-import {SimpleExtractData} from "../SimpleExtractData";
-import {ScrapeConfigDataInterface} from "../../../../../commons/scrapers/interfaces/ScrapeConfig";
+import {SimpleSingleItemExtractData} from "../SimpleSingleItemExtractData";
+import {ScrapeConfigDataInterface} from "../../../../../../commons/scrapers/interfaces/ScrapeConfig";
 
-export class BanggoodExtractData extends SimpleExtractData {
+export class BanggoodExtractData extends SimpleSingleItemExtractData {
 
     constructor(scrapeConfigReader: ScrapeConfigDataInterface) {
         super(scrapeConfigReader)
     }
 
-    protected extractHref($: CheerioAPI, element: any, selector: string, dynamicObject: any) {
+    protected extractHref($: CheerioAPI, element: any, selector: string) {
         const container = $(element);
 
         let href = container.find(selector).first().attr('link');
@@ -30,8 +30,9 @@ export class BanggoodExtractData extends SimpleExtractData {
             return null;
         }
         
-        protected extractImgttr($: CheerioAPI, element: any, selector: string, dynamicObject: any) {
+        protected extractImgttr($: CheerioAPI, element: any, selector: string) {
             const image = $(element).find(selector).attr('src');
+            console.log($(element).html());
             if ($(element).find(selector).attr('src') != undefined) {
                 const img = $(element).find(selector).attr('src');
                 return img || null;

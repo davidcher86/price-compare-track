@@ -26,7 +26,7 @@ export const getScrapeList = async () => {
         const result: PriceTrackItem[] = await retrieveAllEnabledPriceTrackItems();
         console.log("result items count", result.length);
 
-        const scrapeItems = result.filter(item => item.enabled === "true");
+        const scrapeItems = result.filter(item => item.enabled === "true" && item.href !==  '' && item.href !== undefined);
         console.log("items to process count", scrapeItems.length);
 
         for (const item of scrapeItems) {

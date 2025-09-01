@@ -5,8 +5,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "offline:price-track": "sls offline --config serverless-price-track.yml",
-    "invoke:add-price-track": "sls invoke local -f addPriceTrack --stage prod --path functions/add/mock-data/datamockhttp.json",
-    "invoke:getScrapeList": "sls invoke local -f getScrapeList --stage prod --config serverless-price-track.yml"
+    "invoke:scrapeSite": "sls invoke local -f scrapeSite --stage dev --config serverless-price-track.yml --path price-track-machine/handlers/scrape-site/mock-data/datamock.json",
+    "invoke:add-price-track": "sls invoke local -f addPriceTrack --stage prod --config serverless-price-track.yml --path functions/add/mock-data/datamockhttp.json",
+    "invoke:getScrapeList": "sls invoke local -f getScrapeList --stage prod --config serverless-price-track.yml",
+    "invoke:extract-data": "sls invoke local -f extractData --config serverless-price-track.yml --path price-track-machine/handlers/extract-data/mock-data/mockdata.json"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +28,7 @@
     "@aws-sdk/client-sqs": "^3.848.0",
     "@aws-sdk/lib-dynamodb": "^3.868.0",
     "esbuild": "^0.25.5",
+    "puppeteer": "^24.18.0",
     "serverless": "^4.18.0",
     "serverless-esbuild": "^1.55.1",
     "serverless-step-functions": "^3.23.3",

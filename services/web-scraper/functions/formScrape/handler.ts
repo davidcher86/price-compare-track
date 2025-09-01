@@ -33,7 +33,7 @@ export const formScrapeRequest = async (event: any) => {
                 query: query,
                 triesCount: 1
             }
-            console.log(scrapeSourceInfo.name);
+            console.log("sqsPayload: ", JSON.stringify(sqsPayload));
             await sendMessageToQueue(getAccepetScrapeRequestSqsName(), sqsPayload);
         }
 

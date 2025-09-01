@@ -1,0 +1,13 @@
+{
+  "scrapeCode": "6f40626a-3fd8-44a8-a536-994864a2837f",
+  "userId": "9962a416-504d-4b82-87f6-94a536aa27da",
+  "source": "amazon",
+  "scrapeEngine": "puppeteer",
+  "createDt": "2025-08-31T20:02:06.010Z",
+  "iteration": 1,
+  "iterationType": "hourly",
+  "iterationStart": "2025-08-31T20:02:05.261Z",
+  "href": "https://www.amazon.com/AULA-Mechanical-Swappable-Pre-lubed-Reaper/dp/B0D14N2QZF/ref=sr_1_2?dib=eyJ2IjoiMSJ9.gRuFfEjL1j2TxSPTNwbzk3AOtNFHw2roMPFOGNSo2NjXUvCU1NBT8Pg02qHM0IsSXxNdOpGdnpAJb-GM3HfZd1URtmNCzKeV6QVW5HRJrVjxt34JU9RcHw8vngfaMr2vJBlMvUGBIv6rXHor7wymbn2PzqgJoVLx5Pp8wJLlITtDYHK2Qh06rnq6tcuMbuXMC6IWY1Vg7WJgp2jYJyEFPy5dsmYZu8t6lUoAOkWDM5w.TLxjXXVBrHlBLvSNx2sGd7MLcF8QN0Cs-hD9yAiEUlg&dib_tag=se&keywords=keyboard&qid=1756730947&sr=8-2",
+  "name": "4.0",
+  "query": "4.0"
+}

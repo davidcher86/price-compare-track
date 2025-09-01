@@ -7,5 +7,14 @@ export interface ScrapeConfigDataInterface {
     getDisableSec(): boolean | null
     getName(): string | null;
     getHrefHost(): string | null;
+    getBlockedResources(): string[] | null;
+    getLoadWaitUntil(): string | null;
+    getLoadTimeout(): number | null;
     getSingleItemPageLoadSelector(): string | null;
+    getSingleItemPageWrapper(): string | null;
+    getSingleItemPagePriceSelector(): string | null;
+    getSingleItemPageImageSelector(): string | null;
+    getSingleItemPageNameSelector(): string | null;
+    getSingleItemLoadWaitUntil(): string | null;
+    getSingleItemTimeout(): number | null;
 }

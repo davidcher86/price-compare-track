@@ -1,6 +1,5 @@
-import {AbstractScrapeHandler} from '../../../../../commons/scrapers/AbstractPuppeteerScrapeService';
+import {PuppeteerScrapeSingleItemService} from './PuppeteerScrapeSingleItemService'
 import {ScrapeConfigDataInterface} from "../../../../../commons/scrapers/interfaces/ScrapeConfig";
-// import puppeteerCore from "puppeteer-core";
 
 interface ScrapeInfo {
     id: string;
@@ -18,8 +17,7 @@ interface ScrapeInfo {
     query?: string;
 }
 
-export class PuppeteerScrapeSingleItemService extends AbstractScrapeHandler {
-
+export class AmazonScrapeSingleItemService extends PuppeteerScrapeSingleItemService {
     constructor(scrapeConfigDataInterface: ScrapeConfigDataInterface) {
         super(scrapeConfigDataInterface);
     }
@@ -54,12 +52,11 @@ export class PuppeteerScrapeSingleItemService extends AbstractScrapeHandler {
 
             // const searchUrl = this.constructUri(scrapeInfo.query || '', url);
             console.log("scraping address: " + scrapeInfo.href);
-            
             const navigationTimeout = this.configData.getSingleItemTimeout() || 120000; // 2 minutes
             const waitUntil = this.configData.getSingleItemLoadWaitUntil() || 'domcontentloaded';
-
+            
             await page.goto(scrapeInfo.href, {waitUntil: waitUntil, timeout: navigationTimeout});
-
+            await page.click('button[type="submit"]');
             if (loadSelector != undefined && loadSelector !== null) {
                 console.log('waiting for: ' + loadSelector);
                 await page.waitForSelector(loadSelector);

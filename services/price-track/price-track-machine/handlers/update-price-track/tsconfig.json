@@ -1,7 +1,26 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/handlers/update-price-track",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "baseUrl": "../../../",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "declaration": false,
+    "noEmit": true,
+    "noEmitOnError": true,
+    "incremental": true
   },
-  "include": ["./**/*"]
+  "paths": {
+    "@shared-commons/*": ["../../../../commons/**"]
+  },
+  "include": [
+    "./*.ts", 
+    "../../../../../layers/**/*.ts", 
+    "./../*.ts", 
+    "../../../commons/*.ts", 
+    "../../../../../commons/**/*.ts",
+    "../../commons/**/*.ts"
+  ],
+  "exclude": []
 }

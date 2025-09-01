@@ -66,7 +66,10 @@ custom:
     tsconfig: './tsconfig.base.json'
     excludeDevDependencies: true
     external:
-      - shared/SQSService.ts
+      - cheerio
+      - undici
+      - '@aws-sdk/*'
+      - aws-sdk
     resolveExtensions:
       - .js
       - .ts
@@ -217,7 +220,7 @@ functions:
       - { Ref: AwsDataTransferLambdaLayer }
       - { Ref: AwsStorageLambdaLayer }
       - { Ref: ChromiumLambdaLayer }
-    timeout: 900
+    timeout: 600
     events:
       - sqs:
           arn:

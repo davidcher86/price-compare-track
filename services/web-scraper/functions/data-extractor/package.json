@@ -1,7 +1,6 @@
 {
   "name": "data-extractor",
   "version": "1.0.0",
-  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,9 +10,9 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "ts-node": "^10.9.2",
-    "typescript": "^5.2.2",
+    "cheerio": "1.0.0-rc.12",
     "serverless-dotenv-plugin": "^6.0.0",
-    "cheerio": "^1.1.0"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.2.2"
   }
 }

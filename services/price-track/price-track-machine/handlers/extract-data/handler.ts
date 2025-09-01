@@ -1,11 +1,30 @@
 import * as cheerio from 'cheerio';
-import AWS from 'aws-sdk';
-const s3 = new AWS.S3();
+// import AWS from 'aws-sdk';
+import {ExtractDataInterface} from '../../../../commons/scrapers/interfaces/ExtractDataInterface';
+import {getScrapeHtmlRawResultsBucketName, retrievePayload, deletePayload} from '../../../../commons/utils/S3Service'
+// const s3 = new AWS.S3();
+import {AliExpressExtractData} from "./dataExtractors/AliExpress/AliEpressDataExtractor";
+import {NewEggScrapeConfigReader} from "../../../../commons/scrapers/sourcesScrapeConfigs/NewEgg/NewEggScrapeConfigReader";
+import {AliExpressScrapeConfigReader} from "../../../../commons/scrapers/sourcesScrapeConfigs/AliExpress/AliExpressScrapeConfigReader";
+import {AmazonExtractData} from "./dataExtractors/Amazon/AmazonExtractor";
+import {BanggoodScrapeConfigReader} from "../../../../commons/scrapers/sourcesScrapeConfigs/Banggood/BanggoodScrapeConfigReader";
+import { BanggoodExtractData } from "./dataExtractors/Banggood/BanggoodExtractor";
+import {EbayScrapeConfigReader} from "../../../../commons/scrapers/sourcesScrapeConfigs/Ebay/EbayScrapeConfigReader";
+import {AmazonScrapeConfigReader} from "../../../../commons/scrapers/sourcesScrapeConfigs/Amazon/AmazonScrapeConfigReader";
+import {EbayExtractData} from "./dataExtractors/Ebay/EbayExtractData";
+import {NewEggExtractData} from "./dataExtractors/NewEgg/NewEggExtractData";
+
+interface PriceTrackData {
+    image: string;
+    name: string;
+    price: string;
+}
 
 interface ExtractedData {
-    scrapeInfo: any;
-    userId: string;
-    priceTrackData?: null;
+    scrapeInfo: ScrapeInfo;
+    startScrapeDt: string;
+    endScrapeDt: string;
+    priceTrackData?: PriceTrackData;
 }
 
 interface ScrapeInfo {
@@ -24,6 +43,7 @@ interface ScrapeInfo {
     bucketKey: string;
     startScrapeDt: string;
     endScrapeDt: string;
+    scrapeCode: string;
 }
 
 interface ExtractedDataEvent {
@@ -35,67 +55,54 @@ interface ExtractedDataEvent {
 
 export const extractData = async (extractDataEvent: ExtractedDataEvent): Promise<ExtractedData> => {
     try {
-        console.log('ExtractDataEvent:', JSON.stringify(extractDataEvent));
-        //     const { bucketKey, bucketName, userId, scrapeInfo } = extractDataEvent;
+        console.log('recieved extract data event:', JSON.stringify(extractDataEvent));
+        const { bucketKey, scrapeInfo, startScrapeDt, endScrapeDt } = extractDataEvent;
 
-        //     console.log('event:', JSON.stringify(event));
-        //     const s3Object = await s3
-        //         .getObject({
-        //             Bucket: bucketName,
-        //             Key: bucketKey,
-        //         })
-        //         .promise();
+        if (bucketKey == undefined || scrapeInfo == undefined) 
+            throw new Error("scrapeInfo, query or userId is undefined");
+  
+        const bucketName = getScrapeHtmlRawResultsBucketName();
+        const html = await retrievePayload(bucketName, bucketKey);
+        
+        if (html.length === 0)
+            throw new Error('HTML content is empty');
+        
+        let extractDataService: ExtractDataInterface;
 
-        //     const html = s3Object.Body?.toString('utf-8') || '';
+        console.log("scrapeInfo source " + scrapeInfo.source);
 
-        //     if (html.length === 0) {
-        //         throw new Error('HTML content is empty');
-        //     }
+        switch (scrapeInfo.source.toLowerCase()) {
+            case 'banggood':
+                console.log("using Banggood scrape configs")
+                extractDataService = new BanggoodExtractData(new BanggoodScrapeConfigReader());
+                break;
+            case 'newegg':
+                console.log("using NewEgg scrape configs")
+                extractDataService = new NewEggExtractData(new NewEggScrapeConfigReader());
+                break;
+            case 'ebay':
+                console.log("using Ebay scrape configs")
+                extractDataService = new EbayExtractData(new EbayScrapeConfigReader());
+                break;
+            case 'amazon':
+                console.log("using Amazon scrape configs")
+                extractDataService = new AmazonExtractData(new AmazonScrapeConfigReader());
+                break;
+            case 'aliexpress':
+            default:
+                console.log("using AliExpress scrape configs")
+                extractDataService = new AliExpressExtractData(new AliExpressScrapeConfigReader());
+                break;
+        }
 
-        //     const $ = cheerio.load(html);
-        //     let dynamicObject: any = {};
-        //     for (const arg of scrapeInfo.scrapeArgs.extractArgs) {
-        //         console.log('arg:', JSON.stringify(arg));
-        //         let selector = arg.selector;
-        //         let key = arg.keyName;
-        //         let type = arg.type;
-        //         let value:string | null = '';
+        const priceTrackResults = await extractDataService.extract(html, scrapeInfo.userId);
 
-        //         switch (type) {
-        //             case 'src':
-        //                 value = $(selector).attr('src') || null;
-        //                 break;
-        //             case 'text':
-        //             default:
-        //                 value = $(selector).text().trim()  || null;
-        //                 break;
-        //         }
-        //         console.log(`key: ${key}, value: ${value}`);
-        //         dynamicObject[key] = value;``
-        //     }
-
-
-        //     await s3
-        //         .deleteObject({
-        //             Bucket: bucketName,
-        //             Key: bucketKey,
-        //         })
-        //         .promise();
-
-        //     // console.log(`Item with key "${bucketKey}" deleted from bucket "${bucketName}".`);
-
-        //     console.log('Extracted data:', dynamicObject);
-
-        // return {
-        //     scrapeInfo: scrapeInfo,
-        //     userId: userId,
-        //     priceTrackData: dynamicObject
-        // };      
-
+        console.log('Extracted data:', priceTrackResults[0]);
         return {
-            scrapeInfo: 'scrapeInfo',
-            userId: 'userId',
-            priceTrackData: null
+            scrapeInfo: scrapeInfo,
+            priceTrackData: priceTrackResults[0],
+            startScrapeDt: startScrapeDt,
+            endScrapeDt: endScrapeDt
         };    
     } catch (error) {
         console.error('Error extracting data:', error);

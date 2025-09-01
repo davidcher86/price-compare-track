@@ -1,3 +1,3 @@
 export interface ExtractDataInterface {
-    extract: (html: any) => Promise<any[]>;
+    extract: (html: any, userId: string) => Promise<any[]>;
 }

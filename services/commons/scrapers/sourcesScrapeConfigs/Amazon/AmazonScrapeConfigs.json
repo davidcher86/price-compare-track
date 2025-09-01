@@ -3,9 +3,20 @@
   "disableSec": false,
   "url": "https://www.amazon.com/s?k={query}",
   "loadSelector": "#search",
+  "loadWaitUntil": "domcontentloaded",
+  "loadTimeout": 120000,
   "listIdentifier": "[data-asin][data-component-type=\"s-search-result\"]",
-  "singleItemPageLoadSelector": "#product-details",
-  "singleItemPagePriceTag": "#product-details",
+  "singleItemLoadWaitUntil": "domcontentloaded",
+  "singleItemTimeout": 120000,
+  "singleItemPageWrapper": "#ppd",
+  "singleItemPageLoadSelector": "#ppd",
+  "singleItemPagePriceSelector": "#value-pick-price-view",
+  "singleItemPageNameSelector": "#value-pick-title-row",
+  "singleItemPageImageSelector": "img#value-pick-image",
+  "blockedResources": [
+    "media",
+    "font"
+  ],
   "brightDataSupport" : true,
   "hrefHost": "https://www.amazon.com",
   "extractArgs": [
@@ -26,7 +37,7 @@
     },
     {
       "keyName": "href",
-      "selector": "a.a-link-normal",
+      "selector": "a[href]",
       "type": "href"
     }
   ]

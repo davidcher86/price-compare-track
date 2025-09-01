@@ -3,10 +3,19 @@
   "brightDataSupport" : false,
   "url": "https://www.aliexpress.com/w/wholesale-{query}.html?spm=a2g0o.productlist.search.0",
   "loadSelector": "#card-list",
+  "loadWaitUntil": "domcontentloaded",
+  "loadTimeout": 120000,
   "disableSec": true,
   "listIdentifier": ".card-out-wrapper",
+  "singleItemLoadWaitUntil": "domcontentloaded",
+  "singleItemTimeout": 120000,
+  "singleItemPageWrapper": "#product-details",
   "singleItemPageLoadSelector": "#product-details",
   "singleItemPagePriceTag": "#product-details",
+  "blockedResources": [
+    "media",
+    "font"
+  ],
   "extractArgs": [
     {
       "keyName": "name",

@@ -9,6 +9,7 @@
 // const local = false;
 import { v4 as uuid4 } from "uuid";
 import {PuppeteerScrapeSingleItemService} from './scraper/PuppeteerScrapeSingleItemService.ts';
+import {AmazonScrapeSingleItemService} from './scraper/AmazonScrapeSingleItemService.ts'; 
 import {ScraperInterface} from '../../../../commons/scrapers/interfaces/ScraperInterface';
 import {AliExpressScrapeConfigReader} from '../../../../commons/scrapers/sourcesScrapeConfigs/AliExpress/AliExpressScrapeConfigReader';
 import {BanggoodScrapeConfigReader} from '../../../../commons/scrapers/sourcesScrapeConfigs/Banggood/BanggoodScrapeConfigReader';
@@ -103,6 +104,7 @@ interface ScrapeItemEvent {
     id: string;
     userId: string;
     source: string;
+    scrapeCode: string;
     scrapeEngine?: string;
     createDt: string;
     iteration: number;
@@ -114,10 +116,10 @@ interface ScrapeItemEvent {
 }
 
 export const scrapeSite = async (scrapeInfo: ScrapeItemEvent) => {
-    console.log('event for scrape:' + JSON.stringify(scrapeInfo));
+    console.log('event for scrape:', scrapeInfo);
 
     // const {scrapeInfo} = event;
-    console.log("scrapeInfo: " + JSON.stringify(scrapeInfo));
+    console.log("accepted scrapeInfo: " + JSON.stringify(scrapeInfo));
     try {
         let scrapeService: ScraperInterface;
 
@@ -138,7 +140,7 @@ export const scrapeSite = async (scrapeInfo: ScrapeItemEvent) => {
                 break;
             case 'amazon':
                 console.log("using Amazon scrape configs")
-                scrapeService = new PuppeteerScrapeSingleItemService(new AmazonScrapeConfigReader());
+                scrapeService = new AmazonScrapeSingleItemService(new AmazonScrapeConfigReader());
                 break;
             case 'aliexpress':
             default:
@@ -156,16 +158,20 @@ export const scrapeSite = async (scrapeInfo: ScrapeItemEvent) => {
         const bucketName = getScrapeHtmlRawResultsBucketName();
         await savePayload(html, bucketName, bucketKey, 'text/html');
 
-        return {
+
+        const eventPayload = {
             scrapeInfo: scrapeInfo,
             bucketKey: bucketKey,
             startScrapeDt: startScrapeDt,
             endScrapeDt: endScrapeDt
-        };
+        }
+
+        console.log('Scrape event payload: ' + JSON.stringify(eventPayload));
+        return eventPayload;
 
     } catch (error: ErrorMessage | any) {
         console.error('Error during scraping:', error);
-        await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(scrapeInfo, 'SCRAPE_FAILED', `Error: ${error}`));
+        // await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(scrapeInfo, 'SCRAPE_FAILED', `Error: ${error}`));
     }
 }
 

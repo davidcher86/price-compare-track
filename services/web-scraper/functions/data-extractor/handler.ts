@@ -1,7 +1,24 @@
+// Polyfill for File constructor that undici expects in browser environment
+if (typeof globalThis.File === 'undefined') {
+    (globalThis as any).File = class File {
+        constructor(fileBits: any[], fileName: string, options?: any) {
+            this.name = fileName;
+            this.lastModified = options?.lastModified || Date.now();
+            this.size = 0;
+            this.type = options?.type || '';
+            this.webkitRelativePath = '';
+        }
+        name: string;
+        lastModified: number;
+        size: number;
+        type: string;
+        webkitRelativePath: string;
+    };
+}
+
 import {AliExpressExtractData} from "./dataExtractors/AliExpress/AliEpressDataExtractor";
 import {NewEggScrapeConfigReader} from "../../../commons/scrapers/sourcesScrapeConfigs/NewEgg/NewEggScrapeConfigReader";
 import {AliExpressScrapeConfigReader} from "../../../commons/scrapers/sourcesScrapeConfigs/AliExpress/AliExpressScrapeConfigReader";
-import {SimpleExtractData} from "./dataExtractors/SimpleExtractData";
 import {AmazonExtractData} from "./dataExtractors/Amazon/AmazonExtractor";
 import {BanggoodScrapeConfigReader} from "../../../commons/scrapers/sourcesScrapeConfigs/Banggood/BanggoodScrapeConfigReader";
 import { BanggoodExtractData } from "./dataExtractors/Banggood/BanggoodExtractor";
@@ -115,10 +132,10 @@ const extract = async (event: any) => {
 
         // await deletePayload(bucketName, bucketKey);
 
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ message: "Scraping completed successfully" }),
-        }
+        // return {
+        //     statusCode: 200,
+        //     body: JSON.stringify({ message: "Scraping completed successfully" }),
+        // }
     } catch (error: ErrorMessage | any) {
         console.error('Error during scraping:', error);
         await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(event,error.status, error.errorMessage));

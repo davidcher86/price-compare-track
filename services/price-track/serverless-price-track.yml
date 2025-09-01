@@ -35,6 +35,11 @@ provider:
         - s3:PutObject
         - s3:DeleteObject
         - s3:ListBucket
+        - states:StartExecution
+        - states:DescribeExecution
+        - states:StopExecution
+        - states:ListExecutions
+        - states:DescribeStateMachine
       Resource: "*"
 
 plugins:
@@ -49,12 +54,12 @@ custom:
   S3_EXTRACTED_DATA_BUCKET_NAME: ${env:S3_EXTRACTED_DATA_BUCKET_NAME}-${self:provider.stage}
   PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME: ${env:PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME}-${self:provider.stage}
   PRICE_TRACK_RESULTS_TABLE_NAME: ${env:PRICE_TRACK_RESULTS_TABLE_NAME}-${self:provider.stage}
-  PRICE_TRACK_MACHINE: ${env:PRICE_TRACK_MACHINE}
+  PRICE_TRACK_MACHINE_ARN: ${env:PRICE_TRACK_MACHINE_ARN}
   secrets:
     brightdataProxyUri: sls-fourth/brightdata/proxy/uri
   serverless-offline:
     httpPort: 5005
-    lambdaPort: 5015
+    lambdaPort: 5018
   build:
     esbuild:
       bundle: true
@@ -64,14 +69,14 @@ custom:
       platform: node
       concurrency: 10
       exclude: ['node_modules']
-  # stepFunctionsOffline:
-  #   stateMachines:
-  #     scrapePriceTrackMachine: scrapePriceTrackMachine
-  #   port: 4010
-  #   GetScrapeList: getScrapeList
-  #   ScrapeSite: scrapeSite
-  #   ExtractData: extractData
-  #   SavePriceTrackData: updateHistoryData
+  stepFunctionsOffline:
+    stateMachines:
+      priceTrackMachine: priceTrackMachine
+    port: 5017
+    GetScrapeList: getScrapeList
+    ScrapeSite: scrapeSite
+    ExtractData: extractData
+    SavePriceTrackData: updatePriceTrackHistoryData
 
 
 layers:
@@ -139,7 +144,7 @@ layers:
 functions:
   add-price-track-item:
     handler: functions/add-price-track/handler.addPriceTrackItem
-    timeout: 300
+    timeout: 29
     layers:
       - { Ref: UuidLibLambdaLayer }
       - { Ref: AwsDataTransferLambdaLayer }
@@ -161,9 +166,14 @@ functions:
     environment:
       STAGE: ${self:provider.stage}
       REGION: ${self:provider.region}
-      PRICE_TRACK_MACHINE: ${self:custom.PRICE_TRACK_MACHINE}
+      PRICE_TRACK_MACHINE_ARN: ${self:custom.PRICE_TRACK_MACHINE_ARN}
       PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME: ${self:custom.PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME}
-  
+    # events:
+    #   - http:
+    #       path: /track
+    #       method: get
+    #       cors: true
+
   scrapeSite:
     handler: price-track-machine/handlers/scrape-site/handler.scrapeSite
     timeout: 300
@@ -180,13 +190,21 @@ functions:
     timeout: 30
     layers:
       - { Ref: CheerioLambdaLayer }
+      - { Ref: AwsStorageLambdaLayer }
     environment:
       STAGE: ${self:provider.stage}
       REGION: ${self:provider.region}
 
-  # updateHistoryData:
-  #   handler: price-track-machine/handlers/update-price-track/updateHistoryData.handler
-  #   timeout: 30
+  updatePriceTrackHistoryData:
+    handler: price-track-machine/handlers/update-price-track/handler.updateHistoryData
+    timeout: 30
+    layers:
+      - { Ref: AwsStorageLambdaLayer }
+      - { Ref: UuidLibLambdaLayer }
+    environment:
+      STAGE: ${self:provider.stage}
+      REGION: ${self:provider.region}
+      PRICE_TRACK_RESULTS_TABLE_NAME: ${self:custom.PRICE_TRACK_RESULTS_TABLE_NAME}
 
 stepFunctions:
   validate: true
@@ -225,16 +243,16 @@ stepFunctions:
             #   "startScrapeDt.$": "$.startScrapeDt"
             #   "endScrapeDt.$": "$.endScrapeDt"
             ResultPath: "$.stepExtractDataResult"
-            # Next: SavePriceTrackData
-            End: true
+            Next: SavePriceTrackData
+            # End: true
 
-          # SavePriceTrackData:
-          #   Type: Task
-          #   Resource:
-          #     Fn::GetAtt: [ UpdateHistoryDataLambdaFunction, Arn ]
-          #   InputPath: "$.stepExtractDataResult"
-          #   ResultPath: "$.stepSavePriceTrackData"
-          #   End: true
+          SavePriceTrackData:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [ UpdatePriceTrackHistoryDataLambdaFunction, Arn ]
+            InputPath: "$.stepExtractDataResult"
+            ResultPath: "$.stepSavePriceTrackData"
+            End: true
 
       # End: true
 

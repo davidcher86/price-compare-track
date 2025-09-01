@@ -1,8 +1,8 @@
 import {CheerioAPI} from "cheerio";
-import {SimpleExtractData} from "../SimpleExtractData";
-import {ScrapeConfigDataInterface} from "../../../../../commons/scrapers/interfaces/ScrapeConfig";
+import {SimpleSingleItemExtractData} from "../SimpleSingleItemExtractData";
+import {ScrapeConfigDataInterface} from "../../../../../../commons/scrapers/interfaces/ScrapeConfig";
 
-export class AmazonExtractData extends SimpleExtractData {
+export class AmazonExtractData extends SimpleSingleItemExtractData {
     protected configData: any;
 
     constructor(scrapeConfigReader: ScrapeConfigDataInterface) {
@@ -25,7 +25,7 @@ export class AmazonExtractData extends SimpleExtractData {
         return title || null;
     }
 
-    protected extractImage($: CheerioAPI, element: any, selector: string, dynamicObject: any) {
+    protected extractImage($: CheerioAPI, element: any, selector: string) {
         // const image =q $(element).find(selector).first().attr('src');
         const container = $(element);
         
@@ -48,11 +48,11 @@ export class AmazonExtractData extends SimpleExtractData {
         return null;
     }
     
-    protected extractHref($: CheerioAPI, element: any, selector: string, dynamicObject: any) {
+    protected extractHref($: CheerioAPI, element: any, selector: string) {
         const container = $(element);
         
         if (container.find(selector).first().text().trim() !== undefined)
-            return 'https://www.amazon.com' + container.find(selector).first().attr('href') || null;
+            return container.find(selector).first().attr('href') || null;
 
         return null;
     }

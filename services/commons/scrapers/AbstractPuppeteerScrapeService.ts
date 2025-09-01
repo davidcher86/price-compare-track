@@ -1,4 +1,5 @@
 import puppeteerCore from "puppeteer-core";
+import puppeteer from "puppeteer";
 import {ScraperInterface} from "./interfaces/ScraperInterface";
 import {getSecretValue} from "../utils/SecretManager";
 import {ScrapeConfigDataInterface} from "./interfaces/ScrapeConfig";
@@ -28,14 +29,13 @@ export abstract class AbstractScrapeHandler implements ScraperInterface {
     protected configData: ScrapeConfigDataInterface;
 
     constructor(scrapeConfigDataInterface: ScrapeConfigDataInterface) {
-        // super();
         this.configData = scrapeConfigDataInterface;
     }
 
     public async start(scraperRequestInfo: any): Promise<any> {
         try {
             await this.startBrowser(scraperRequestInfo);
-            const htmlResult = await this.scrape(scraperRequestInfo.query);
+            const htmlResult = await this.scrape(scraperRequestInfo);
 
             return htmlResult;
         } catch (error) {
@@ -96,6 +96,12 @@ export abstract class AbstractScrapeHandler implements ScraperInterface {
                     '--disable-web-security',
                     '--disable-features=IsolateOrigins,site-per-process',
                     '--allow-running-insecure-content',
+                    '--disable-dev-shm-usage',
+                    '--disable-background-timer-throttling',
+                    '--disable-backgrounding-occluded-windows',
+                    '--disable-renderer-backgrounding',
+                    '--no-sandbox',
+                    '--single-process',
                 ],
                 defaultViewport: chromium.defaultViewport,
                 executablePath: await chromium.executablePath(
@@ -104,11 +110,21 @@ export abstract class AbstractScrapeHandler implements ScraperInterface {
                 headless: chromium.headless,
             });
         } else {
-            this.browser = await puppeteerCore.launch({
-                executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+            console.log(`starting browser. using bundled chromium...`)
+            this.browser = await puppeteer.launch({
                 args: scraperInfo.disableSec ? [
                     '--disable-web-security',
-                ] : [],
+                    '--disable-features=IsolateOrigins,site-per-process',
+                    '--allow-running-insecure-content',
+                    '--disable-dev-shm-usage',
+                    '--disable-background-timer-throttling',
+                    '--disable-backgrounding-occluded-windows',
+                    '--disable-renderer-backgrounding',
+                    '--no-sandbox',
+                ] : [
+                    '--disable-dev-shm-usage',
+                    '--no-sandbox',
+                ],
                 headless: false
             });
         }

@@ -392,10 +392,30 @@ export const retrieveAllEnabledPriceTrackItems = async (): Promise<PriceTrackIte
         }));
 
         const response: PriceTrackItem[] = scanResult.Items as PriceTrackItem[] || [];
-
+        console.log('All enabled price track items retrieved successfully, counted:', response.length);
         return response;
     } catch (err) {
         console.error("Error retrieving results:", err);
         return [];
     }
 }
+
+export const savePriceTrackRecord = async (payload: any): Promise<void> => {
+    try {
+        const TableName = process.env.PRICE_TRACK_RESULTS_TABLE_NAME;
+
+        console.log('Adding price track record to DynamoDB: ' + TableName);
+        const params = {
+            TableName: TableName,
+            Item: payload,
+        };
+
+        console.log('Adding price track record to DynamoDB: ' + TableName);
+        console.log('Payload:', JSON.stringify(payload));
+
+        await ddb.send(new PutCommand(params));
+    } catch (error) {
+        console.error('Error saving price track record:', error);
+        throw new Error('Failed to save price track record');
+    }
+};
