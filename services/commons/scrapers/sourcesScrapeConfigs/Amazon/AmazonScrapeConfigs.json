@@ -8,11 +8,11 @@
   "listIdentifier": "[data-asin][data-component-type=\"s-search-result\"]",
   "singleItemLoadWaitUntil": "domcontentloaded",
   "singleItemTimeout": 120000,
-  "singleItemPageWrapper": "#ppd",
-  "singleItemPageLoadSelector": "#ppd",
-  "singleItemPagePriceSelector": "#value-pick-price-view",
+  "singleItemPageWrapper": "#centerCol",
+  "singleItemPageLoadSelector": "#centerCol",
+  "singleItemPagePriceSelector": ".a-price.aok-align-center",
   "singleItemPageNameSelector": "#value-pick-title-row",
-  "singleItemPageImageSelector": "img#value-pick-image",
+  "singleItemPageImageSelector": "#imgTagWrapperId",
   "blockedResources": [
     "media",
     "font"

@@ -400,9 +400,15 @@ export const retrieveAllEnabledPriceTrackItems = async (): Promise<PriceTrackIte
     }
 }
 
+const getPriceTrackResultsTableName = () => {
+    return process.env.STAGE === 'prod'
+            ? (process.env.PRICE_TRACK_RESULTS_TABLE_NAME || '')
+            : "price-track-results-prod";
+};
+
 export const savePriceTrackRecord = async (payload: any): Promise<void> => {
     try {
-        const TableName = process.env.PRICE_TRACK_RESULTS_TABLE_NAME;
+        const TableName = getPriceTrackResultsTableName();
 
         console.log('Adding price track record to DynamoDB: ' + TableName);
         const params = {

@@ -56,7 +56,11 @@ export class AmazonScrapeSingleItemService extends PuppeteerScrapeSingleItemServ
             const waitUntil = this.configData.getSingleItemLoadWaitUntil() || 'domcontentloaded';
             
             await page.goto(scrapeInfo.href, {waitUntil: waitUntil, timeout: navigationTimeout});
-            await page.click('button[type="submit"]');
+            // invoke this only if the element exist
+            const submitButton = await page.$('button[type="submit"]');
+            if (submitButton) {
+                await submitButton.click();
+            }
             if (loadSelector != undefined && loadSelector !== null) {
                 console.log('waiting for: ' + loadSelector);
                 await page.waitForSelector(loadSelector);

@@ -11,31 +11,28 @@ export class SimpleSingleItemExtractData implements ExtractDataInterface {
     }
 
     public async extract(html: any, query: string): Promise<any> {
-        // let items: any[] = [];
+
         const extractArgs = this.configData.getExtractArgs();
-        const hrefHost = this.configData.getHrefHost() || '';
         const listIdentifier = this.configData.getListIdentifier() || '';
         const singleItemPageWrapper = this.configData.getSingleItemPageWrapper() || '';
         const singleItemPagePriceSelector = this.configData.getSingleItemPagePriceSelector() || '';
-        const singleItemPageImageSelector = this.configData.getSingleItemPageImageSelector() || '';
-        const singleItemPageNameSelector = this.configData.getSingleItemPageNameSelector() || '';
 
         if (extractArgs === undefined || extractArgs.length === 0 || listIdentifier === '') {
             throw {status: "EXTRACRD_DATA_DATA_VALIDATION_ERROR",message: `no results where found, when searching for ${listIdentifier} elements. [query: ${query}, source: ${this.configData.getName()}]`};
-        //    throw new Error("extractArgs/listIdentifier is undefined or empty");
         }
 
         const $ = cheerio.load(html);
         const singleItemWrapperElement = $(singleItemPageWrapper);
-        
-        const image = this.extractImgttr($, singleItemWrapperElement, singleItemPageImageSelector);
         const price = this.extractPrice($, singleItemWrapperElement, singleItemPagePriceSelector);
-        const productName = this.extractName($, singleItemWrapperElement, singleItemPageNameSelector);
-
+       
+        if (price === null) {
+            throw new Error('Price not found');
+        }
+        
+        const parsedPrice = this.parsePrice(price);
+        
         return [{
-            image: image,
-            price: price,
-            name: productName
+            price: parsedPrice
         }]
     }
 
@@ -52,7 +49,7 @@ export class SimpleSingleItemExtractData implements ExtractDataInterface {
         return null;
     }
 
-    protected extractImgttr($: cheerio.CheerioAPI, element: any, selector: string) {
+    protected extractImage($: cheerio.CheerioAPI, element: any, selector: string) {
         const image = $(element).find(selector).attr('src');
         console.log($(element).html());
         if ($(element).find(selector).attr('src') != undefined) {
@@ -76,10 +73,56 @@ export class SimpleSingleItemExtractData implements ExtractDataInterface {
 
         return null;
     }
+
+    protected parsePrice(priceString: string): number {
+        // Remove currency symbols and spaces, but keep digits, dots, and commas
+        const cleaned = priceString.replace(/[^\d.,]/g, '');
+        
+        // Handle European format (comma as decimal separator)
+        // Pattern: digits, optional comma/dot for thousands, comma for decimal
+        const europeanPattern = /^(\d{1,3}(?:[.,]\d{3})*),(\d{2})$/;
+        const europeanMatch = europeanPattern.exec(cleaned);
+        
+        if (europeanMatch) {
+            // Convert European format: remove thousands separators, replace comma with dot
+            const wholePart = europeanMatch[1].replace(/[.,]/g, '');
+            const decimalPart = europeanMatch[2];
+            const normalized = `${wholePart}.${decimalPart}`;
+            return parseFloat(normalized);
+        }
+        
+        // Handle US format (dot as decimal separator)
+        // Pattern: digits, optional comma for thousands, dot for decimal
+        const usPattern = /^(\d{1,3}(?:,\d{3})*)\.(\d{2})$/;
+        const usMatch = usPattern.exec(cleaned);
+        
+        if (usMatch) {
+            // Convert US format: remove thousands separators
+            const wholePart = usMatch[1].replace(/,/g, '');
+            const decimalPart = usMatch[2];
+            const normalized = `${wholePart}.${decimalPart}`;
+            return parseFloat(normalized);
+        }
+        
+        // Simple fallback: just extract first number sequence
+        const simplePattern = /(\d+)[.,](\d+)/;
+        const simpleMatch = simplePattern.exec(cleaned);
+        
+        if (simpleMatch) {
+            return parseFloat(`${simpleMatch[1]}.${simpleMatch[2]}`);
+        }
+        
+        // Last resort: try to parse as-is after basic cleaning
+        const basicCleaned = cleaned.replace(/,/g, '.');
+        const parsed = parseFloat(basicCleaned);
+        
+        if (isNaN(parsed)) {
+            throw new Error(`Invalid price format: ${priceString}`);
+        }
+
+        return parsed;
+    }
 }
 
-interface ErrorMessage {
-    status: string;
-    message: string;
-    data?: any;
-}
+
+

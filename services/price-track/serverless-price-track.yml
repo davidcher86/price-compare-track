@@ -45,7 +45,6 @@ provider:
 plugins:
   - serverless-offline
   - serverless-step-functions
-  - serverless-step-functions-offline
   - serverless-dotenv-plugin
 
 custom:
@@ -69,14 +68,6 @@ custom:
       platform: node
       concurrency: 10
       exclude: ['node_modules']
-  stepFunctionsOffline:
-    stateMachines:
-      priceTrackMachine: priceTrackMachine
-    port: 5017
-    GetScrapeList: getScrapeList
-    ScrapeSite: scrapeSite
-    ExtractData: extractData
-    SavePriceTrackData: updatePriceTrackHistoryData
 
 
 layers:
@@ -194,6 +185,7 @@ functions:
     environment:
       STAGE: ${self:provider.stage}
       REGION: ${self:provider.region}
+      S3_RAW_HTML_RESULT_BUCKET_NAME: ${self:custom.S3_RAW_HTML_RESULT_BUCKET_NAME}
 
   updatePriceTrackHistoryData:
     handler: price-track-machine/handlers/update-price-track/handler.updateHistoryData
@@ -224,103 +216,42 @@ stepFunctions:
             Type: Task
             Resource:
               Fn::GetAtt: [ ScrapeSiteLambdaFunction, Arn ]
-            # Parameters:
-            #   "scrapeInfo.$": "$.scrapeInfo"
-            #   "userId.$": "$.userId"
             ResultPath: "$.stepScrapeSiteResult"
             TimeoutSeconds: 30
             Next: ExtractData
-            # End: true
 
           ExtractData:
             Type: Task
             Resource:
               Fn::GetAtt: [ ExtractDataLambdaFunction, Arn ]
             InputPath: "$.stepScrapeSiteResult"
-            # Parameters:
-            #   "scrapeInfo.$": "$.scrapeInfo"
-            #   "bucketKey.$": "$.bucketKey"
-            #   "startScrapeDt.$": "$.startScrapeDt"
-            #   "endScrapeDt.$": "$.endScrapeDt"
+            Parameters:
+              "scrapeInfo.$": "$.scrapeInfo"
+              "bucketKey.$": "$.bucketKey"
+              "startScrapeDt.$": "$.startScrapeDt"
+              "endScrapeDt.$": "$.endScrapeDt"
             ResultPath: "$.stepExtractDataResult"
             Next: SavePriceTrackData
-            # End: true
 
           SavePriceTrackData:
             Type: Task
             Resource:
               Fn::GetAtt: [ UpdatePriceTrackHistoryDataLambdaFunction, Arn ]
             InputPath: "$.stepExtractDataResult"
+            Parameters:
+              "scrapeInfo.$": "$.scrapeInfo"
+              "startScrapeDt.$": "$.startScrapeDt"
+              "endScrapeDt.$": "$.endScrapeDt"
+              "priceTrackData.$": "$.priceTrackData"
             ResultPath: "$.stepSavePriceTrackData"
             End: true
 
-      # End: true
-
-    # scrapePriceTrackMachine:
-    #   name: priceTrackRecord
-    #   loggingConfig:
-    #     level: ALL
-    #     includeExecutionData: true
-    #     destinations:
-    #       - Fn::GetAtt: [ SLSLogGroup, Arn ]
-    #   definition:
-    #     Comment: "Scrape price tracking pipeline state machine"
-    #     StartAt: GetScrapeList
-    #     States:
-    #       GetScrapeList:
-    #         Type: Task
-    #         Resource:
-    #           Fn::GetAtt: [ GetScrapeListLambdaFunction, Arn ]
-    #         ResultPath: "$.stepGetScrapeListResult"
-    #         Next: iterateScrapeList
-
-    #       iterateScrapeList:
-    #         Type: Map
-    #         ItemsPath: "$.stepGetScrapeListResult.scrapeList"
-    #         Parameters:
-    #           "scrapeInfo.$": "$$.Map.Item.Value"
-    #           # "userId.$": "$.stepGetScrapeListResult.userId"
-    #         MaxConcurrency: 5
-    #         Iterator:
-    #           StartAt: ScrapeSite
-    #           States:
-
-    #             ScrapeSite:
-    #               Type: Task
-    #               Resource:
-    #                 Fn::GetAtt: [ ScrapeSiteLambdaFunction, Arn ]
-    #               Parameters:
-    #                 "scrapeInfo.$": "$.scrapeInfo"
-    #                 "userId.$": "$.userId"
-    #               ResultPath: "$.stepScrapeSiteResult"
-    #               TimeoutSeconds: 30
-    #               Next: ExtractData
-
-    #             ExtractData:
-    #               Type: Task
-    #               Resource:
-    #                 Fn::GetAtt: [ ExtractDataLambdaFunction, Arn ]
-    #               InputPath: "$.stepScrapeSiteResult"
-    #               ResultPath: "$.stepExtractDataResult"
-    #               Next: SavePriceTrackData
-
-    #             SavePriceTrackData:
-    #               Type: Task
-    #               Resource:
-    #                 Fn::GetAtt: [ UpdateHistoryDataLambdaFunction, Arn ]
-    #               InputPath: "$.stepExtractDataResult"
-    #               ResultPath: "$.stepSavePriceTrackData"
-    #               End: true
 
 package:
   individually: true
 
 resources:
   Resources:
-#     ScrapedHtmlBucket:
-#       Type: AWS::S3::Bucket
-#       Properties:
-#         BucketName: ${env:BUCKET_NAME}
     PriceTrackLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:

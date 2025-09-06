@@ -8,8 +8,8 @@
   "listIdentifier": ".product-list ul li",
   "singleItemLoadWaitUntil": "domcontentloaded",
   "singleItemTimeout": 120000,
-  "singleItemPageWrapper": "#pageDetails",
-  "singleItemPageLoadSelector": "#product-details #pageDetails",
+  "singleItemPageWrapper": ".info-modular",
+  "singleItemPageLoadSelector": ".info-modular",
   "singleItemPagePriceSelector": ".price",
   "singleItemPageNameSelector": ".products_name",
   "singleItemPageImageSelector": ".details-slide-img",
@@ -21,7 +21,7 @@
   "extractArgs": [
     {
       "keyName": "name",
-      "selector": "span",
+      "selector": "p",
       "type": "text"
     },
     {

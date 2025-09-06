@@ -1,8 +1,9 @@
 import {CheerioAPI} from "cheerio";
 import {SimpleSingleItemExtractData} from "../SimpleSingleItemExtractData";
 import {ScrapeConfigDataInterface} from "../../../../../../commons/scrapers/interfaces/ScrapeConfig";
+import {ExtractDataInterface} from "../../../../../../commons/scrapers/interfaces/ExtractDataInterface";
 
-export class AmazonExtractData extends SimpleSingleItemExtractData {
+export class AmazonExtractData extends SimpleSingleItemExtractData implements ExtractDataInterface {
     protected configData: any;
 
     constructor(scrapeConfigReader: ScrapeConfigDataInterface) {
@@ -26,16 +27,42 @@ export class AmazonExtractData extends SimpleSingleItemExtractData {
     }
 
     protected extractImage($: CheerioAPI, element: any, selector: string) {
-        // const image =q $(element).find(selector).first().attr('src');
         const container = $(element);
         
-        if ($(element).find(selector).first() != undefined) {
-            const img = container.find(selector);
-            const imageUrl = img.attr('src') || img.attr('data-src') || null;
-
-            // const img = 'http:' + $(element).find(selector).first().attr('src');
+        console.log('=== IMAGE EXTRACTION DEBUG ===');
+        console.log('Selector used:', selector);
+        console.log('Container HTML preview:', container.html()?.substring(0, 200) + '...');
+        
+        // Find the image element using the selector
+        const imageElement = container.find(selector).first();
+        
+        console.log('Image element found:', imageElement.length > 0);
+        
+        if (imageElement.length > 0) {
+            console.log('Image element HTML:', (imageElement.get(0) as any)?.outerHTML);
+            
+            // Debug each attribute individually
+            const srcAttr = imageElement.attr('src');
+            const dataSrcAttr = imageElement.attr('data-src');
+            const dataOldHiresAttr = imageElement.attr('data-old-hires');
+            const dataAHiresAttr = imageElement.attr('data-a-hires');
+            
+            // console.log('src attribute:', srcAttr);
+            // console.log('data-src attribute:', dataSrcAttr);
+            // console.log('data-old-hires attribute:', dataOldHiresAttr);
+            // console.log('data-a-hires attribute:', dataAHiresAttr);
+            
+            // Try multiple src attributes that Amazon commonly uses
+            const imageUrl = srcAttr || dataSrcAttr || dataOldHiresAttr || dataAHiresAttr;
+            
+            // console.log('Final extracted image URL:', imageUrl);
+            // console.log('=== END IMAGE EXTRACTION DEBUG ===');
             return imageUrl || null;
         }
+        
+        console.log('No image element found with selector:', selector);
+        console.log('Available img elements in container:', container.find('img').length);
+        console.log('=== END IMAGE EXTRACTION DEBUG ===');
         return null;
     }
     

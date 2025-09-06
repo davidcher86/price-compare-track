@@ -7,9 +7,9 @@
   "listIdentifier": "li.s-item, li.s-card",
   "singleItemLoadWaitUntil": "domcontentloaded",
   "singleItemTimeout": 120000,
-  "singleItemPageWrapper": "#product-details",
-  "singleItemPageLoadSelector": "#product-details",
-  "singleItemPagePriceTag": "#product-details",
+  "singleItemPageWrapper": "#mainContent",
+  "singleItemPageLoadSelector": "#mainContent",
+  "singleItemPagePriceSelector": ".x-price-primary",
   "blockedResources": [
     "media",
     "font"

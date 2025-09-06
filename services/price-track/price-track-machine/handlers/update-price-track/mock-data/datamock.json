@@ -1,0 +1,20 @@
+{
+    "scrapeInfo": {
+      "scrapeCode": "0b7abf02-e8a8-45e1-b23d-ff5e0e0dd60f",
+      "userId": "9962a416-504d-4b82-87f6-94a536aa27da",
+      "source": "amazon",
+      "scrapeEngine": "puppeteer",
+      "createDt": "2025-09-01T12:49:38.482Z",
+      "iteration": 1,
+      "iterationType": "hourly",
+      "iterationStart": "2025-09-01T12:49:37.263Z",
+      "href": "https://www.amazon.com/AULA-Mechanical-Swappable-Pre-lubed-Reaper/dp/B0D14N2QZF/ref=sr_1_2?dib=eyJ2IjoiMSJ9.gRuFfEjL1j2TxSPTNwbzk3AOtNFHw2roMPFOGNSo2NjXUvCU1NBT8Pg02qHM0IsSXxNdOpGdnpAJb-GM3HfZd1URtmNCzKeV6QVW5HRJrVjxt34JU9RcHw8vngfaMr2vJBlMvUGBIv6rXHor7wymbn2PzqgJoVLx5Pp8wJLlITtDYHK2Qh06rnq6tcuMbuXMC6IWY1Vg7WJgp2jYJyEFPy5dsmYZu8t6lUoAOkWDM5w.TLxjXXVBrHlBLvSNx2sGd7MLcF8QN0Cs-hD9yAiEUlg&dib_tag=se&keywords=keyboard&qid=1756730947&sr=8-2",
+      "name": "AULA F75 Pro Wireless Mechanical Keyboard,75% Hot Swappable Custom Keyboard with Knob,RGB Backlit,Pre-lubed Reaper Switche...",
+      "query": "AULA F75 Pro Wireless Mechanical Keyboard,75% Hot Swappable Custom Keyboard with Knob,RGB Backlit,Pre-lubed Reaper Switche..."
+    },
+    "priceTrackData": {
+      "price": 63.71
+    },
+    "startScrapeDt": "2025-09-04T19:34:41.081Z",
+    "endScrapeDt": "2025-09-04T19:34:59.841Z"
+  }

@@ -171,6 +171,7 @@ export const scrapeSite = async (scrapeInfo: ScrapeItemEvent) => {
 
     } catch (error: ErrorMessage | any) {
         console.error('Error during scraping:', error);
+        throw JSON.stringify(error);
         // await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(scrapeInfo, 'SCRAPE_FAILED', `Error: ${error}`));
     }
 }

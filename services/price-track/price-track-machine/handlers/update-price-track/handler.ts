@@ -1,12 +1,6 @@
-import { PutCommand } from "@aws-sdk/lib-dynamodb";
-import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { v4 as UUID4 } from "uuid";
 
 import {savePriceTrackRecord} from '../../../../commons/utils/DynamoDBService'
-
-const client = new DynamoDBClient({ region: process.env.REGION });
-const ddb = DynamoDBDocumentClient.from(client);
 
 interface PriceTrackData {
     image: string;
@@ -44,14 +38,13 @@ export const updateHistoryData = async (event: ExtractedData): Promise<any> => {
     try {
         const {priceTrackData, scrapeInfo, startScrapeDt, endScrapeDt} = event;
 
-        // console.log('event:', JSON.stringify(payload));
-        const formattedPrice = parseFloat(priceTrackData.price.replace(/\D/g, ''));
+        // const formattedPrice = parseFloat(priceTrackData.price.replace(/\D/g, ''));
         const payload = {
             id: UUID4(),
             userId: scrapeInfo.userId,
             source: scrapeInfo.source,
             productName: scrapeInfo.name,
-            productPrice: formattedPrice,
+            productPrice: priceTrackData.price,
             scrapeDate: new Date().toISOString(),
             startScrapeDt: startScrapeDt,
             endScrapeDt: endScrapeDt,
@@ -69,12 +62,12 @@ export const updateHistoryData = async (event: ExtractedData): Promise<any> => {
                 userId: scrapeInfo.userId,
                 productName: scrapeInfo.name,
                 source: scrapeInfo.source,
-                price: formattedPrice,
+                price: priceTrackData.price,
                 date: new Date().toISOString(),
             }
         };
     } catch (error) {
-        console.error('Error extracting data:', error);
-        throw new Error('Failed to extract data from HTML');
+        console.error('Error saving extracted data', JSON.stringify(error));
+        throw new Error('Failed to save extracted data');
     }
 };

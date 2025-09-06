@@ -15,8 +15,8 @@ import {EbayExtractData} from "./dataExtractors/Ebay/EbayExtractData";
 import {NewEggExtractData} from "./dataExtractors/NewEgg/NewEggExtractData";
 
 interface PriceTrackData {
-    image: string;
-    name: string;
+    // image: string;
+    // name: string;
     price: string;
 }
 
@@ -47,17 +47,20 @@ interface ScrapeInfo {
 }
 
 interface ExtractedDataEvent {
+    stepScrapeSiteResult: StepScrapeSiteResult;
+}
+
+interface StepScrapeSiteResult {
     scrapeInfo?: ScrapeInfo;
     bucketKey: string;
     startScrapeDt: string;
     endScrapeDt: string;
 }
 
-export const extractData = async (extractDataEvent: ExtractedDataEvent): Promise<ExtractedData> => {
+export const extractData = async (extractDataEvent: any): Promise<ExtractedData> => {
     try {
         console.log('recieved extract data event:', JSON.stringify(extractDataEvent));
-        const { bucketKey, scrapeInfo, startScrapeDt, endScrapeDt } = extractDataEvent;
-
+        const { scrapeInfo, bucketKey, startScrapeDt, endScrapeDt } = extractDataEvent;
         if (bucketKey == undefined || scrapeInfo == undefined) 
             throw new Error("scrapeInfo, query or userId is undefined");
   
@@ -106,6 +109,6 @@ export const extractData = async (extractDataEvent: ExtractedDataEvent): Promise
         };    
     } catch (error) {
         console.error('Error extracting data:', error);
-        throw new Error('Failed to extract data from HTML');
+        throw new Error('Failed to extract data from HTML, error: ' + JSON.stringify(error));
     }
 };
