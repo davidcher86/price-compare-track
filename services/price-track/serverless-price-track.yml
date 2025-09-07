@@ -159,9 +159,9 @@ functions:
       REGION: ${self:provider.region}
       PRICE_TRACK_MACHINE_ARN: ${self:custom.PRICE_TRACK_MACHINE_ARN}
       PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME: ${self:custom.PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME}
-      schedule: 
-        rate:
-          - cron(0 8 * * ? *)
+    schedule: 
+      rate:
+        - cron(0 8 * * ? *)
       enabled: false
 
   scrapeSite:
