@@ -1,20 +1,21 @@
 {
-  "Records": [
-    {
-      "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",
-      "receiptHandle": "MessageReceiptHandle",
-      "body": "{\"scrapeRequestId\":\"382a459c-9f97-43c1-bdb6-066d5132895e\",\"scrapeId\":\"702f926e-f771-472a-89e4-d60621a2d93e\",\"scrapeInfo\":{\"name\":\"banggood\",\"order\":1},\"userId\":\"9962a416-504d-4b82-87f6-94a536aa27da\",\"scrapeDt\":\"2025-07-27T09:41:35.953Z\",\"query\":\"mouse\"}",
-      "attributes": {
-        "ApproximateReceiveCount": "1",
-        "SentTimestamp": "1523232000000",
-        "SenderId": "123456789012",
-        "ApproximateFirstReceiveTimestamp": "1523232000001"
-      },
-      "messageAttributes": {},
-      "md5OfBody": "{{{md5_of_body}}}",
-      "eventSource": "aws:sqs",
-      "eventSourceARN": "arn:aws:sqs:us-east-1:123456789012:MyQueue",
-      "awsRegion": "us-east-1"
-    }
-  ]
+    "Records": [
+        {
+            "messageId": "6589db75-1fe6-4423-8ad8-bbb0fe305ec2",
+            "receiptHandle": "AQEBefi/lenkWw7IujBx+uh+3iJ6NWkh65qTTzMyhQHPwl5oOWF4qz+vuTVHJeX/QbYyEWyjhdn3YSK6P2WSpfaL7z8+W66kKORYeJGLyfw/tV0pdu69gsckUBDKeVlJiW0aT/q1sdweCT2VwrPFFI80pqc9xsMrx/H2K5OziAvf4k2le2SfOfoANSR8VTPE3jy4bWGOmU9emGhJdxVf6SrgBvpi75jhxqOFHfYJ2jkhZSa5jB1VRjuK0Hbot7ToabChtsCc2meopCAyO+NGkvevEB3c+R60ItXUL/pNrbW8CHVUp11uFHXDIdJ2aNBkGwNBHL4uTgED6lCYcKV1z2qshjBvPU5PbEqEYCDQ7AjN+F5TqQwc1T+rsyFs45ikOkj32a6huvgmY378PLATy7+dpUP86xFZ8TeUBgfJgsaHGg4=",
+            "body": "{\"event\":\"SCRAPE_FAILED\",\"error\":\"Error: TypeError: Cannot read properties of undefined (reading 'toLowerCase')\",\"scrapeRequestId\":\"36dae2d6-9263-4176-93a8-081de8080f13\",\"scrapeId\":\"dfdaa6ca-10ec-41e1-9b31-8c9d91f635e1\",\"scrapeInfo\":{\"source\":\"newegg\"},\"userId\":\"9962a416-504d-4b82-87f6-94a536aa27da\",\"scrapeDate\":\"2025-09-06T19:13:24.213Z\",\"query\":\"mouse\",\"triesCount\":3}",
+            "attributes": {
+                "ApproximateReceiveCount": "1",
+                "AWSTraceHeader": "Root=1-68bc87da-deeafff6ef732ca5de3076fb;Parent=6807ac516be95db6;Sampled=0;Lineage=4:4cfcf2f9:1",
+                "SentTimestamp": "1757186010831",
+                "SenderId": "AROAQWYTC7JVW3ARZ62AA:web-scraper-prod-dlq-handler",
+                "ApproximateFirstReceiveTimestamp": "1757186010836"
+            },
+            "messageAttributes": {},
+            "md5OfBody": "5fffc56d01bd1c98ede1e67dcbcc72a9",
+            "eventSource": "aws:sqs",
+            "eventSourceARN": "arn:aws:sqs:eu-central-1:048895294059:accept-scrape-request-queue-prod",
+            "awsRegion": "eu-central-1"
+        }
+    ]
 }

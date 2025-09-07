@@ -8,6 +8,7 @@ export const formScrapeRequest = async (event: any) => {
         console.log(`body: ${JSON.stringify(body)}`);
         const {scrapeSources, query} = body;
         const userId = event.headers?.userId;
+        console.log(`userId: ${userId}`);
 
         if (scrapeSources.length == 0 || query.length == 0 || userId == undefined) {
             return {
@@ -18,8 +19,11 @@ export const formScrapeRequest = async (event: any) => {
 
         const scrapeRequestId = uuid4();
         const scrapeDt = new Date().toISOString();
+        const scrapeSourcesFixed = scrapeSources.map((source: any) => ({
+            source: source.name,
+        }));
 
-        for (const scrapeSourceInfo of scrapeSources) {
+        for (const scrapeSourceInfo of scrapeSourcesFixed) {
             await new Promise(resolve => setTimeout(resolve, 1500));
             console.log(`sendingMessageTooQueue ${JSON.stringify(scrapeSourceInfo)}`);
 

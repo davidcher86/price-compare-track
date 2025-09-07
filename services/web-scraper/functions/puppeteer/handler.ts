@@ -36,7 +36,7 @@ const scrape = async (event: any) => {
 
         // console.log("scrapeInfo.name " + scrapeInfo.name);
 
-        switch (scrapeInfo.name.toLowerCase()) {
+        switch (scrapeInfo.source.toLowerCase()) {
             case 'banggood':
                 console.log("using Banggood scrape configs")
                 scrapeService = new PuppeteerScrapeListService(new BanggoodScrapeConfigReader());
@@ -66,7 +66,7 @@ const scrape = async (event: any) => {
         const html = await scrapeService.start(scrapeInfo);
         const endScrapeDt = new Date().toISOString();
 
-        const bucketKey = `${scrapeInfo.name.replace(/\s+/g, "")}-${userId}-${uuid4()}`;
+        const bucketKey = `${scrapeInfo.source.replace(/\s+/g, "")}-${userId}-${uuid4()}`;
         const bucketName = getScrapeHtmlRawResultsBucketName();
         await savePayload(html, bucketName, bucketKey, 'text/html');
 

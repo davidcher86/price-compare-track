@@ -21,7 +21,8 @@ export const addPriceTrackItem = async (event: any) => {
     const userId = event.headers?.userId;
 
     console.log(`adding price track item for userId: ${userId}`);
-
+    console.log(`event body: ${event.body}`);
+    
     if (!userId) {
         return {
             statusCode: 400,

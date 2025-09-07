@@ -10,7 +10,8 @@
     "invoke:extract-data": "sls invoke local -f extract-data --path functions/data-extractor/mock-data/mocksqsmsg.json",
     "invoke:extract-data-dlq": "sls invoke local -f dlq-handler --path functions/extract-data-dlq/mock-data/mocksqsmsg.json",
     "invoke:save-extracted-data": "sls invoke local -f save-extracted-data --path functions/save-scrape-result/mock-data/mocksqsmsg.json",
-    "invoke:playwright-new": "sls invoke local -f scrapePlaywright --path functions/playwright/datamocknewegg.json --debug"
+    "invoke:playwright-new": "sls invoke local -f scrapePlaywright --path functions/playwright/datamocknewegg.json --debug",
+    "invoke:acceptRequest": "sls invoke local -f acceptRequest --path functions/formScrape/mock-data/datamocklist2.json"
   },
   "keywords": [],
   "author": "",

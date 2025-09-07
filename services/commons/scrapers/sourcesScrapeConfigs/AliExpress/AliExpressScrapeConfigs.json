@@ -7,11 +7,11 @@
   "loadTimeout": 120000,
   "disableSec": true,
   "listIdentifier": ".card-out-wrapper",
-  "singleItemLoadWaitUntil": "domcontentloaded",
+  "singleItemLoadWaitUntil": "networkidle2",
   "singleItemTimeout": 120000,
-  "singleItemPageWrapper": "#product-details",
-  "singleItemPageLoadSelector": "#product-details",
-  "singleItemPagePriceTag": "#product-details",
+  "singleItemPageWrapper": "div[class*='price-default--wrap--']",
+  "singleItemPageLoadSelector2": "div[class*='price-default--wrap--']",
+  "singleItemPagePriceSelector": "span[class*='price-default--current']",
   "blockedResources": [
     "media",
     "font"

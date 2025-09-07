@@ -75,9 +75,9 @@ const extract = async (event: any) => {
 
         let extractDataService: ExtractDataInterface;
 
-        console.log("scrapeInfo.name " + scrapeInfo.name);
+        console.log("scrapeInfo.source " + scrapeInfo.source);
 
-        switch (scrapeInfo.name.toLowerCase()) {
+        switch (scrapeInfo.source.toLowerCase()) {
             case 'banggood':
                 console.log("using Banggood scrape configs")
                 extractDataService = new BanggoodExtractData(new BanggoodScrapeConfigReader());

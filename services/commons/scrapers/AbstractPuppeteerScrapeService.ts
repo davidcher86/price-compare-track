@@ -81,7 +81,7 @@ export abstract class AbstractScrapeHandler implements ScraperInterface {
     }
 
     protected async startBrowser(scraperInfo: any): Promise<void> {
-        if (brightDataServices.indexOf((scraperInfo.name.toLowerCase())) > -1) {
+        if (brightDataServices.indexOf((scraperInfo.source.toLowerCase())) > -1) {
             console.log(`starting browser. with BrightData service...`);
             const brightDataWsEndpoint = await this.getBrightDataKey();
 

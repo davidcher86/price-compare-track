@@ -17,13 +17,13 @@ export class NewEggExtractData extends SimpleSingleItemExtractData {
     //     return null;
     // }
 
-    protected extractPrice($: cheerio.CheerioAPI, element: any, selector: string) {
-        if ($(element)?.find(selector) !== null && $(element)?.find(selector) !== undefined){
-            const price = $(element).find(selector).first().text();
-            const cleanPrice = price.replace(/[\u00A0–-]/g, '').trim();
-            return cleanPrice
-        }
+    // protected extractPrice($: cheerio.CheerioAPI, element: any, selector: string) {
+    //     if ($(element)?.find(selector) !== null && $(element)?.find(selector) !== undefined){
+    //         const price = $(element).find(selector).first().text();
+    //         const cleanPrice = price.replace(/[\u00A0–-]/g, '').trim();
+    //         return cleanPrice
+    //     }
 
-        return null;
-    }
+    //     return null;
+    // }
 }

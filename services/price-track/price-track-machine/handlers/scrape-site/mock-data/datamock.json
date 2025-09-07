@@ -1,13 +1,12 @@
 {
-  "scrapeCode": "4632b77f-040b-494a-9b38-707d6e8ef215",
+  "scrapeCode": "9d083404-82f5-4d06-bd31-d5d2ebfa83ef",
   "userId": "9962a416-504d-4b82-87f6-94a536aa27da",
-  "source": "ebay",
   "scrapeEngine": "puppeteer",
-  "createDt": "2025-09-05T15:27:45.336Z",
+  "createDt": "2025-09-06T20:34:07.070Z",
   "iteration": 1,
   "iterationType": "hourly",
-  "iterationStart": "2025-09-05T15:27:44.970Z",
-  "href": "https://www.ebay.com/itm/256460047483?_skw=keyboard&itmmeta=01K42N29DTAZVS22EFB4GSY9W2&hash=item3bb635c47b:g:AIUAAOSwZW1mBBLl&itmprp=enc%3AAQAKAAAAwFkggFvd1GGDu0w3yXCmi1cdi1kCR%2Bl0qfngkfnIga37mXz%2B%2F8hfHEfGjhg--1xyUAr1hkT9%2FPyksdRxKAgznGk%2B2fScAZuiGV0n1cChGy%2BjoycxUWBV7TY0tAqDP%2F9%2FxgpxXHQjYYXwD2FiMIsaXXxiMlMWub9INygvh7E3Bgsc27wki8YuDlnffy0eGwhB%2BT30L6g59SPzFBkZZlMX6US4dy5ZP4TFvXRcp%2F4d%2FgE4nPP%2FfAMXJjzx79PRRvwbmw%3D%3D%7Ctkp%3ABlBMUKSXidWgZg",
-  "name": "ViewSonic KU315 Wired Gaming Keyboard (SPANISH)",
-  "query": "ViewSonic KU315 Wired Gaming Keyboard (SPANISH)"
+  "iterationStart": "2025-09-06T20:34:05.810Z",
+  "href": "https://www.newegg.com/anker-a7852011b/p/173-0091-00004",
+  "name": "Anker 2.4G Wireless Vertical Ergonomic Optical Mouse, 800 / 1200 /1600 DPI, 5 Buttons for Laptop, Desktop, PC, Macbook - Black",
+  "query": "Anker 2.4G Wireless Vertical Ergonomic Optical Mouse, 800 / 1200 /1600 DPI, 5 Buttons for Laptop, Desktop, PC, Macbook - Black"
 }

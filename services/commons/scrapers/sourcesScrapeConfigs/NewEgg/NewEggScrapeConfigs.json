@@ -8,9 +8,9 @@
   "listIdentifier": ".item-cell",
   "singleItemLoadWaitUntil": "domcontentloaded",
   "singleItemTimeout": 120000,
-  "singleItemPageWrapper": "#product-details",
-  "singleItemPageLoadSelector": "#product-details",
-  "singleItemPagePriceTag": "#product-details",
+  "singleItemPageWrapper": ".product-price",
+  "singleItemPageLoadSelector": ".product-price",
+  "singleItemPagePriceSelector": ".price-current",
   "blockedResources": [
     "media",
     "font"
@@ -25,7 +25,7 @@
     },
     {
       "keyName": "href",
-      "selector": ".item-open-box-italic",
+      "selector": "a[title='View Details']",
       "type": "href"
     },
     {

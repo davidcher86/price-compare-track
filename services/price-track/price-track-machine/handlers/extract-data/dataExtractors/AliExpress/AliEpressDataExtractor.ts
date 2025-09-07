@@ -9,21 +9,21 @@ export class AliExpressExtractData extends SimpleSingleItemExtractData {
         super(scrapeConfigReader)
     }
 
-    protected extractPrice($: CheerioAPI, element: any) {
-        let priceText = '';
+    // protected extractPrice($: CheerioAPI, element: any) {
+    //     let priceText = '';
 
-        $(element)
-            .find('span')
-            .each((_: any, span: any) => {
-                const fullText = $(span).text().replace(/\s+/g, ' ').trim();
+    //     $(element)
+    //         .find('span')
+    //         .each((_: any, span: any) => {
+    //             const fullText = $(span).text().replace(/\s+/g, ' ').trim();
 
-                if (/(\$|₪)/.test(fullText) && priceText === '') {
-                    priceText = $(span).parent().text().replace(/\s+/g, ' ').replace(/[a-zA-Z]/g, '').trim();
-                }
-            });
+    //             if (/(\$|₪)/.test(fullText) && priceText === '') {
+    //                 priceText = $(span).parent().text().replace(/\s+/g, ' ').replace(/[a-zA-Z]/g, '').trim();
+    //             }
+    //         });
 
-        return priceText;
-    }
+    //     return priceText;
+    // }
 
     protected extractName($: CheerioAPI, element: any, selector: string) {
         const image = $(element).find(selector).attr('title');

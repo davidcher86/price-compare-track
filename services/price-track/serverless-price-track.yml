@@ -159,11 +159,10 @@ functions:
       REGION: ${self:provider.region}
       PRICE_TRACK_MACHINE_ARN: ${self:custom.PRICE_TRACK_MACHINE_ARN}
       PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME: ${self:custom.PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME}
-    # events:
-    #   - http:
-    #       path: /track
-    #       method: get
-    #       cors: true
+      schedule: 
+        rate:
+          - cron(0 8 * * ? *)
+      enabled: false
 
   scrapeSite:
     handler: price-track-machine/handlers/scrape-site/handler.scrapeSite
@@ -174,6 +173,7 @@ functions:
     environment:
       STAGE: ${self:provider.stage}
       REGION: ${self:provider.region}
+      BRIGHT_DATA_SERVICE_ENABLED_LIST: ${env:BRIGHT_DATA_SERVICE_ENABLED_LIST}
       S3_RAW_HTML_RESULT_BUCKET_NAME: ${self:custom.S3_RAW_HTML_RESULT_BUCKET_NAME}
 
   extractData:
@@ -217,7 +217,7 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [ ScrapeSiteLambdaFunction, Arn ]
             ResultPath: "$.stepScrapeSiteResult"
-            TimeoutSeconds: 30
+            TimeoutSeconds: 300
             Next: ExtractData
 
           ExtractData:

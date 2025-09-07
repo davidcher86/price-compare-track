@@ -36,7 +36,7 @@ const save = async (event: any) => {
             scrapeDate: scrapeDate, 
             startScrapeDt: startScrapeDt, 
             endScrapeDt: endScrapeDt,
-            source: scrapeInfo.name,
+            source: scrapeInfo.source,
             results: JSON.stringify(rawPayload),
         };
         
