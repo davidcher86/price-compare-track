@@ -13,10 +13,9 @@ import {EbayScrapeConfigReader} from "../../../../commons/scrapers/sourcesScrape
 import {AmazonScrapeConfigReader} from "../../../../commons/scrapers/sourcesScrapeConfigs/Amazon/AmazonScrapeConfigReader";
 import {EbayExtractData} from "./dataExtractors/Ebay/EbayExtractData";
 import {NewEggExtractData} from "./dataExtractors/NewEgg/NewEggExtractData";
+import {sendMessageToQueue, getDlqSqsName, generateDlqSqsPayload} from "../../../../commons/utils/SQSService";
 
 interface PriceTrackData {
-    // image: string;
-    // name: string;
     price: string;
 }
 
@@ -100,6 +99,10 @@ export const extractData = async (extractDataEvent: any): Promise<ExtractedData>
 
         const priceTrackResults = await extractDataService.extract(html, scrapeInfo.userId);
 
+        if (priceTrackResults == null || priceTrackResults.length === 0)
+            throw new Error('No data extracted for price track result');
+
+
         console.log('Extracted data:', priceTrackResults[0]);
         return {
             scrapeInfo: scrapeInfo,
@@ -109,6 +112,7 @@ export const extractData = async (extractDataEvent: any): Promise<ExtractedData>
         };    
     } catch (error) {
         console.error('Error extracting data:', error);
+        await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(extractDataEvent, 'SCHEDULED_EXTRACT_DATA_FAILED', `Error: ${error}`));
         throw new Error('Failed to extract data from HTML, error: ' + JSON.stringify(error));
     }
 };

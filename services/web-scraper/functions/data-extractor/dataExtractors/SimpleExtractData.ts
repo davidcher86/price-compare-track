@@ -24,15 +24,8 @@ export class SimpleExtractData implements ExtractDataInterface {
         const $ = cheerio.load(html);
         const childElements = $(listIdentifier);
 
-        // console.log(html);
-        if (childElements.length === 0) {
+        if (childElements.length === 0) 
             throw {status: "EXTRACRD_DATA_NO_CHILD_ELEMENTS",message: `no results where found, when searching for ${listIdentifier} elements. [query: ${query}, source: ${this.configData.getName()}]`};
-            
-            // throw new Error(`childElements are empty, when searching for ${listIdentifier} elements. [query: ${query}, source: ${this.configData.getName()}]`);
-            // await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload({}, "childElements are empty"));
-            // return [];
-            // throw new Error("childElements are empty");
-        }
 
         console.log("childElements found: " + childElements.length);
         childElements.each((_, element) => {
@@ -80,9 +73,7 @@ export class SimpleExtractData implements ExtractDataInterface {
         console.log(`extracted ${items.length} items from the page`);
         if (childElements.length === 0) 
             throw {status: "EXTRACRD_DATA_NO_RESULTS_ERROR",message: `no results where found, when searching for ${listIdentifier} elements. [query: ${query}, source: ${this.configData.getName()}]`};
-            // throw new Error(`no results where found, when searching for ${listIdentifier} elements. [query: ${query}, source: ${this.configData.getName()}]`);
-            // await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(event, "no resylts where found"));
-        
+
         return items;
     }
 

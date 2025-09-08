@@ -1,6 +1,6 @@
 import { v4 as UUID4 } from "uuid";
-
 import {savePriceTrackRecord} from '../../../../commons/utils/DynamoDBService'
+import {sendMessageToQueue, getDlqSqsName, generateDlqSqsPayload} from "../../../../commons/utils/SQSService.ts";
 
 interface PriceTrackData {
     image: string;
@@ -36,9 +36,11 @@ interface ScrapeInfo {
 
 export const updateHistoryData = async (event: ExtractedData): Promise<any> => {
     try {
+        console.log('recieved save extracted data event:', JSON.stringify(event));
+        if (event == undefined) 
+            throw new Error("event is undefined");
         const {priceTrackData, scrapeInfo, startScrapeDt, endScrapeDt} = event;
 
-        // const formattedPrice = parseFloat(priceTrackData.price.replace(/\D/g, ''));
         const payload = {
             id: UUID4(),
             userId: scrapeInfo.userId,
@@ -68,6 +70,7 @@ export const updateHistoryData = async (event: ExtractedData): Promise<any> => {
         };
     } catch (error) {
         console.error('Error saving extracted data', JSON.stringify(error));
+        await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(event, 'SCHEDULED_DATA_SAVE_FAILED', `Error: ${error}`));
         throw new Error('Failed to save extracted data');
     }
 };
