@@ -279,13 +279,21 @@ interface PriceTrackItem {
     userId: string;
     source: string;
     scrapeEngine?: string;
-    createDt: string;
+    createdDt: string; // Fixed: createdDt to match table schema
     iteration: number;
     iterationType: string;
     iterationStart: string;
     enabled: string; // This will be converted to "true"/"false" string when stored in DynamoDB
     href?: string;
     name?: string;
+}
+
+interface PriceTrackResultRecord {
+    scrapeCode: string;
+    userId: string;
+    source: string;
+    productName: string;
+    startScrapeDt: string;
 }
 
 const getPriceTrackScheduledItemsTableName = () => {
@@ -350,35 +358,6 @@ export const retrievePriceTrackScheduledItems = async (
     }
 };
 
-// generate a method to get all records in scheduled-scrapes that has enabled as true
-// export const retrieveEnabledPriceTrackScheduledItems = async (
-//     userId: any
-// ): Promise<PriceTrackItem[]> => {
-//     try {
-//         const tableName = process.env.PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME || '';
-//         console.log('returning all enabled records from DynamoDB table: ' + tableName + ' userId: ' + userId);
-//         const queryResult = await ddb.send(new QueryCommand({
-//             TableName: tableName,
-//             IndexName: "user-id-index", // Specify the GSI name
-//             KeyConditionExpression: "userId = :userId", // Query condition
-//             FilterExpression: "enabled = :enabled",
-//             ExpressionAttributeValues: {
-//                 ":userId": userId, // Bind the value for userId
-//                 ":enabled": "true",
-//             },
-//             ScanIndexForward: false,
-//         }));
-
-//         const response: PriceTrackItem[] = queryResult.Items as PriceTrackItem[] || [];
-
-//         return response;
-//     } catch (err) {
-//         console.error("Error retrieving results:", err);
-//         return [];
-//     }
-// };
-
-//generate a method that retrieve  all price track items that are enabled. do not consider any userId parameter
 export const retrieveAllEnabledPriceTrackItems = async (): Promise<PriceTrackItem[]> => {
     try {
         const tableName = process.env.PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME || '';
@@ -423,5 +402,79 @@ export const savePriceTrackRecord = async (payload: any): Promise<void> => {
     } catch (error) {
         console.error('Error saving price track record:', error);
         throw new Error('Failed to save price track record');
+    }
+};
+
+export const retrievePriceTrackResultsScrapeCodeGrouped = async (
+    userId: string
+): Promise<any[]> => {
+    try {
+        const tableName = getPriceTrackScheduledItemsTableName(); // Changed to scheduled items table
+        console.log('returning all price track scheduled items from DynamoDB table: ' + tableName + ' userId: ' + userId);
+        console.log('userId type:', typeof userId, 'userId value:', JSON.stringify(userId));
+        
+        // First, let's try a simple scan to see if there's any data at all
+        console.log('=== DEBUG: Scanning table to check for any data ===');
+        const result = await ddb.send(new ScanCommand({
+            TableName: tableName,
+            Limit: 3
+        }));
+        
+
+        return result.Items || [];
+    } catch (err) {
+        console.error("Error retrieving price track scheduled items:", err);
+        return [];
+    }
+};
+
+export const retrievePriceTrackResultsByScrapeCode = async (
+    scrapeCode: string
+): Promise<any[]> => {
+    try {
+        const tableName = getPriceTrackResultsTableName();
+        console.log('returning price track results from DynamoDB table: ' + tableName + ' scrapeCode: ' + scrapeCode);
+        
+        const queryResult = await ddb.send(new QueryCommand({
+            TableName: tableName,
+            IndexName: "scrape-code-index", // Specify the GSI name for scrapeCode
+            KeyConditionExpression: "scrapeCode = :scrapeCode", // Query condition
+            ExpressionAttributeValues: {
+                ":scrapeCode": scrapeCode, // Bind the value for scrapeCode
+            },
+            ScanIndexForward: false, // Sort by sort key in descending order (newest first)
+        }));
+
+        console.log('Price track results retrieved successfully for scrapeCode, count:', queryResult.Items?.length);
+        
+        return queryResult.Items || [];
+    } catch (err) {
+        console.error("Error retrieving price track results by scrapeCode:", err);
+        return [];
+    }
+};
+
+export const deletePriceTrackResultsByScrapeCode = async (
+    scrapeId: string
+): Promise<{ success: boolean; deletedCount?: number; message?: string; error?: string }> => {
+    try {
+        const tableName = getPriceTrackScheduledItemsTableName();
+        console.log('deleting price track scheduled records from DynamoDB table: ' + tableName + ' scrapeId: ' + scrapeId);
+
+        console.log(`Deleting scheduled records for scrapeId: ${scrapeId}`);
+        
+        // Use the correct primary key (id) to delete the record
+        await ddb.send(new DeleteCommand({
+            TableName: tableName,
+            Key: {
+                id: scrapeId // Use 'id' which is the primary key, not 'scrapeCode'
+            }
+        }));
+
+        console.log(`Successfully deleted scheduled record for scrapeId:`, scrapeId);
+        return { success: true, deletedCount: 1 };
+    } catch (err) {
+        console.error("Error deleting price track scheduled records:", err);
+        return { success: false, error: JSON.stringify(err) };
     }
 };

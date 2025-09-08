@@ -1,18 +1,21 @@
-// import {sendMessageToQueue, getAccepetScrapeRequestSqsName} from "@shared-commons/utils/SQSService";
-// import { v4 as uuid4 } from "uuid";
+import {deletePriceTrackResultsByScrapeCode} from '../../../commons/utils/DynamoDBService';
 
-export const deletePriceTrack = async (event: any) => {
+export const deleteScheduledPriceTrack = async (event: any) => {
     try {
 
-        console.log(`body: ${JSON.stringify(event.body)}`);
-        
+        console.log(`event: ${JSON.stringify(event)}`);
+        const scrapeCode = event.headers?.scrapeCode;
+
+        const result = await deletePriceTrackResultsByScrapeCode(scrapeCode);
+
+        console.log(`Delete result: ${JSON.stringify(result)}`);
 
         return {
             statusCode: 200,
             body: "done"
         }
     } catch (error) {
-        console.error(error)
+        console.error("failed to delete scheduled price track:", error)
         return {
             statusCode: 500,
             body: `error: ${error}`
