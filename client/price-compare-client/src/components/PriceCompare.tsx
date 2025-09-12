@@ -75,20 +75,7 @@ export const PriceCompare = () => {
             hideLoadingRef.current();
         }
     }, [setData]);
-
-    // const handleSearch = useCallback(async (scrapeRequestId: string) => {
-    //     try {
-    //         showLoadingRef.current("Retrieving scrape results...");
-    //         await retrieveScrapeResultsData(process.env.REACT_APP_TMP_USER_ID || '', scrapeRequestId);
-    //         addNotificationRef.current("Search request sent successfully", "success");
-    //     } catch (error) {
-    //         addNotificationRef.current("Error retrieving scrape results", "error");
-    //         console.error('Error retrieving scrape results:', error);
-    //     } finally {
-    //         hideLoadingRef.current();
-    //     }
-    // }, [showLoadingRef, hideLoadingRef, addNotificationRef]);
-
+    
     const handleRetrieveScrapeDataResult = useCallback(async (scrapeRequestId: string) => {
         console.log('handleRetrieveScrapeDataResult called with ID:', scrapeRequestId);
         try{
