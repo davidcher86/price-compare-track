@@ -2,10 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import PriceCompareHome from "./PriceCompareHome";
+import PriceCompareHome from "./Home";
 import { NotificationProvider } from './components/Notifications';
 import { LoadingSpinnerProvider } from "./components/LoadingSpinner";
 import { PopUpProvider } from './components/Modals';
+import Home from './Home';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -16,7 +17,7 @@ root.render(
   <LoadingSpinnerProvider>
     <PopUpProvider>
       <NotificationProvider>
-        <PriceCompareHome />
+        <Home />
       </NotificationProvider>
     </PopUpProvider>  
   </LoadingSpinnerProvider>

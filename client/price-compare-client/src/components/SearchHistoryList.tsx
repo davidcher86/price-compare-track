@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { retrieveScrapeHistoryList, deleteScrapeRequest } from "src/services/api";
+import { useEffect, memo, useCallback } from "react";
+import { deleteScrapeRequest } from "src/services/api";
 import { ReactComponent as DeleteIcon } from '../logos/delete-icon.svg';
 import { usePopUp } from './Modals';
 import { useNotification } from "./Notifications";
@@ -8,25 +8,21 @@ import moment from "moment";
 interface SearchHistoryListProps {
     selectedHistoryItem: any;
     handleSelectedItem: (item: any) => void; 
-    handleRetrieveUserScrpaeHistory: (userId: string) => Promise<any[]>;
+    handleRetrieveUserScrapeHistory: (userId: string) => Promise<any[]>;
     onSelectScrapeData: (scrapeRequestId: string) => void;
     historicalData: any[];
-}   
-
-interface HistoricalDataValueItem  {
-    scrapeDate: string,
-    source: string,
-    scrapeRequestId: string,
-    query: string,
-    userId: string
+    onNotification?: (message: string, type?: "success" | "error" | "warning" | "info") => void;
 }
 
-export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ selectedHistoryItem, handleSelectedItem, handleRetrieveUserScrpaeHistory, onSelectScrapeData, historicalData }) => {
+export const SearchHistoryList: React.FC<SearchHistoryListProps> = memo(({ selectedHistoryItem, handleSelectedItem, handleRetrieveUserScrapeHistory, onSelectScrapeData, historicalData, onNotification }) => {
 
     const { openModal } = usePopUp();
     const { addNotification } = useNotification();
+    
+    // Use the prop notification function if provided, otherwise fall back to context
+    const notifyUser = onNotification || addNotification;
 
-    const handleDeleteScrape = async (item: any) => {
+    const handleDeleteScrape = useCallback(async (item: any) => {
         const scrapeRequestId = item.key;
         const userId = process.env.REACT_APP_TMP_USER_ID || '';
         
@@ -45,13 +41,13 @@ export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ selectedHi
                             console.log('Scrape deleted successfully for user:', userId, 'and scrapeRequestId:', scrapeRequestId);
                             
                             if (requestSuccess) {
-                                await handleRetrieveUserScrpaeHistory(userId);
-                                addNotification("Scrape history item deleted successfully");
+                                await handleRetrieveUserScrapeHistory(userId);
+                                notifyUser("Scrape history item deleted successfully");
                             } else {
-                                addNotification("Error deleting scrape history item", "error");
+                                notifyUser("Error deleting scrape history item", "error");
                             }
                         } catch (deleteError) {
-                            addNotification("Error deleting scrape history item", "error");
+                            notifyUser("Error deleting scrape history item", "error");
                             console.error('Failed to delete scrape:', deleteError);
                         }
                     })();
@@ -62,10 +58,10 @@ export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ selectedHi
                 }
             });
         } catch (error) {
-            addNotification("Error opening delete confirmation", "error");
+            notifyUser("Error opening delete confirmation", "error");
             console.error('Failed to open modal:', error);
         }
-    }
+    }, [notifyUser, handleRetrieveUserScrapeHistory, openModal]);
 
     useEffect(() => {
         if (selectedHistoryItem) {
@@ -82,7 +78,7 @@ export const SearchHistoryList: React.FC<SearchHistoryListProps> = ({ selectedHi
             </div>
         </div>
     );
-}
+});
 
 interface SearchHistoryItemProps {
     item: any;
@@ -91,13 +87,13 @@ interface SearchHistoryItemProps {
     handleDeleteScrape: (item: any) => Promise<void>;
 }
 
-const SearchHistoryItem: React.FC<SearchHistoryItemProps> = ({ item, selectedHistoryItem, handleSelectedItem, handleDeleteScrape }) => {
+const SearchHistoryItem: React.FC<SearchHistoryItemProps> = memo(({ item, selectedHistoryItem, handleSelectedItem, handleDeleteScrape }) => {
     const sourcesString = item.value.map((entry: { source: string; }) => entry.source).join(", ");
     const scrapeDt = item.value.length > 0 ? item.value[0].scrapeDate : null;
 
     const scrapeDate = scrapeDt !== null ? moment(scrapeDt).format('h:mm  d/mm/yyyy') : "No scrape date";
     const query = item.value.length > 0 ? item.value[0].query : "No query";
-
+    console.log(item.key);
     return (
         <div key={item.key} style={(selectedHistoryItem && item.key === selectedHistoryItem.key) ? {backgroundColor: "rgba(248, 225, 168, 1)"} : {backgroundColor: "rgba(153, 191, 245, 1)"} } className="flex flex-col w-90 h-18 w-11/12 shadow-lg item-borders cursor-pointer mt-1 mb-1" onClick={() => handleSelectedItem(item)}>
             <div className="flex flex-row">
@@ -120,5 +116,5 @@ const SearchHistoryItem: React.FC<SearchHistoryItemProps> = ({ item, selectedHis
             </div>
         </div>
     );
-}
+});
 

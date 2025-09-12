@@ -135,7 +135,7 @@ layers:
 functions:
   delete-scheduled-price-track:
     handler: functions/delete-price-track/handler.deleteScheduledPriceTrack
-    timeout: 120
+    timeout: 29
     layers:
       - { Ref: AwsStorageLambdaLayer }
     environment:
@@ -149,7 +149,7 @@ functions:
 
   get-price-track-list:
     handler: functions/get-price-track-list/handler.retrievePriceTrackList
-    timeout: 290
+    timeout: 29
     layers:
       - { Ref: AwsStorageLambdaLayer }
     environment:
@@ -200,10 +200,10 @@ functions:
       REGION: ${self:provider.region}
       PRICE_TRACK_MACHINE_ARN: ${self:custom.PRICE_TRACK_MACHINE_ARN}
       PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME: ${self:custom.PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME}
-    schedule: 
-      rate:
-        - cron(0 15 * * ? *)
-      enabled: true
+    events:
+      - schedule:
+          rate: cron(0 6 * * ? *)
+          enabled: true
 
   scrapeSite:
     handler: price-track-machine/handlers/scrape-site/handler.scrapeSite

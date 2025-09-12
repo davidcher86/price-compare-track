@@ -1,4 +1,4 @@
-import React, { ReactNode, useState, useReducer, useEffect } from "react";
+import React, { ReactNode, useState, useRef, useReducer, useEffect, useCallback } from "react";
 import { ReactComponent as SearchButton } from '../logos/search-button.svg';
 import { ReactComponent as AmazonLogo } from '../logos/amazon-logo.svg';
 import { ReactComponent as EbayLogo } from '../logos/ebay-logo.svg';
@@ -6,12 +6,13 @@ import { ReactComponent as NewEggLogo } from '../logos/newegg-logo.svg';
 import { ReactComponent as AliExpressLogo } from '../logos/aliexpress-logo.svg';
 import { sendSearchRequest } from "src/services/api";
 import { useNotification } from "./Notifications";
+import { useLoading } from "./LoadingSpinner";
 import TextInput from "./TextInput";
 
 
-interface Props {
-  onSearch: (query: string, sources: string[]) => void;
-}
+// interface Props {
+//   onSearch: (query: string, sources: string[]) => void;
+// }
 
 interface CheckedSource {
     name: string;
@@ -63,8 +64,18 @@ function reducer(state: any , action: any) {
     }
 }
 
-export const SearchBar: React.FC<Props> = ({ onSearch }) => {
+export const SearchBar: React.FC<any> = () => {
     const { addNotification } = useNotification();
+    const { showLoading, hideLoading } = useLoading();
+    const showLoadingRef = useRef(showLoading);
+    const hideLoadingRef = useRef(hideLoading);
+    const addNotificationRef = useRef(addNotification);
+    
+    // Update refs on each render
+    showLoadingRef.current = showLoading;
+    hideLoadingRef.current = hideLoading;
+    addNotificationRef.current = addNotification;
+
     const [state, dispatch] = useReducer(reducer, {
         searchBoxText: '',
         checkedSources: [],
@@ -76,21 +87,37 @@ export const SearchBar: React.FC<Props> = ({ onSearch }) => {
         dispatch({ type: 'SET_VALID_REQUEST', payload: isValid });
     }, [state.searchBoxText, state.checkedSources]);
 
+    // const handleSearch = useCallback(async (scrapeRequestId: string) => {
+    //         try {
+    //             showLoadingRef.current("Retrieving scrape results...");
+    //             await retrieveScrapeResultsData(process.env.REACT_APP_TMP_USER_ID || '', scrapeRequestId);
+    //             addNotificationRef.current("Search request sent successfully", "success");
+    //         } catch (error) {
+    //             addNotificationRef.current("Error retrieving scrape results", "error");
+    //             console.error('Error retrieving scrape results:', error);
+    //         } finally {
+    //             hideLoadingRef.current();
+    //         }
+    //     }, [showLoadingRef, hideLoadingRef, addNotificationRef]);
+
     const handleSendSearchRequest = async () => {
         try {
+            showLoadingRef.current("Sending search request...");
             await sendSearchRequest(process.env.REACT_APP_TMP_USER_ID || '', state.searchBoxText.trim(), state.checkedSources)
-            addNotification("Search request sent successfully", "success");
+            addNotificationRef.current("Search request sent successfully", "success");
         } catch (error) {
-            addNotification("Error sending search request", "error");
+            addNotificationRef.current("Error sending search request", "error");
             console.error('Error sending search request:', error);
+        } finally {
+            hideLoadingRef.current();
         }
     };
 
-    const handleChangeSearchInput = async (value: string) => {
+    const handleChangeSearchInput = useCallback(async (value: string) => {
         dispatch({ type: 'SET_SEARCH_BOX_TEXT', payload: value })
-    };
-    
-    
+    }, [dispatch]);
+
+
     return (
         <div id="search-form" className="flex flex-col bg-black-700 w-full theme-border">
             <div className="flex flex-row justify-between items-center">
