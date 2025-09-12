@@ -71,7 +71,6 @@ export const SearchHistoryList: React.FC<SearchHistoryListProps> = memo(({ selec
 
     return (
         <div id="search-bar"  className="flex flex-col w-1/5 h-full pl-3 gap-3 theme-border overflow-hidden items-center">
-            {/* <YesNoModal isOpen={isModalOpen} onYes={handleModalYes} onNo={handleModalNo} /> */}
             <p className="text-xl font-normal text-center theme-font h-10 pt-5 pb-3">{"search history".toUpperCase()}</p>
             <div className="overflow-auto">   
                 {historicalData.map((item) => <SearchHistoryItem key={item.key} item={item} selectedHistoryItem={selectedHistoryItem} handleSelectedItem={handleSelectedItem} handleDeleteScrape={handleDeleteScrape} />)}
