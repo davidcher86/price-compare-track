@@ -50,6 +50,7 @@ export const PriceCompare = () => {
 
     const selectedItemKey = selectedHistoryItem?.key;
     const prevKeyRef = useRef<string | undefined>(undefined);
+    
     useEffect(() => {
       console.log('useEffect triggered - selectedItemKey:', selectedItemKey, 'prevKey:', prevKeyRef.current);
       if (selectedItemKey && selectedItemKey !== prevKeyRef.current) {
@@ -75,7 +76,7 @@ export const PriceCompare = () => {
             hideLoadingRef.current();
         }
     }, [setData]);
-    
+
     const handleRetrieveScrapeDataResult = useCallback(async (scrapeRequestId: string) => {
         console.log('handleRetrieveScrapeDataResult called with ID:', scrapeRequestId);
         try{
@@ -84,11 +85,10 @@ export const PriceCompare = () => {
             console.log('handleRetriveScrapeDataResult', items);
             setScrapeDataResult(items);
         } catch (error) {
-            // addNotificationRef.current("Error retrieving scrape results", "error");
+            addNotificationRef.current("Error retrieving scrape results", "error");
             console.error('Error retrieving scrape results:', error);
         } finally {
             hideLoadingRef.current();
-            // hideLoadingRef.current();
         }
     }, [hideLoadingRef, showLoadingRef, setScrapeDataResult]); 
 
