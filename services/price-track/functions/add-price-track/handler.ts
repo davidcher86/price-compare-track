@@ -7,7 +7,7 @@ interface PriceTrackItem {
     userId: string;
     source: string;
     scrapeEngine?: string;
-    createDt: string;
+    createdDt: string;
     img: string;
     iteration: number;
     iterationType: string;
@@ -48,7 +48,7 @@ export const addPriceTrackItem = async (event: any) => {
             enabled,
             href,
             name,
-            createDt: new Date().toISOString()
+            createdDt: new Date().toISOString()
         };
         await addPriceTrackRecord(newRecord);
 

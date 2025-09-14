@@ -8,7 +8,7 @@ interface PriceTrackItem {
     userId: string;
     source: string;
     scrapeEngine?: string;
-    createDt: string;
+    createdDt: string;
     iteration: number;
     iterationType: string;
     iterationStart: string;
@@ -35,7 +35,7 @@ export const getScrapeList = async () => {
                 userId: item.userId,
                 source: item.source,
                 scrapeEngine: item.scrapeEngine,
-                createDt: item.createDt,
+                createdDt: item.createdDt,
                 iteration: item.iteration,
                 iterationType: item.iterationType,
                 iterationStart: item.iterationStart,

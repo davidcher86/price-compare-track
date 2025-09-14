@@ -16,7 +16,7 @@ interface ScrapeItemEvent {
     source: string;
     scrapeCode: string;
     scrapeEngine?: string;
-    createDt: string;
+    createdDt: string;
     iteration: number;
     iterationType: string;
     iterationStart: string;

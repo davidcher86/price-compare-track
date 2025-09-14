@@ -416,12 +416,35 @@ export const retrievePriceTrackResultsScrapeCodeGrouped = async (
         // First, let's try a simple scan to see if there's any data at all
         console.log('=== DEBUG: Scanning table to check for any data ===');
         const result = await ddb.send(new ScanCommand({
-            TableName: tableName,
-            Limit: 3
+            TableName: tableName
         }));
         
 
         return result.Items || [];
+    } catch (err) {
+        console.error("Error retrieving price track scheduled items:", err);
+        return [];
+    }
+};
+
+export const retrievePScheduledPriceTrackList = async (
+    userId: string
+): Promise<any[]> => {
+    try {
+        const tableName = getPriceTrackScheduledItemsTableName();
+        const scanResult = await ddb.send(new QueryCommand({
+            TableName: tableName,
+            IndexName: "user-id-index", // Specify the GSI name
+            KeyConditionExpression: "userId = :userId",
+            ExpressionAttributeValues: {
+                ":userId": userId
+            }
+        }));
+
+        console.log('Scan result - items found:', scanResult.Items?.length);
+        console.log('Scan result items:', JSON.stringify(scanResult.Items, null, 2));
+        
+        return scanResult.Items || [];
     } catch (err) {
         console.error("Error retrieving price track scheduled items:", err);
         return [];

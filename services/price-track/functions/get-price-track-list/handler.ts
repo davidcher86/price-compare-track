@@ -1,4 +1,4 @@
-import {retrievePriceTrackResultsScrapeCodeGrouped} from '../../../commons/utils/DynamoDBService';
+import {retrievePScheduledPriceTrackList} from '../../../commons/utils/DynamoDBService';
 
 export const retrievePriceTrackList = async (event: any) => {
     try {
@@ -10,7 +10,7 @@ export const retrievePriceTrackList = async (event: any) => {
             };
         }
 
-        const result = await retrievePriceTrackResultsScrapeCodeGrouped(userId);
+        const result = await retrievePScheduledPriceTrackList(userId);
         return {
             statusCode: 200,
             body: JSON.stringify(result),

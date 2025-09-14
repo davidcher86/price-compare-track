@@ -188,3 +188,22 @@ export const addItemPriceTrack = async (userId: string, priceTrackItem: PriceTra
 
     return await res.json();
 };
+
+export const retrieveScheduledTrackers = async (userId: string): Promise<any> => {
+    const URI = `${process.env.REACT_APP_PRICE_TRACK_SERVICE_HOST}${process.env.REACT_APP_PRICE_TRACK_RETRIEVE_SCHEDULED_ITEMS_ENDPOINT}`;
+    
+    if (!URI) {
+      throw new Error("URI base URL is not defined");
+    }
+
+    const res = await fetch(URI, {
+      method: "GET",
+      headers: { "Content-Type": "application/json", "userId": userId },
+    });
+
+    if (!res.ok) {
+      throw new Error("Retrieve scheduled trackers request failed");
+    }
+
+    return await res.json();
+};

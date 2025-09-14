@@ -31,7 +31,7 @@ interface ScrapeInfo {
     userId: string;
     source: string;
     scrapeEngine?: string;
-    createDt: string;
+    createdDt: string;
     iteration: number;
     iterationType: string;
     iterationStart: string;
