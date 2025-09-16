@@ -441,8 +441,8 @@ export const retrievePScheduledPriceTrackList = async (
             }
         }));
 
-        console.log('Scan result - items found:', scanResult.Items?.length);
-        console.log('Scan result items:', JSON.stringify(scanResult.Items, null, 2));
+        // console.log('Scan result - items found:', scanResult.Items?.length);
+        // console.log('Scan result items:', JSON.stringify(scanResult.Items, null, 2));
         
         return scanResult.Items || [];
     } catch (err) {

@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "baseUrl": "../../",
+    "paths": {
+      "@commons/*": ["commons/*"],
+      "@shared-commons/*": ["../commons/*"]
+    },
+    "sourceMap": true,
+    "outDir": "./functions/get-price-track-info",
+    "declaration": false,
+    "noEmitOnError": true,
+    "incremental": true,
+    "noEmit": true
+  },
+  "include": ["./*.ts", "../../../../layers/**/*.ts", "./../*.ts", "../../commons/*.ts", "../../../../commons/**/*.ts"],
+  "exclude": []
+}

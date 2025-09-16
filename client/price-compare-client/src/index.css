@@ -48,7 +48,7 @@
 }
 
 .price-compare-app-wrapper {
-   verflow: clip;
+   overflow: clip;
 }
 
 body {
@@ -117,4 +117,50 @@ body {
     text-align: center;
     padding: 1rem 0;
   }
+}
+
+/* Scheduled Price Track Items Styles */
+.scheduled-items-container {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.scheduled-items-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scheduled-items-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.scheduled-items-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.scheduled-items-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.scheduled-price-track-item {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
