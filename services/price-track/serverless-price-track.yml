@@ -27,6 +27,7 @@ provider:
         - lambda:InvokeFunction
         - secretsmanager:GetSecretValue
         - dynamodb:PutItem
+        - dynamodb:PutCommand
         - dynamodb:Scan
         - sqs:SendMessage
         - sqs:ReceiveMessage
@@ -134,6 +135,19 @@ layers:
 
 
 functions:
+  togglePriceTrackEnabled:
+    handler: functions/toggle-price-track-enable/handler.togglePriceTrackEnabled
+    timeout: 29
+    layers:
+      - { Ref: AwsStorageLambdaLayer }
+    environment:
+      PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME: ${self:custom.PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME}
+    events:
+      - http:
+          path: /price-track/toggle-price-track-enabled
+          method: patch
+          cors: true
+
   delete-scheduled-price-track:
     handler: functions/delete-price-track/handler.deleteScheduledPriceTrack
     timeout: 29

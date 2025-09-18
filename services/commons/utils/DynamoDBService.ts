@@ -1,5 +1,5 @@
 import {DynamoDBClient, DeleteItemCommand, PutItemCommand} from "@aws-sdk/client-dynamodb";
-import {DynamoDBDocumentClient, PutCommand, ScanCommand, QueryCommand, BatchWriteCommand, DeleteCommand} from "@aws-sdk/lib-dynamodb";
+import {DynamoDBDocumentClient, PutCommand, ScanCommand, QueryCommand, BatchWriteCommand, DeleteCommand, UpdateCommand} from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({ region: process.env.REGION });
 const ddb = DynamoDBDocumentClient.from(client);
@@ -581,3 +581,47 @@ export const deletePriceTrackResults = async (
         return { success: false, error: JSON.stringify(err) };
     }
 };
+
+export const togglePriceTrackEnableProp = async (
+    id: string,
+    enabled: boolean
+): Promise<{ success: boolean; message?: string; error?: string }> => {
+    try {
+        const tableName = getPriceTrackScheduledItemsTableName();
+        console.log(`Toggling enabled status for price track item with id: ${id} to ${enabled}`);
+        console.log('Table name:', tableName);
+        console.log('Input types - id:', typeof id, 'enabled:', typeof enabled);
+
+        if (!id || typeof id !== 'string' || id.trim() === '') {
+            console.error('Invalid id provided:', id);
+            return { success: false, message: 'Invalid id provided' };
+        }
+
+        const enabledValue = enabled ? "true" : "false";
+        console.log('Will set enabled to:', enabledValue);
+
+        // Update the 'enabled' attribute of the item with the given id
+        const updateCommand = {
+            TableName: tableName,
+            Key: {
+                id: id.trim()
+            },
+            UpdateExpression: "SET enabled = :enabled",
+            ExpressionAttributeValues: {
+                ":enabled": enabledValue // Store as string for DynamoDB
+            },
+            ConditionExpression: "attribute_exists(id)", // Ensure the item exists
+            ReturnValues: "UPDATED_NEW" as const
+        };
+        
+        console.log('UpdateCommand params:', JSON.stringify(updateCommand, null, 2));
+        
+        const updateResult = await ddb.send(new UpdateCommand(updateCommand));
+
+        console.log('Update operation result:', JSON.stringify(updateResult, null, 2));
+        return { success: true, message: `Successfully updated enabled status for item with id: ${id}` };
+    } catch (err) {
+        console.error("Error toggling enabled status for price track item:", err);
+        return { success: false, error: JSON.stringify(err) };
+    }
+}

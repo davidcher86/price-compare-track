@@ -1,7 +1,8 @@
 import { useEffect,useRef, memo, useCallback } from "react";
 import { usePopUp } from './Modals';
-import {deleteScheduledPriceTrack} from '../services/api';
+import {deleteScheduledPriceTrack, togglePriceTrackEnabled} from '../services/api';
 import { useNotification } from "./Notifications";
+import { useLoading } from "./LoadingSpinner";
 
 interface ScheduledPriceTrackListProps {
     selectedScheduledPriceTrackItem: any;
@@ -71,7 +72,10 @@ const ScheduledPriceTrackItem: React.FC<ScheduledPriceTrackItemComponentProps> =
     const { openModal } = usePopUp();
     const { addNotification } = useNotification();
     const notifyUser = useRef(addNotification);
-    
+    const { showLoading, hideLoading } = useLoading();
+    const showLoadingRef = useRef(showLoading);
+    const hideLoadingRef = useRef(hideLoading);
+
     const formatDate = (dateString: string) => {
         if (!dateString) return 'N/A';
         try {
@@ -101,6 +105,7 @@ const ScheduledPriceTrackItem: React.FC<ScheduledPriceTrackItemComponentProps> =
                         try {
                              // create a promise that waits 3 seconds
                             //  const delay = () => new Promise(resolve => setTimeout(resolve, 3000));
+                            showLoadingRef.current("Deleting item...");
                             console.log(`Deleting scheduled price track with id: ${id}`);
                             await deleteScheduledPriceTrack(id, scrapeCode);
                             // await delay(); // simulate network delay
@@ -110,6 +115,8 @@ const ScheduledPriceTrackItem: React.FC<ScheduledPriceTrackItemComponentProps> =
                         } catch (deleteError) {
                             notifyUser.current(`Error deleting scheduled price track item "${itemName}"`, "error");
                             console.error('Failed to delete scrape:', deleteError);
+                        } finally {
+                            hideLoadingRef.current();
                         }
                     })();
                 },
@@ -126,6 +133,51 @@ const ScheduledPriceTrackItem: React.FC<ScheduledPriceTrackItemComponentProps> =
             console.error("Error deleting scheduled price track:", error);
         }
     }, [openModal, notifyUser, handleRetrieveScheduledPriceTrackList]);
+
+    const handleTogglePriceTrackEnabled = useCallback(async (id: string, newEnabledState: boolean) => {
+        if (!id) {
+            console.error("No id provided for toggling enabled state");
+            return;
+        }
+
+        try {
+            openModal({
+                title: newEnabledState ? "Enable Item" : "Disable Item",
+                message: `Are you sure you want to ${newEnabledState ? 'enable' : 'disable'} this item: ${item.name || item.title}?`,
+                onYes: () => {
+                    // Handle toggle logic in a separate async function
+                    (async () => {
+                        try {
+                            showLoadingRef.current(newEnabledState ? "Enabling..." : "Disabling...");
+                            console.log(`Toggling enabled state for id: ${id} to ${newEnabledState}`);
+                            await togglePriceTrackEnabled(id, newEnabledState);
+                            // await delay(); // simulate network delay
+                            notifyUser.current(`Scheduled price track item "${item.name || item.title}" ${newEnabledState ? 'enabled' : 'disabled'} successfully`, 'success');
+                            await handleRetrieveScheduledPriceTrackList();
+
+                        } catch (toggleError) {
+                            notifyUser.current(`Error ${newEnabledState ? 'enabling' : 'disabling'} scheduled price track item "${item.name || item.title}"`, "error");
+                            console.error('Failed to toggle enabled state:', toggleError);
+                        } finally {
+                            hideLoadingRef.current();
+                        }
+                    })();
+                },
+                onNo: () => {
+                    // Handle cancel (optional, modal will close automatically)
+                    console.log('Toggle enabled state cancelled');
+                }
+            });
+            // console.log(`Toggling enabled state for id: ${id} to ${newEnabledState}`);
+            // await togglePriceTrackEnabled(id, newEnabledState);
+            // notifyUser.current(`Scheduled price track item "${item.name || item.title}" ${newEnabledState ? 'enabled' : 'disabled'} successfully`, 'success');
+            // await handleRetrieveScheduledPriceTrackList();
+        } catch (error) {
+            notifyUser.current(`Error ${newEnabledState ? 'enabling' : 'disabling'} scheduled price track item "${item.name || item.title}"`, "error");
+            console.error("Error toggling enabled state:", error);
+        }
+    }, [notifyUser, item.name, item.title, handleRetrieveScheduledPriceTrackList]);
+
 
     const isEnabled = item.enabled === 'true' || item.enabled === '1' || item.enabled === 'enabled';
     // console.log('item key:', key);
@@ -151,11 +203,14 @@ const ScheduledPriceTrackItem: React.FC<ScheduledPriceTrackItemComponentProps> =
                 
                 {/* Status Badge */}
                 <div className="absolute top-2 right-2">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full cursor-pointer ${
+                        
                         isEnabled 
                             ? 'bg-green-100 text-green-800' 
                             : 'bg-red-100 text-red-800'
-                    }`}>
+                    }`}
+                    onClick={() => handleTogglePriceTrackEnabled(item.id, !isEnabled)}
+                    >
                         {isEnabled ? 'Active' : 'Inactive'}
                     </span>
                 </div>

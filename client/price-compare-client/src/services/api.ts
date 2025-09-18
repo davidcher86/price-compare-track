@@ -257,3 +257,22 @@ export const deleteScheduledPriceTrack = async (id: string, scrapeCode: string |
 
     return await res.json();
 }
+
+export const togglePriceTrackEnabled = async (id: string, enabled: boolean): Promise<any> => {
+    const URI = `${process.env.REACT_APP_PRICE_TRACK_SERVICE_HOST}${process.env.REACT_APP_PRICE_TRACK_TOGGLE_ENABLED_ENDPOINT}`;
+
+    if (!URI) {
+        throw new Error("URI base URL is not defined");
+    }
+
+    const res = await fetch(URI, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", "id": id, "enabled": String(enabled) },
+    });
+
+    if (!res.ok) {
+        throw new Error("Toggle price track enabled request failed");
+    }
+
+    return await res.json();
+} 
