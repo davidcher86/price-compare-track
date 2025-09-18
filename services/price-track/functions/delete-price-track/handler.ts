@@ -1,12 +1,16 @@
-import {deletePriceTrackResultsByScrapeCode} from '../../../commons/utils/DynamoDBService';
+import {deletePScheduledPriceTrackById, deletePriceTrackResults} from '../../../commons/utils/DynamoDBService';
 
 export const deleteScheduledPriceTrack = async (event: any) => {
     try {
-
         console.log(`event: ${JSON.stringify(event)}`);
+        const id = event.headers?.id;
+        // const ifDeleteScrapes = event.headers?.ifDeleteScrapes === 'true';
         const scrapeCode = event.headers?.scrapeCode;
 
-        const result = await deletePriceTrackResultsByScrapeCode(scrapeCode);
+        if (scrapeCode !== undefined && scrapeCode !== null && scrapeCode !== '')
+            await deletePriceTrackResults(scrapeCode);
+
+        const result = await deletePScheduledPriceTrackById(id);
 
         console.log(`Delete result: ${JSON.stringify(result)}`);
 

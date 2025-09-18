@@ -477,27 +477,107 @@ export const retrievePriceTrackResultsByScrapeCode = async (
     }
 };
 
-export const deletePriceTrackResultsByScrapeCode = async (
-    scrapeId: string
+export const deletePScheduledPriceTrackById = async (
+    id: string
 ): Promise<{ success: boolean; deletedCount?: number; message?: string; error?: string }> => {
     try {
         const tableName = getPriceTrackScheduledItemsTableName();
-        console.log('deleting price track scheduled records from DynamoDB table: ' + tableName + ' scrapeId: ' + scrapeId);
+        console.log('deleting price track scheduled records from DynamoDB table: ' + tableName + ' id: ' + id);
+        console.log('id type:', typeof id, 'id value:', JSON.stringify(id));
 
-        console.log(`Deleting scheduled records for scrapeId: ${scrapeId}`);
-        
-        // Use the correct primary key (id) to delete the record
-        await ddb.send(new DeleteCommand({
+        // Validate input
+        if (!id || typeof id !== 'string' || id.trim() === '') {
+            console.error('Invalid id provided:', id);
+            return { success: false, message: 'Invalid id provided' };
+        }
+
+        // Use the correct primary key (id) to delete the record with ReturnValues to confirm deletion
+        const deleteResult = await ddb.send(new DeleteCommand({
             TableName: tableName,
             Key: {
-                id: scrapeId // Use 'id' which is the primary key, not 'scrapeCode'
-            }
+                id: id.trim() // Use 'id' which is the primary key, clean any whitespace
+            },
+            ReturnValues: "ALL_OLD" // This will return the deleted item if it existed
         }));
 
-        console.log(`Successfully deleted scheduled record for scrapeId:`, scrapeId);
-        return { success: true, deletedCount: 1 };
+        console.log('Delete operation result:', JSON.stringify(deleteResult, null, 2));
+
+        if (deleteResult.Attributes) {
+            console.log(`Successfully deleted scheduled record with id: ${id}`);
+            console.log('Deleted item:', JSON.stringify(deleteResult.Attributes, null, 2));
+            return { success: true, deletedCount: 1 };
+        } else {
+            console.log(`No item was deleted - item with id ${id} does not exist`);
+            return { success: false, message: `No item found with id: ${id}` };
+        }
     } catch (err) {
         console.error("Error deleting price track scheduled records:", err);
+        console.error("Full error details:", JSON.stringify(err, null, 2));
+        return { success: false, error: JSON.stringify(err) };
+    }
+};
+
+export const deletePriceTrackResults = async (
+    scrapeCode: string
+): Promise<{ success: boolean; deletedCount?: number; message?: string; error?: string }> => {
+    try {
+        const tableName = getPriceTrackResultsTableName();
+        console.log('deleting price track results records from DynamoDB table: ' + tableName + ' scrapeCode: ' + scrapeCode);
+
+        if (!scrapeCode || typeof scrapeCode !== 'string' || scrapeCode.trim() === '') {
+            console.error('Invalid scrapeCode provided:', scrapeCode);
+            return { success: false, message: 'Invalid scrapeCode provided' };
+        }
+
+        console.log(`Deleting records for scrapeCode: ${scrapeCode}`);
+        const queryResult = await ddb.send(new QueryCommand({
+            TableName: tableName,
+            IndexName: "scrape-code-index",
+            KeyConditionExpression: "scrapeCode = :scrapeCode",
+            ExpressionAttributeValues: {
+                ":scrapeCode": scrapeCode,
+            },
+        }));
+
+        if (!queryResult.Items || queryResult.Items.length === 0) {
+            console.log('No records found for scrapeCode:', scrapeCode);
+            return { success: true, message: 'No records found to delete' };
+        }
+
+        // Use BatchWriteItem for efficient deletion (up to 25 items per batch)
+        const items = queryResult.Items;
+        const batches = [];
+        
+        // Split items into batches of 25
+        for (let i = 0; i < items.length; i += 25) {
+            const batch = items.slice(i, i + 25);
+            batches.push(batch);
+        }
+
+        let totalDeleted = 0;
+        
+        for (const batch of batches) {
+            const deleteRequests = batch.map(item => ({
+                DeleteRequest: {
+                    Key: {
+                        id: item.id // Use 'id' as the primary key for PriceTrackResultsTable
+                    }
+                }
+            }));
+
+            await ddb.send(new BatchWriteCommand({
+                RequestItems: {
+                    [tableName!]: deleteRequests
+                }
+            }));
+            
+            totalDeleted += batch.length;
+        }
+
+        console.log(`Successfully deleted ${totalDeleted} records for scrapeCode:`, scrapeCode);
+        return { success: true, deletedCount: totalDeleted };
+    } catch (err) {
+        console.error("Error deleting price track results:", err);
         return { success: false, error: JSON.stringify(err) };
     }
 };

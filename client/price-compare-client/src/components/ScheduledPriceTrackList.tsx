@@ -1,10 +1,12 @@
-import { useEffect, memo, useCallback } from "react";
+import { useEffect,useRef, memo, useCallback } from "react";
 import { usePopUp } from './Modals';
+import {deleteScheduledPriceTrack} from '../services/api';
+import { useNotification } from "./Notifications";
 
 interface ScheduledPriceTrackListProps {
     selectedScheduledPriceTrackItem: any;
-    handleSelectedScheduledPriceTrack: (item: any) => void; 
-    handleRetrieveScheduledPriceTrackList: (scrapeCode: string) => Promise<any[]>;
+    handleSelectedScheduledPriceTrack: (item: any) => void;
+    handleRetrieveScheduledPriceTrackList: () => Promise<any[]>;
     // onSelectScrapeData: (scrapeRequestId: string) => void;
     scheduledPriceTrackList: any[];
     // onNotification?: (message: string, type?: "success" | "error" | "warning" | "info") => void;
@@ -19,6 +21,7 @@ export const ScheduledPriceTrackList: React.FC<ScheduledPriceTrackListProps> = m
                 <ScheduledPriceTrackItem
                     key={item.id}
                     item={item}
+                    handleRetrieveScheduledPriceTrackList={handleRetrieveScheduledPriceTrackList}   
                     handleSelectedScheduledPriceTrack={handleSelectedScheduledPriceTrack}
                     // onSelect={() => handleSelectedScheduledPriceTrack(item)}
                 />
@@ -59,12 +62,16 @@ interface ScheduledPriceTrackItemProps {
 }
 
 interface ScheduledPriceTrackItemComponentProps {
-    key: string;
     handleSelectedScheduledPriceTrack: (item: any) => void;
+    handleRetrieveScheduledPriceTrackList: () => Promise<any[]>;
     item: ScheduledPriceTrackItemProps;
 }
 
-const ScheduledPriceTrackItem: React.FC<ScheduledPriceTrackItemComponentProps> = memo(({ key, item, handleSelectedScheduledPriceTrack }) => {
+const ScheduledPriceTrackItem: React.FC<ScheduledPriceTrackItemComponentProps> = memo(({ item, handleSelectedScheduledPriceTrack, handleRetrieveScheduledPriceTrackList }) => {
+    const { openModal } = usePopUp();
+    const { addNotification } = useNotification();
+    const notifyUser = useRef(addNotification);
+    
     const formatDate = (dateString: string) => {
         if (!dateString) return 'N/A';
         try {
@@ -78,8 +85,50 @@ const ScheduledPriceTrackItem: React.FC<ScheduledPriceTrackItemComponentProps> =
         }
     };
 
+    const handleDeletePriceTrack = useCallback(async (id: string, itemName: string, scrapeCode: string | null = null) => {
+        if (!id) {
+            console.error("No id provided for deletion");
+            return;
+        }
+
+        try {
+            openModal({
+                title: "Delete Item",
+                message: `Are you sure you want to delete this item: ${itemName}?`,
+                onYes: () => {
+                    // Handle delete logic in a separate async function
+                    (async () => {
+                        try {
+                             // create a promise that waits 3 seconds
+                            //  const delay = () => new Promise(resolve => setTimeout(resolve, 3000));
+                            console.log(`Deleting scheduled price track with id: ${id}`);
+                            await deleteScheduledPriceTrack(id, scrapeCode);
+                            // await delay(); // simulate network delay
+                            notifyUser.current(`Scheduled price track item "${itemName}" deleted successfully`, 'success');
+                            await handleRetrieveScheduledPriceTrackList();
+
+                        } catch (deleteError) {
+                            notifyUser.current(`Error deleting scheduled price track item "${itemName}"`, "error");
+                            console.error('Failed to delete scrape:', deleteError);
+                        }
+                    })();
+                },
+                onNo: () => {
+                    // Handle cancel (optional, modal will close automatically)
+                    console.log('Delete cancelled');
+                }
+            });
+            // const response = await deleteScheduledPriceTrack(scrapeCode);
+            // if (response) {
+            //     console.log("Scheduled price track deleted successfully");
+            // }
+        } catch (error) {
+            console.error("Error deleting scheduled price track:", error);
+        }
+    }, [openModal, notifyUser, handleRetrieveScheduledPriceTrackList]);
+
     const isEnabled = item.enabled === 'true' || item.enabled === '1' || item.enabled === 'enabled';
-    console.log('item key:', key);
+    // console.log('item key:', key);
     return (
         <div className="scheduled-price-track-item bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 mb-3 p-4 border border-gray-200 hover:border-sky-400">
             {/* Image Banner */}
@@ -148,12 +197,10 @@ const ScheduledPriceTrackItem: React.FC<ScheduledPriceTrackItemComponentProps> =
                     <button onClick={() => handleSelectedScheduledPriceTrack(item)} className="flex-1 text-xs py-1.5 px-3 bg-sky-50 text-sky-700 rounded-md hover:bg-sky-100 transition-colors duration-200 font-medium">
                         View Details
                     </button>
-                    <button className={`flex-1 text-xs py-1.5 px-3 rounded-md transition-colors duration-200 font-medium ${
-                        isEnabled 
-                            ? 'bg-red-50 text-red-700 hover:bg-red-100' 
-                            : 'bg-green-50 text-green-700 hover:bg-green-100'
-                    }`}>
-                        {isEnabled ? 'Disable' : 'Enable'}
+                    <button className="flex-1 text-xs py-1.5 px-3 rounded-md transition-colors duration-200 font-medium"
+                        onClick={() => handleDeletePriceTrack(item.id, item.name, item.scrapeCode)}
+                    >
+                        Delete
                     </button>
                 </div>
             </div>

@@ -208,7 +208,19 @@ export const addItemPriceTrack = async (userId: string, priceTrackItem: PriceTra
       return await res.json();
   };
 
-export const getPriceTrackDetails = async (scrapeCode: string): Promise<any> => {
+interface PriceTrackGraphProps {
+    id: string;
+    endScrapeDt: string;
+    startScrapeDt: string;
+    productName: string;
+    productPrice: number;
+    scrapeCode: string;
+    scrapeDate: string;
+    source: string;
+    userId: string;
+}
+
+export const getPriceTrackDetails = async (scrapeCode: string): Promise<PriceTrackGraphProps[]> => {
     const URI = `${process.env.REACT_APP_PRICE_TRACK_SERVICE_HOST}${process.env.REACT_APP_PRICE_TRACK_GET_DETAILS_ENDPOINT}`;
 
     if (!URI) {
@@ -226,3 +238,22 @@ export const getPriceTrackDetails = async (scrapeCode: string): Promise<any> => 
 
     return await res.json();
 };
+
+export const deleteScheduledPriceTrack = async (id: string, scrapeCode: string | null =  null): Promise<any> => {
+    const URI = `${process.env.REACT_APP_PRICE_TRACK_SERVICE_HOST}${process.env.REACT_APP_PRICE_TRACK_DELETE_SCHEDULED_ITEM_ENDPOINT}`;
+
+    if (!URI) {
+        throw new Error("URI base URL is not defined");
+    }
+
+    const res = await fetch(URI, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json", "id": id, "scrapeCode": scrapeCode || "" },
+    });
+
+    if (!res.ok) {
+        throw new Error("Delete scheduled price track request failed");
+    }
+
+    return await res.json();
+}

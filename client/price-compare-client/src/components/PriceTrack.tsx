@@ -4,6 +4,9 @@ import { useFetchData } from '../hooks';
 import { useLoading } from "./LoadingSpinner";
 import {retrieveScheduledTrackers, getPriceTrackDetails} from "../services/api";
 import { ScheduledPriceTrackList } from "./ScheduledPriceTrackList";
+import {PriceTrackGraph} from "./PriceTrackGraph";
+import { useNotification } from "./Notifications";
+
 
 interface ScheduledPriceTrackItemProps {
     img: string;
@@ -26,16 +29,30 @@ interface ScheduledPriceTrackItemProps {
     id: string;
 }
 
+interface PriceTrackDataPoint {
+    id: string;
+    endScrapeDt: string;
+    startScrapeDt: string;
+    productName: string;
+    productPrice: number;
+    scrapeCode: string;
+    scrapeDate: string;
+    source: string;
+    userId: string;
+}
+
 export const PriceTrack: React.FC = () => {
 
+    const { addNotification } = useNotification();
     const { showLoading, hideLoading } = useLoading();
     const showLoadingRef = useRef(showLoading);
     const hideLoadingRef = useRef(hideLoading);
-
+    const addNotificationRef = useRef(addNotification);
+    
     const { data, setData } = useFetchData<any[]>(() => retrieveScheduledTrackers(process.env.REACT_APP_TMP_USER_ID || ''), "Fetching Data...", "Error retrieving scheduled trackers", [])
+    const [priceTrackInfo, setPriceTrackInfo] = useState<PriceTrackDataPoint[]>([]);
     const [selectedScheduledPriceTrackItem, setSelectedScheduledPriceTrackItem] = useState<ScheduledPriceTrackItemProps | null>(null);
 
-    
     const setScheduledPriceTrackListRef = useRef(setData);
     setScheduledPriceTrackListRef.current = setData;
     // const scheduledPriceTrackList = use(data);
@@ -57,13 +74,29 @@ export const PriceTrack: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedScheduledPriceTrackItem]);
 
+    const handleRetrieveScheduledPriceTracks = useCallback(async () => {
+            console.log('handleRetrieveScheduledPriceTracks called');
+            try {
+                showLoadingRef.current("Retrieving data...");
+                const items = await retrieveScheduledTrackers(process.env.REACT_APP_TMP_USER_ID || '');
+                setData(items);
+                return items;
+            } catch (error) {
+                addNotificationRef.current("Error retrieving scheduled price tracks", "error");
+                console.error('Error retrieving scheduled price tracks:', error);
+            return [];
+            } finally {
+                hideLoadingRef.current();
+            }
+        }, [setData]);
+
     const handleRetrieveScrapeDataResult = useCallback(async (scrapeCode: string) => {
             console.log('handleRetrieveScrapeDataResult called with ID:', scrapeCode);
             try{
                 showLoadingRef.current("Retrieving data...");
-                const items = await getPriceTrackDetails(scrapeCode);
+                const items: PriceTrackDataPoint[] = await getPriceTrackDetails(scrapeCode);
                 console.log('handleRetrieveScrapeDataResult', items);
-                // setScrapeDataResult(items);
+                setPriceTrackInfo(items);
             } catch (error) {
                 // addNotificationRef.current("Error retrieving scrape results", "error");
                 console.error('Error retrieving scrape results:', error);
@@ -82,10 +115,10 @@ export const PriceTrack: React.FC = () => {
                 <p className="text-xl font-normal text-center theme-font h-10 pt-5 pb-3">{"scheduled tracking prices".toUpperCase()}</p>
                 <div className="scheduled-items-container overflow-auto w-full px-2 pb-4">   
                     <ScheduledPriceTrackList 
+                        handleRetrieveScheduledPriceTrackList={handleRetrieveScheduledPriceTracks}
                         scheduledPriceTrackList={memoizedScheduledPriceTrackList}
                         selectedScheduledPriceTrackItem={selectedScheduledPriceTrackItem}
                         handleSelectedScheduledPriceTrack={handleShowPriceTrackDetails}
-                        handleRetrieveScheduledPriceTrackList={async () => []}
                         // onSelectScrapeData={() => {}}
                     />
                 </div>
@@ -102,7 +135,7 @@ export const PriceTrack: React.FC = () => {
                 </div>
                 
                 <div className="flex-1 min-h-0">
-                    {/* <ScheduledResults resultData={scrapeDataResult}/> */}
+                    <PriceTrackGraph priceTrackDetails={priceTrackInfo}/>
                 </div>
             </div>
         </div>
