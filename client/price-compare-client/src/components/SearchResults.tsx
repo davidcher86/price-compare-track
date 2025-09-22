@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { retrieveScrapeHistoryList } from "src/services/api";
 import { ReactComponent as GoToPageLogo } from '../logos/go-to-page-icon.svg';
+import { ReactComponent as PlusIcon } from '../logos/plus.svg';
 import { usePopUp } from './Modals';
 import { addItemPriceTrack } from "../services/api";
 import { useNotification } from "./Notifications";
@@ -145,7 +146,7 @@ const SourceResults: React.FC<{ sourceResult: SourceResultData, source: string, 
                 </div>
                 <div className="inline-block item-price-wrapper">
                     <div className="flex flex-row justify-end items-center">
-                        <img src="/logos/plus.svg" alt="Track item" className="m-2 w-8 justify-self-end cursor-pointer" onClick={() => handleTrackItemPrice(sourceResult, source)}/>
+                        <PlusIcon className="m-2 w-8 justify-self-end cursor-pointer" onClick={() => handleTrackItemPrice(sourceResult, source)}/>
                         <GoToPageLogo className="m-2 w-8 justify-self-end cursor-pointer" onClick={() => window.open(sourceResult.href, '_blank')}/>
                     </div>
                     <p className="block text-2xl font-normal text-center">{sourceResult.price}</p>
