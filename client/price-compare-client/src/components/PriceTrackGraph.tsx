@@ -100,18 +100,18 @@ export const PriceTrackGraph: React.FC<PriceTrackGraphProps> = memo(({ priceTrac
             });
             
             return (
-                <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-                    <p className="text-sm text-gray-600 mb-1">{formattedDate}</p>
-                    <p className="text-lg font-semibold text-green-600">
+                <div className="bg-slate-800 backdrop-blur-sm p-3 border border-slate-600 rounded-lg shadow-lg">
+                    <p className="text-sm text-slate-300 mb-1">{formattedDate}</p>
+                    <p className="text-lg font-semibold text-green-400">
                         ${Number(priceToUse).toFixed(2)}
                     </p>
-                    <p className="text-xs text-blue-500">Index: {dataToUse.originalIndex}</p>
-                    <p className="text-xs text-purple-500">Chart ID: {dataToUse.id}</p>
-                    <p className="text-xs text-indigo-500">Original ID: {dataToUse.originalId}</p>
-                    <p className="text-xs text-red-500">Used Price: {priceToUse}</p>
-                    <p className="text-xs text-orange-500">Payload Value: {payloadValue}</p>
-                    <p className="text-xs text-green-500">Matched by Label: {matchingDataPoint ? 'Yes' : 'No'}</p>
-                    <p className="text-sm text-gray-500 truncate max-w-xs">{dataToUse.productName}</p>
+                    <p className="text-xs text-blue-400">Index: {dataToUse.originalIndex}</p>
+                    <p className="text-xs text-purple-400">Chart ID: {dataToUse.id}</p>
+                    <p className="text-xs text-indigo-400">Original ID: {dataToUse.originalId}</p>
+                    <p className="text-xs text-red-400">Used Price: {priceToUse}</p>
+                    <p className="text-xs text-orange-400">Payload Value: {payloadValue}</p>
+                    <p className="text-xs text-green-400">Matched by Label: {matchingDataPoint ? 'Yes' : 'No'}</p>
+                    <p className="text-sm text-slate-400 truncate max-w-xs">{dataToUse.productName}</p>
                 </div>
             );
         }
@@ -123,17 +123,17 @@ export const PriceTrackGraph: React.FC<PriceTrackGraphProps> = memo(({ priceTrac
 
     if (!chartData.length) {
         return (
-            <div className="flex items-center justify-center h-64 bg-gray-50 rounded-lg">
-                <p className="text-gray-500">No price data available</p>
+            <div className="flex items-center justify-center h-64 bg-slate-800/50 backdrop-blur-sm border border-slate-600 rounded-lg">
+                <p className="text-slate-400">No price data available</p>
             </div>
         );
     }
 
     return (
-        <div className="w-full h-96 p-4 bg-white rounded-lg shadow-sm">
+        <div className="w-full h-96 p-4 bg-slate-900/50 backdrop-blur-md border border-slate-700 rounded-lg shadow-sm">
             <div className="mb-4">
-                <h3 className="text-lg font-semibold text-gray-800">Price Tracking History</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="text-lg font-semibold text-slate-100">Price Tracking History</h3>
+                <p className="text-sm text-slate-300">
                     Showing {chartData.length} price points over time
                 </p>
             </div>
@@ -149,10 +149,10 @@ export const PriceTrackGraph: React.FC<PriceTrackGraphProps> = memo(({ priceTrac
                         bottom: 20,
                     }}
                 >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
                     <XAxis
                         dataKey="formattedDate"
-                        stroke="#6b7280"
+                        stroke="#94a3b8"
                         fontSize={12}
                         tickLine={false}
                         axisLine={false}
@@ -161,7 +161,7 @@ export const PriceTrackGraph: React.FC<PriceTrackGraphProps> = memo(({ priceTrac
                     />
                     <YAxis
                         tickFormatter={formatPrice}
-                        stroke="#6b7280"
+                        stroke="#94a3b8"
                         fontSize={12}
                         tickLine={false}
                         axisLine={false}
@@ -170,7 +170,7 @@ export const PriceTrackGraph: React.FC<PriceTrackGraphProps> = memo(({ priceTrac
                     />
                     <Tooltip 
                         content={<CustomTooltip />}
-                        cursor={{ stroke: '#10b981', strokeWidth: 1, strokeDasharray: '5 5' }}
+                        cursor={{ stroke: '#60a5fa', strokeWidth: 1, strokeDasharray: '5 5' }}
                         allowEscapeViewBox={{ x: false, y: false }}
                         animationDuration={0}
                         isAnimationActive={false}
@@ -181,18 +181,18 @@ export const PriceTrackGraph: React.FC<PriceTrackGraphProps> = memo(({ priceTrac
                     <Line
                         type="monotone"
                         dataKey="price"
-                        stroke="#10b981"
+                        stroke="#60a5fa"
                         strokeWidth={3}
                         dot={{
-                            fill: '#10b981',
+                            fill: '#60a5fa',
                             strokeWidth: 2,
                             r: 6
                         }}
                         activeDot={{
                             r: 8,
-                            stroke: '#10b981',
+                            stroke: '#60a5fa',
                             strokeWidth: 2,
-                            fill: '#ffffff'
+                            fill: '#1e293b'
                         }}
                         name="Price"
                         connectNulls={false}

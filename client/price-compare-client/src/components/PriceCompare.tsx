@@ -148,7 +148,7 @@ export const PriceCompare = () => {
     }, []);
 
     return (
-        <div id="content-component" className="flex flex-row flex-1 min-h-0 bg-gradient-to-br from-slate-50 to-gray-100">
+        <div id="content-component" className="flex flex-row flex-1 min-h-0 bg-gradient-to-br from-slate-900 to-slate-800">
             <SearchHistoryList 
                 selectedHistoryItem={selectedHistoryItem} 
                 handleSelectedItem={handleSelectedItem} 
@@ -157,13 +157,13 @@ export const PriceCompare = () => {
                 onSelectScrapeData={handleRetrieveScrapeDataResult}
                 onNotification={memoizedNotification}
             />
-            <div id="search-scrape-result-content" className="flex flex-col w-4/5 flex-1 min-h-0 bg-white/60 backdrop-blur-sm">
+            <div id="search-scrape-result-content" className="flex flex-col w-4/5 flex-1 min-h-0 bg-slate-800/60 backdrop-blur-sm">
 
-                <div id="scrape-bar-header" className="flex flex-col w-full px-8 py-6 justify-center flex-shrink-0 bg-white/80 shadow-sm border-b border-gray-200/50">
-                    <h1 className="text-3xl font-bold text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <div id="scrape-bar-header" className="flex flex-col w-full px-8 py-6 justify-center flex-shrink-0 bg-slate-800/80 shadow-sm border-b border-slate-600/50">
+                    <h1 className="text-3xl font-bold text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                         Compare largest online stores - Maximize Your Savings
                     </h1>
-                    <p className="text-gray-600 text-center mt-2 text-sm">Find the best deals across multiple platforms</p>
+                    <p className="text-slate-400 text-center mt-2 text-sm">Find the best deals across multiple platforms</p>
                 </div>
                 
                 <div className="flex-shrink-0 px-6 py-4">
@@ -177,3 +177,5 @@ export const PriceCompare = () => {
         </div>
     );
 };
+
+export default PriceCompare;

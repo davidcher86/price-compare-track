@@ -75,15 +75,15 @@ export const SearchResults: React.FC<SearchResultData> = ({ resultData }) => {
     }
     
     return (
-        <div id="scrape-results-wrap" className="h-full bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
+        <div id="scrape-results-wrap" className="h-full bg-slate-800/60 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-600/50 overflow-hidden">
             {resultData.length === 0 ? (
-                <div className="flex items-center justify-center h-full text-gray-500">
+                <div className="flex items-center justify-center h-full text-slate-400">
                     <div className="text-center">
-                        <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
+                        <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-slate-700/50 to-slate-600/50 rounded-full flex items-center justify-center">
                             <span className="text-2xl">🔍</span>
                         </div>
-                        <p className="text-lg font-medium text-gray-600">No results yet</p>
-                        <p className="text-sm text-gray-500">Start a search to see price comparisons</p>
+                        <p className="text-lg font-medium text-slate-300">No results yet</p>
+                        <p className="text-sm text-slate-400">Start a search to see price comparisons</p>
                     </div>
                 </div>
             ) : (
@@ -105,9 +105,9 @@ const SourceScrapeDataColumn: React.FC<SourceScrapeDataColumnProps> = ({ item, h
     const scrapeResults = JSON.parse(JSON.parse(item.results));
 
     return (
-        <div className="flex flex-col flex-1 max-w-xs bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-2 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent capitalize truncate">
+        <div className="flex flex-col flex-1 max-w-xs bg-slate-700/50 rounded-lg shadow-md border border-slate-600/50 overflow-hidden">
+            <div className="bg-gradient-to-r from-slate-700/50 to-slate-600/50 p-2 border-b border-slate-600/50">
+                <h3 className="text-lg font-semibold text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent capitalize truncate">
                     {item.source}
                 </h3>
             </div>
@@ -137,7 +137,7 @@ const SourceResults: React.FC<{ key: string, sourceResult: SourceResultData, sou
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div id={key} className="bg-blue-50 rounded-lg p-2 border border-blue-100 transition-all duration-300 hover:bg-gradient-to-br hover:from-blue-100 hover:to-purple-100 hover:border-blue-200 hover:shadow-lg hover:scale-[1.02] cursor-pointer group">
+        <div id={key} className="bg-slate-600/40 rounded-lg p-2 border border-slate-500/50 transition-all duration-300 hover:bg-gradient-to-br hover:from-slate-600/60 hover:to-slate-500/60 hover:border-slate-400/50 hover:shadow-lg hover:scale-[1.02] cursor-pointer group">
             <div className="flex flex-row gap-2 mb-2">
                 <div className="w-16 h-16 flex-shrink-0">
                     <img src={sourceResult.image} alt={sourceResult.name.substring(0,60)} className="w-full h-full object-cover rounded transition-transform duration-300 group-hover:scale-105" />
@@ -145,30 +145,30 @@ const SourceResults: React.FC<{ key: string, sourceResult: SourceResultData, sou
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-end gap-1 mb-1">
                         <button 
-                            className="p-1 rounded hover:bg-white/80 hover:shadow-md transition-all duration-200 hover:scale-110 active:scale-95"
+                            className="p-1 rounded hover:bg-slate-500/60 hover:shadow-md transition-all duration-200 hover:scale-110 active:scale-95"
                             onClick={() => handleTrackItemPrice(sourceResult, source)}
                             title="Add to price tracking"
                         >
-                            <PlusIcon className="w-4 h-4 text-blue-600 group-hover:text-purple-600 transition-colors duration-300" />
+                            <PlusIcon className="w-4 h-4 text-blue-400 group-hover:text-purple-400 transition-colors duration-300" />
                         </button>
                         <button 
-                            className="p-1 rounded hover:bg-white/80 hover:shadow-md transition-all duration-200 hover:scale-110 active:scale-95"
+                            className="p-1 rounded hover:bg-slate-500/60 hover:shadow-md transition-all duration-200 hover:scale-110 active:scale-95"
                             onClick={() => window.open(sourceResult.href, '_blank')}
                             title="View product"
                         >
-                            <GoToPageLogo className="w-4 h-4 text-blue-600 group-hover:text-purple-600 transition-colors duration-300" />
+                            <GoToPageLogo className="w-4 h-4 text-blue-400 group-hover:text-purple-400 transition-colors duration-300" />
                         </button>
                     </div>
-                    <p className="text-lg font-bold text-blue-700 text-center group-hover:text-purple-700 transition-colors duration-300">${sourceResult.price}</p>
+                    <p className="text-lg font-bold text-blue-400 text-center group-hover:text-purple-400 transition-colors duration-300">${sourceResult.price}</p>
                 </div>
             </div>
             <div className="text-xs">
-                <p className={`text-gray-700 leading-tight transition-all duration-300 ${isOpen ? '' : 'line-clamp-2'}`}>
+                <p className={`text-slate-300 leading-tight transition-all duration-300 ${isOpen ? '' : 'line-clamp-2'}`}>
                     {sourceResult.name}
                 </p>
                 {sourceResult.name.length > 80 && (
                     <button 
-                        className="text-blue-600 hover:text-blue-800 font-medium mt-1 transition-colors duration-200"
+                        className="text-blue-400 hover:text-blue-300 font-medium mt-1 transition-colors duration-200"
                         onClick={() => setIsOpen(!isOpen)}
                     >
                         {isOpen ? "Show less" : "Read more..."}

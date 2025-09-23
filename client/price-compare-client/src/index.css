@@ -2,35 +2,84 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Modern scrollbar styling */
+/* Dark mode color palette */
+:root {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --accent-primary: #3b82f6;
+  --accent-secondary: #8b5cf6;
+  --border-primary: #334155;
+  --border-secondary: #475569;
+}
+
+/* Modern scrollbar styling for dark mode */
+/* Global scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #64748b #1e293b;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #64748b;
+  border-radius: 4px;
+  border: 2px solid #1e293b;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+*::-webkit-scrollbar-corner {
+  background: #1e293b;
+}
+
+/* Thin scrollbar variant */
 .scrollbar-thin {
   scrollbar-width: thin;
-}
-
-.scrollbar-thumb-gray-300 {
-  scrollbar-color: #d1d5db transparent;
-}
-
-.scrollbar-track-gray-100 {
-  scrollbar-color: #d1d5db #f3f4f6;
+  scrollbar-color: #64748b #1e293b;
 }
 
 .scrollbar-thin::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  background: #f3f4f6;
+  background: #1e293b;
   border-radius: 3px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: #64748b;
   border-radius: 3px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: #94a3b8;
+}
+
+/* Hidden scrollbar variant */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 /* Line clamping utility */
@@ -41,21 +90,21 @@
   overflow: hidden;
 }
 
-/* Legacy theme classes for backward compatibility */
+/* Updated theme classes for dark mode */
 .theme-background {
-    @apply bg-blue-500;
+    @apply bg-slate-800;
 }
 
 .theme-font {
-    @apply text-indigo-600;
+    @apply text-blue-400;
 }
 
 .theme-border {
-    @apply border-sky-500 border-r;
+    @apply border-slate-600 border-r;
 }
 
 .theme-input-frame {
-    @apply border-sky-600 border-2;
+    @apply border-slate-500 border-2;
 }
 
 .rem-40 {
@@ -63,7 +112,7 @@
 }
 
 .borders-color-blue {
-    @apply bg-blue-300;
+    @apply bg-slate-700;
 }
 
 .item-borders {
@@ -92,7 +141,7 @@
 }
 
 body {
-    @apply overflow-clip bg-gray-50;
+    @apply overflow-clip bg-slate-900 text-slate-100;
 }
 
 .navbar {
@@ -162,7 +211,7 @@ body {
 /* Scheduled Price Track Items Styles */
 .scheduled-items-container {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 #f1f5f9;
+  scrollbar-color: #64748b #1e293b;
 }
 
 .scheduled-items-container::-webkit-scrollbar {
@@ -170,12 +219,12 @@ body {
 }
 
 .scheduled-items-container::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #1e293b;
   border-radius: 3px;
 }
 
 .scheduled-items-container::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #64748b;
   border-radius: 3px;
 }
 

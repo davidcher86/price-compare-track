@@ -113,10 +113,14 @@ export const PriceTrack: React.FC = () => {
 
     console.log('Rendering selectedScheduledPriceTrackItem with data:', selectedScheduledPriceTrackItem);
     return (
-        <div id="content-component" className="flex flex-row flex-1 min-h-0">
-            <div id="search-bar" className="flex flex-col w-1/5 h-full pl-3 gap-3 theme-border overflow-hidden items-center bg-gray-50">
-                <p className="text-xl font-normal text-center theme-font h-10 pt-5 pb-3">{"scheduled tracking prices".toUpperCase()}</p>
-                <div className="scheduled-items-container overflow-auto w-full px-2 pb-4">   
+        <div id="content-component" className="flex flex-row flex-1 min-h-0 bg-gradient-to-br from-slate-900 to-slate-800">
+            <div id="search-bar" className="flex flex-col w-1/5 h-full bg-slate-800/90 backdrop-blur-sm shadow-lg border-r border-slate-600/50 overflow-hidden">
+                <div className="p-6 border-b border-slate-600/50 bg-gradient-to-r from-slate-700/50 to-slate-600/50">
+                    <h2 className="text-xl font-semibold text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent uppercase tracking-wide">
+                        Scheduled Tracking Prices
+                    </h2>
+                </div>
+                <div className="scheduled-items-container overflow-auto w-full px-4 pb-4 flex-1 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">   
                     <ScheduledPriceTrackList 
                         handleRetrieveScheduledPriceTrackList={handleRetrieveScheduledPriceTracks}
                         scheduledPriceTrackList={memoizedScheduledPriceTrackList}
@@ -126,19 +130,25 @@ export const PriceTrack: React.FC = () => {
                 </div>
             </div>
             
-            <div id="price-track-result-content"  className="overflow-auto flex flex-col w-4/5 flex-1 min-h-0">
+            <div id="price-track-result-content" className="overflow-auto flex flex-col w-4/5 flex-1 min-h-0 bg-slate-800/60 backdrop-blur-sm">
             
-                <div id="scrape-bar-header" className="flex flex-col w-full mt-2 h-20 justify-center flex-shrink-0">
-                    <p className="block text-xl font-medium text-center theme-font">Track Item prices online stores - Maximize Your Savings</p>
+                <div id="scrape-bar-header" className="flex flex-col w-full px-8 py-6 justify-center flex-shrink-0 bg-slate-800/80 shadow-sm border-b border-slate-600/50">
+                    <h1 className="text-3xl font-bold text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                        Track Item prices online stores - Maximize Your Savings
+                    </h1>
+                    <p className="text-slate-400 text-center mt-2 text-sm">Monitor price changes and get notified of deals</p>
                 </div>
-                <div className="flex-shrink-0">
+                
+                <div className="flex-shrink-0 px-6 py-4">
                     <PriceTrackInfo priceTrackResults={memoizedPriceTrackResults} priceTrackDetails={selectedScheduledPriceTrackItem} />
                 </div>
                 
-                <div className="flex-1 min-h-0">
+                <div className="flex-1 min-h-0 px-6 pb-6">
                     <PriceTrackGraph priceTrackDetails={memoizedPriceTrackResults}/>
                 </div>
             </div>
         </div>
     );
 };
+
+export default PriceTrack;

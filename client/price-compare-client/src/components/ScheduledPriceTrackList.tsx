@@ -28,12 +28,12 @@ export const ScheduledPriceTrackList: React.FC<ScheduledPriceTrackListProps> = m
                 />
             ))}
             {(!scheduledPriceTrackList || scheduledPriceTrackList.length === 0) && (
-                <div className="flex flex-col items-center justify-center h-40 text-gray-500">
-                    <svg className="w-12 h-12 mb-3 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                <div className="flex flex-col items-center justify-center h-40 text-slate-400">
+                    <svg className="w-12 h-12 mb-3 text-slate-500" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
                     </svg>
-                    <p className="text-sm font-medium">No tracked items</p>
-                    <p className="text-xs text-gray-400 mt-1">Start tracking prices to see them here</p>
+                    <p className="text-sm font-medium text-slate-300">No tracked items</p>
+                    <p className="text-xs text-slate-500 mt-1">Start tracking prices to see them here</p>
                 </div>
             )}
         </div>
@@ -182,9 +182,9 @@ const ScheduledPriceTrackItem: React.FC<ScheduledPriceTrackItemComponentProps> =
     const isEnabled = item.enabled === 'true' || item.enabled === '1' || item.enabled === 'enabled';
     // console.log('item key:', key);
     return (
-        <div className="scheduled-price-track-item bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 mb-3 p-4 border border-gray-200 hover:border-sky-400">
+        <div className="scheduled-price-track-item bg-slate-700/50 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 mb-3 p-4 border border-slate-600/50 hover:border-blue-400/50 hover:bg-slate-600/50">
             {/* Image Banner */}
-            <div className="image-banner mb-3 relative overflow-hidden rounded-md bg-gray-100">
+            <div className="image-banner mb-3 relative overflow-hidden rounded-md bg-slate-600/30">
                 {item.img ? (
                     <img 
                         src={item.img} 
@@ -197,17 +197,17 @@ const ScheduledPriceTrackItem: React.FC<ScheduledPriceTrackItemComponentProps> =
                         }}
                     />
                 ) : null}
-                <div className={`${item.img ? 'hidden' : ''} w-full h-20 bg-gradient-to-r from-gray-200 to-gray-300 flex items-center justify-center`}>
-                    <span className="text-gray-500 text-sm">No Image</span>
+                <div className={`${item.img ? 'hidden' : ''} w-full h-20 bg-gradient-to-r from-slate-600/50 to-slate-500/50 flex items-center justify-center`}>
+                    <span className="text-slate-400 text-sm">No Image</span>
                 </div>
                 
                 {/* Status Badge */}
                 <div className="absolute top-2 right-2">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full cursor-pointer ${
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full cursor-pointer transition-all duration-200 hover:scale-105 ${
                         
                         isEnabled 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-red-100 text-red-800'
+                            ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                            : 'bg-red-500/20 text-red-400 border border-red-500/30'
                     }`}
                     onClick={() => handleTogglePriceTrackEnabled(item.id, !isEnabled)}
                     >
@@ -219,20 +219,20 @@ const ScheduledPriceTrackItem: React.FC<ScheduledPriceTrackItemComponentProps> =
             {/* Item Details */}
             <div className="item-details space-y-2">
                 {/* Name/Title */}
-                <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 leading-tight">
+                <h3 className="text-sm font-semibold text-slate-100 line-clamp-2 leading-tight">
                     {item.name || item.title || 'Unnamed Item'}
                 </h3>
 
                 {/* Source */}
-                <div className="flex items-center text-xs text-gray-600">
-                    <span className="inline-block w-2 h-2 bg-sky-500 rounded-full mr-2"></span>
+                <div className="flex items-center text-xs text-slate-400">
+                    <span className="inline-block w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
                     <span className="font-medium">Source:</span>
-                    <span className="ml-1 text-sky-600 font-medium">{item.source || 'Unknown'}</span>
+                    <span className="ml-1 text-blue-400 font-medium">{item.source || 'Unknown'}</span>
                 </div>
 
                 {/* Created Date */}
-                <div className="flex items-center text-xs text-gray-600">
-                    <svg className="w-3 h-3 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <div className="flex items-center text-xs text-slate-400">
+                    <svg className="w-3 h-3 mr-2 text-slate-500" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                     </svg>
                     <span className="font-medium">Created:</span>
@@ -241,18 +241,18 @@ const ScheduledPriceTrackItem: React.FC<ScheduledPriceTrackItemComponentProps> =
 
                 {/* Price (if available) */}
                 {item.price && (
-                    <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                        <span className="text-xs font-medium text-gray-600">Current Price:</span>
-                        <span className="text-sm font-bold theme-font">{item.price}</span>
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-600/50">
+                        <span className="text-xs font-medium text-slate-400">Current Price:</span>
+                        <span className="text-sm font-bold text-blue-400">{item.price}</span>
                     </div>
                 )}
 
                 {/* Action Buttons */}
                 <div className="flex gap-2 pt-2">
-                    <button onClick={() => handleSelectedScheduledPriceTrack(item)} className="flex-1 text-xs py-1.5 px-3 bg-sky-50 text-sky-700 rounded-md hover:bg-sky-100 transition-colors duration-200 font-medium">
+                    <button onClick={() => handleSelectedScheduledPriceTrack(item)} className="flex-1 text-xs py-1.5 px-3 bg-blue-500/20 text-blue-400 rounded-md hover:bg-blue-500/30 transition-colors duration-200 font-medium border border-blue-500/30">
                         View Details
                     </button>
-                    <button className="flex-1 text-xs py-1.5 px-3 rounded-md transition-colors duration-200 font-medium"
+                    <button className="flex-1 text-xs py-1.5 px-3 rounded-md transition-colors duration-200 font-medium bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30"
                         onClick={() => handleDeletePriceTrack(item.id, item.name, item.scrapeCode)}
                     >
                         Delete

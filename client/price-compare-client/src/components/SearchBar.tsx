@@ -119,19 +119,19 @@ export const SearchBar: React.FC<any> = () => {
 
 
     return (
-        <div id="search-form" className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6">
+        <div id="search-form" className="bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-600/50 p-6">
             <div className="flex flex-row justify-center items-center mb-6">
-                <div id="search-bar" className="flex flex-row items-center w-full max-w-2xl bg-white rounded-2xl shadow-sm border border-gray-200 hover:border-blue-300 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-100 transition-all duration-200">
+                <div id="search-bar" className="flex flex-row items-center w-full max-w-2xl bg-slate-700/50 rounded-2xl shadow-sm border border-slate-600/50 hover:border-blue-400/50 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-400/20 transition-all duration-200">
                     <TextInput 
-                        className="flex-1 px-6 py-4 text-lg placeholder-gray-500 bg-transparent border-0 focus:ring-0 focus:outline-none" 
+                        className="flex-1 px-6 py-4 text-lg placeholder-slate-400 bg-transparent border-0 focus:ring-0 focus:outline-none text-slate-100" 
                         placeholder="Search stores online for the best deals..." 
                         onChange={handleChangeSearchInput} 
                     />
                     <button 
                         className={`mr-4 p-3 rounded-xl transition-all duration-200 ${
                             state.validRequest 
-                                ? 'text-blue-600 hover:bg-blue-50 hover:text-blue-700 active:scale-95 cursor-pointer' 
-                                : 'text-gray-300 cursor-not-allowed'
+                                ? 'text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 active:scale-95 cursor-pointer' 
+                                : 'text-slate-500 cursor-not-allowed'
                         }`}
                         onClick={handleSendSearchRequest}
                         disabled={!state.validRequest}
@@ -149,10 +149,10 @@ export const SearchBar: React.FC<any> = () => {
                         onClick={() => dispatch({ type: 'TOGGLE_SEARCH_RESOURCES', payload: {name: store.name, order: store.order} })}
                         className={`
                             flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-200 
-                            hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-100
+                            hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-400/20
                             ${state.checkedSources.some((source: CheckedSource) => source.name === store.name)
-                                ? 'bg-gradient-to-br from-blue-50 to-purple-50 border-blue-200 shadow-md' 
-                                : 'bg-white border-gray-200 hover:border-gray-300 opacity-60 hover:opacity-80'
+                                ? 'bg-gradient-to-br from-slate-700/50 to-slate-600/50 border-blue-500/50 shadow-md shadow-blue-500/20' 
+                                : 'bg-slate-700/30 border-slate-600/30 hover:border-slate-500/50 opacity-60 hover:opacity-80'
                             }
                         `}
                         aria-pressed={state.checkedSources.some((source: CheckedSource) => source.name === store.name)}
@@ -162,8 +162,8 @@ export const SearchBar: React.FC<any> = () => {
                         </div>
                         <span className={`text-sm font-medium ${
                             state.checkedSources.some((source: CheckedSource) => source.name === store.name)
-                                ? 'text-gray-900' 
-                                : 'text-gray-600'
+                                ? 'text-slate-100' 
+                                : 'text-slate-400'
                         }`}>
                             {store.label}
                         </span>
