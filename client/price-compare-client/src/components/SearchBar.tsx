@@ -1,4 +1,4 @@
-import React, { ReactNode, useState, useRef, useReducer, useEffect, useCallback } from "react";
+import React, { ReactNode, useRef, useReducer, useEffect, useCallback } from "react";
 import { ReactComponent as SearchButton } from '../logos/search-button.svg';
 import { ReactComponent as AmazonLogo } from '../logos/amazon-logo.svg';
 import { ReactComponent as EbayLogo } from '../logos/ebay-logo.svg';
@@ -119,21 +119,55 @@ export const SearchBar: React.FC<any> = () => {
 
 
     return (
-        <div id="search-form" className="flex flex-col bg-black-700 w-full theme-border">
-            <div className="flex flex-row justify-between items-center">
-                <div id="search-bar" className="flex flex-row h-12 items-center w-3/6 h-18 mt-5 mb-5 mr-auto ml-auto theme-input-frame rounded-2xl">
-                    <TextInput className={""} placeholder="Search Stores Online" onChange={handleChangeSearchInput} />
-                    <div className="w-5 mr-5"><SearchButton className={state.validRequest ? `cursor-pointer` : `cursor-not-allowed pointer-events-none opacity-30`} onClick={handleSendSearchRequest} /></div>
+        <div id="search-form" className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6">
+            <div className="flex flex-row justify-center items-center mb-6">
+                <div id="search-bar" className="flex flex-row items-center w-full max-w-2xl bg-white rounded-2xl shadow-sm border border-gray-200 hover:border-blue-300 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-100 transition-all duration-200">
+                    <TextInput 
+                        className="flex-1 px-6 py-4 text-lg placeholder-gray-500 bg-transparent border-0 focus:ring-0 focus:outline-none" 
+                        placeholder="Search stores online for the best deals..." 
+                        onChange={handleChangeSearchInput} 
+                    />
+                    <button 
+                        className={`mr-4 p-3 rounded-xl transition-all duration-200 ${
+                            state.validRequest 
+                                ? 'text-blue-600 hover:bg-blue-50 hover:text-blue-700 active:scale-95 cursor-pointer' 
+                                : 'text-gray-300 cursor-not-allowed'
+                        }`}
+                        onClick={handleSendSearchRequest}
+                        disabled={!state.validRequest}
+                        aria-label="Search"
+                    >
+                        <SearchButton className="w-6 h-6" />
+                    </button>
                 </div>
             </div>
-            <div id="scrape-source-bar" className="flex flex-row justify-center m-4">
+            
+            <div id="scrape-source-bar" className="grid grid-cols-5 gap-4">
                 {stores.map((store, i) => (
-                    <div onClick={() => dispatch({ type: 'TOGGLE_SEARCH_RESOURCES', payload: {name: store.name, order: store.order} })} key={i} style={{ opacity: state.checkedSources.some((source: CheckedSource) => source.name === store.name) ? 1 : 0.3 }} className={`flex flex-col items-center bg-gray-500 m-4 w-28 text-center item-borders cursor-pointer`}>
-                        <div className="w-16 h-24 rounded-full flex items-center justify-center text-xl font-bold theme-font">
+                    <button
+                        key={i}
+                        onClick={() => dispatch({ type: 'TOGGLE_SEARCH_RESOURCES', payload: {name: store.name, order: store.order} })}
+                        className={`
+                            flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-200 
+                            hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-100
+                            ${state.checkedSources.some((source: CheckedSource) => source.name === store.name)
+                                ? 'bg-gradient-to-br from-blue-50 to-purple-50 border-blue-200 shadow-md' 
+                                : 'bg-white border-gray-200 hover:border-gray-300 opacity-60 hover:opacity-80'
+                            }
+                        `}
+                        aria-pressed={state.checkedSources.some((source: CheckedSource) => source.name === store.name)}
+                    >
+                        <div className="w-12 h-12 flex items-center justify-center mb-2">
                             {store.logo}
                         </div>
-                        <p className="theme-font">{store.label}</p>
-                    </div>
+                        <span className={`text-sm font-medium ${
+                            state.checkedSources.some((source: CheckedSource) => source.name === store.name)
+                                ? 'text-gray-900' 
+                                : 'text-gray-600'
+                        }`}>
+                            {store.label}
+                        </span>
+                    </button>
                 ))}
             </div>
         </div>

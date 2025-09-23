@@ -70,9 +70,13 @@ export const SearchHistoryList: React.FC<SearchHistoryListProps> = memo(({ selec
     }, [selectedHistoryItem, onSelectScrapeData]);
 
     return (
-        <div id="search-bar"  className="flex flex-col w-1/5 h-full pl-3 gap-3 theme-border overflow-hidden items-center">
-            <p className="text-xl font-normal text-center theme-font h-10 pt-5 pb-3">{"search history".toUpperCase()}</p>
-            <div className="overflow-auto">   
+        <div id="search-bar" className="flex flex-col w-1/5 h-full bg-white/90 backdrop-blur-sm shadow-lg border-r border-gray-200/50 overflow-hidden">
+            <div className="p-6 border-b border-gray-200/50 bg-gradient-to-r from-blue-50 to-purple-50">
+                <h2 className="text-xl font-semibold text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent uppercase tracking-wide">
+                    Search History
+                </h2>
+            </div>
+            <div className="flex-1 overflow-auto p-4 space-y-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">   
                 {historicalData.map((item) => <SearchHistoryItem key={item.key} item={item} selectedHistoryItem={selectedHistoryItem} handleSelectedItem={handleSelectedItem} handleDeleteScrape={handleDeleteScrape} />)}
             </div>
         </div>
@@ -90,28 +94,47 @@ const SearchHistoryItem: React.FC<SearchHistoryItemProps> = memo(({ item, select
     const sourcesString = item.value.map((entry: { source: string; }) => entry.source).join(", ");
     const scrapeDt = item.value.length > 0 ? item.value[0].scrapeDate : null;
 
-    const scrapeDate = scrapeDt !== null ? moment(scrapeDt).format('h:mm  d/mm/yyyy') : "No scrape date";
+    const scrapeDate = scrapeDt !== null ? moment(scrapeDt).format('h:mm A · MMM D, YYYY') : "No scrape date";
     const query = item.value.length > 0 ? item.value[0].query : "No query";
-    console.log(item.key);
+    const isSelected = selectedHistoryItem && item.key === selectedHistoryItem.key;
+    
     return (
-        <div key={item.key} style={(selectedHistoryItem && item.key === selectedHistoryItem.key) ? {backgroundColor: "rgba(248, 225, 168, 1)"} : {backgroundColor: "rgba(153, 191, 245, 1)"} } className="flex flex-col w-90 h-18 w-11/12 shadow-lg item-borders cursor-pointer mt-1 mb-1" onClick={() => handleSelectedItem(item)}>
-            <div className="flex flex-row">
-                <div className="flex flex-col w-10/12 justify-start items-start p-2">
-                    <p className="flex text-xs text-black text-center m-1 h-6 theme-font">{scrapeDate}</p>
-                    
+        <div 
+            key={item.key} 
+            className={`
+                group relative flex flex-col w-full rounded-xl shadow-sm border transition-all duration-200 cursor-pointer
+                hover:shadow-md hover:scale-[1.02] active:scale-[0.98]
+                ${isSelected 
+                    ? 'bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 shadow-md' 
+                    : 'bg-white hover:bg-gray-50 border-gray-200'
+                }
+            `} 
+            onClick={() => handleSelectedItem(item)}
+        >
+            <div className="flex flex-row justify-between items-start p-4">
+                <div className="flex flex-col flex-1 min-w-0">
+                    <time className={`text-xs font-medium mb-2 ${isSelected ? 'text-blue-600' : 'text-gray-500'}`}>
+                        {scrapeDate}
+                    </time>
+                    <h3 className={`text-base font-semibold mb-2 line-clamp-2 ${isSelected ? 'text-gray-900' : 'text-gray-800'}`}>
+                        {query}
+                    </h3>
+                    <div className={`text-xs ${isSelected ? 'text-blue-600' : 'text-gray-500'}`}>
+                        <span className="font-medium">Sources:</span>
+                        <span className="ml-1">{sourcesString}</span>
+                    </div>
                 </div>
 
-                <div className="m-3">
-                    <DeleteIcon className="cursor-pointer" onClick={(e) => {
+                <button
+                    className="ml-3 p-2 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-600 transition-all duration-200 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-200"
+                    onClick={(e) => {
                         e.stopPropagation();
                         handleDeleteScrape(item);
-                    }}/>
-                </div>
-            </div>
-            <div className="flex flex-col justify-end">
-                <p className="text-xl font-normal pt-2 pl-2 text-center w-full theme-font">{query}</p>
-
-                <p className="mx-0.5 text-sm font-normal text-left w-full theme-font p-1 m-1">{`sources: [${sourcesString}]`}</p>
+                    }}
+                    aria-label="Delete search history item"
+                >
+                    <DeleteIcon className="w-4 h-4" />
+                </button>
             </div>
         </div>
     );

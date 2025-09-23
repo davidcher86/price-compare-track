@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { retrieveScrapeHistoryList } from "src/services/api";
 import { ReactComponent as GoToPageLogo } from '../logos/go-to-page-icon.svg';
 import { ReactComponent as PlusIcon } from '../logos/plus.svg';
 import { usePopUp } from './Modals';
@@ -30,24 +29,8 @@ export const SearchResults: React.FC<SearchResultData> = ({ resultData }) => {
     const { openModal, closeModal } = usePopUp();
     const { addNotification } = useNotification();
     const { showLoading, hideLoading } = useLoading();
-    // const [scrapeDataResults, setScrapeDataResults] = useState(resultData);
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             const res = await retrieveScrapeHistoryList('8c62a416-504d-4b82-87f6-94a536aa27da');
-    //             console.log('res', res);
-    //         } catch (error) {
-    //             console.error('Error fetching scrape history:', error);
-    //             setScrapeHistory([]);
-    //         };
-    //     };
-    //     fetchData();
-    // }, []);
-    // console.log('resultData');
-    // console.log(resultData);
     const handleTrackItemPrice = async (sourceResult: SourceResultData, source: string): Promise<any> => {
-        // Open a modal to confirm tracking this item
         openModal({
             title: 'Track Price',
             content: (
@@ -72,8 +55,6 @@ export const SearchResults: React.FC<SearchResultData> = ({ resultData }) => {
                     };
                     showLoading("Adding item to price tracking...");
                     const response = await addItemPriceTrack(process.env.REACT_APP_TMP_USER_ID || '', priceTrackItem);
-                    // Here you would call an API to save this item for tracking
-                    
                     
                     if (response.status === 200) {
                         console.log('Tracking item:', sourceResult);
@@ -94,10 +75,22 @@ export const SearchResults: React.FC<SearchResultData> = ({ resultData }) => {
     }
     
     return (
-        <div id="scrape-results-wrap" className="flex flex-row w-full h-full theme-border border-t">
-            {resultData.length == 0 
-            ? <p className="text-xl font-normal text-center w-full theme-font">no results</p>
-            : resultData.map(item => <SourceScrapeDataColumn key={item.scrapeId} item={item} handleTrackItemPrice={handleTrackItemPrice} />)}
+        <div id="scrape-results-wrap" className="h-full bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
+            {resultData.length === 0 ? (
+                <div className="flex items-center justify-center h-full text-gray-500">
+                    <div className="text-center">
+                        <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
+                            <span className="text-2xl">🔍</span>
+                        </div>
+                        <p className="text-lg font-medium text-gray-600">No results yet</p>
+                        <p className="text-sm text-gray-500">Start a search to see price comparisons</p>
+                    </div>
+                </div>
+            ) : (
+                <div className="flex flex-row h-full gap-2 p-3">
+                    {resultData.map(item => <SourceScrapeDataColumn key={item.scrapeId} item={item} handleTrackItemPrice={handleTrackItemPrice} />)}
+                </div>
+            )}
         </div>
     );
 }
@@ -109,56 +102,79 @@ interface SourceScrapeDataColumnProps {
 }
 
 const SourceScrapeDataColumn: React.FC<SourceScrapeDataColumnProps> = ({ item, handleTrackItemPrice }) => {
-// function sourceScrapeDataColumn(item: ScapeSourceData) {
-    // console.log(item);
-    // console.log(JSON.parse(JSON.parse(item.results)));
     const scrapeResults = JSON.parse(JSON.parse(item.results));
 
     return (
-        <div id="scrape-source-item" className="flex flex-col w-full h-full items-center">
-            <p className="text-xl text-center w-full theme-font font-bold absolute">{item.source}</p>
-            <div className="mt-8 overflow-auto ">
-                {scrapeResults.map((sourceResultItem: SourceResultData, index: number) => <SourceResults key={`${sourceResultItem.name}-${index}`} sourceResult={sourceResultItem} source={item.source} handleTrackItemPrice={handleTrackItemPrice} />)}
+        <div className="flex flex-col flex-1 max-w-xs bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-2 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent capitalize truncate">
+                    {item.source}
+                </h3>
             </div>
-        
+            <div className="flex-1 overflow-auto p-2 space-y-2">
+                {scrapeResults.map((sourceResultItem: SourceResultData, index: number) => 
+                    <SourceResults 
+                        key={`${sourceResultItem.name}-${index}`} 
+                        sourceResult={sourceResultItem} 
+                        source={item.source} 
+                        handleTrackItemPrice={handleTrackItemPrice} 
+                    />
+                )}
+            </div>
         </div>
     );
 }
 
 interface SourceResultData {
+    key: string;
     name: string;
     image?: string;
     price: number;
     href?: string;
 }
 
-const SourceResults: React.FC<{ sourceResult: SourceResultData, source: string, handleTrackItemPrice: (sourceResult: SourceResultData, source: string) => void }> = ({ sourceResult, source, handleTrackItemPrice }) => {
+const SourceResults: React.FC<{ key: string, sourceResult: SourceResultData, source: string, handleTrackItemPrice: (sourceResult: SourceResultData, source: string) => void }> = ({ key, sourceResult, source, handleTrackItemPrice }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const { openModal } = usePopUp();
 
-    
-    // console.log(isOpen);
     return (
-        <div className="bg-blue-200 m-2 rounded-md p-1 max-w-xl">
-            <div className="flex flex-row my-2 justify-between">
-                <div className="inline-block result-item-image-container">
-                    <img src={sourceResult.image} alt={sourceResult.name.substring(0,120)} className="m-2 w-full h-full object-coverobject-cover" />
+        <div id={key} className="bg-blue-50 rounded-lg p-2 border border-blue-100 transition-all duration-300 hover:bg-gradient-to-br hover:from-blue-100 hover:to-purple-100 hover:border-blue-200 hover:shadow-lg hover:scale-[1.02] cursor-pointer group">
+            <div className="flex flex-row gap-2 mb-2">
+                <div className="w-16 h-16 flex-shrink-0">
+                    <img src={sourceResult.image} alt={sourceResult.name.substring(0,60)} className="w-full h-full object-cover rounded transition-transform duration-300 group-hover:scale-105" />
                 </div>
-                <div className="inline-block item-price-wrapper">
-                    <div className="flex flex-row justify-end items-center">
-                        <PlusIcon className="m-2 w-8 justify-self-end cursor-pointer" onClick={() => handleTrackItemPrice(sourceResult, source)}/>
-                        <GoToPageLogo className="m-2 w-8 justify-self-end cursor-pointer" onClick={() => window.open(sourceResult.href, '_blank')}/>
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-end gap-1 mb-1">
+                        <button 
+                            className="p-1 rounded hover:bg-white/80 hover:shadow-md transition-all duration-200 hover:scale-110 active:scale-95"
+                            onClick={() => handleTrackItemPrice(sourceResult, source)}
+                            title="Add to price tracking"
+                        >
+                            <PlusIcon className="w-4 h-4 text-blue-600 group-hover:text-purple-600 transition-colors duration-300" />
+                        </button>
+                        <button 
+                            className="p-1 rounded hover:bg-white/80 hover:shadow-md transition-all duration-200 hover:scale-110 active:scale-95"
+                            onClick={() => window.open(sourceResult.href, '_blank')}
+                            title="View product"
+                        >
+                            <GoToPageLogo className="w-4 h-4 text-blue-600 group-hover:text-purple-600 transition-colors duration-300" />
+                        </button>
                     </div>
-                    <p className="block text-2xl font-normal text-center">{sourceResult.price}</p>
+                    <p className="text-lg font-bold text-blue-700 text-center group-hover:text-purple-700 transition-colors duration-300">${sourceResult.price}</p>
                 </div>
             </div>
-            <div className="p-3">
-                <p onClick={() => setIsOpen(true)} className="w-full theme-font">{isOpen ? sourceResult.name : sourceResult.name.substring(0,120)}</p>
-                {sourceResult.name.length > 80 
-                    ? <p className="w-full cursor-pointer font-medium text-sm" onClick={() => setIsOpen(!isOpen)}>{isOpen == false ? "read more..." : "close"}</p> 
-                    : null}
+            <div className="text-xs">
+                <p className={`text-gray-700 leading-tight transition-all duration-300 ${isOpen ? '' : 'line-clamp-2'}`}>
+                    {sourceResult.name}
+                </p>
+                {sourceResult.name.length > 80 && (
+                    <button 
+                        className="text-blue-600 hover:text-blue-800 font-medium mt-1 transition-colors duration-200"
+                        onClick={() => setIsOpen(!isOpen)}
+                    >
+                        {isOpen ? "Show less" : "Read more..."}
+                    </button>
+                )}
             </div>
-            
         </div>
     );
 }
