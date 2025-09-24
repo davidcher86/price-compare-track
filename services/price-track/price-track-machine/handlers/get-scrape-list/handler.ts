@@ -1,24 +1,6 @@
 import {retrieveAllEnabledPriceTrackItems} from "../../../../commons/utils/DynamoDBService";
-// import { SFNClient, StartExecutionCommand } from "@aws-sdk/client-sfn";
 import {sendMessageToMachine} from '../../../../commons/utils/StepFunctionService';
-
-interface PriceTrackItem {
-    id: string;
-    scrapeCode: string;
-    userId: string;
-    source: string;
-    scrapeEngine?: string;
-    createdDt: string;
-    iteration: number;
-    iterationType: string;
-    iterationStart: string;
-    enabled: string; // This will be converted to "true"/"false" string when stored in DynamoDB
-    href?: string;
-    name?: string;
-    query?: string;
-}
-
-// const sfn = new SFNClient({ region: process.env.AWS_REGION });
+import { PriceTrackItem } from "../../../commons/models";
 
 export const getScrapeList = async () => {
     try {

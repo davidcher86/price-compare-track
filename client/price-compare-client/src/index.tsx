@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import PriceCompareHome from "./Home";
 import { NotificationProvider } from './components/Notifications';
 import { LoadingSpinnerProvider } from "./components/LoadingSpinner";
 import { PopUpProvider } from './components/Modals';
@@ -13,14 +12,13 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   // <React.StrictMode>
-
-  <LoadingSpinnerProvider>
-    <PopUpProvider>
-      <NotificationProvider>
-        <Home />
-      </NotificationProvider>
-    </PopUpProvider>  
-  </LoadingSpinnerProvider>
+    <LoadingSpinnerProvider>
+      <PopUpProvider>
+        <NotificationProvider>
+          <Home />
+        </NotificationProvider>
+      </PopUpProvider>  
+    </LoadingSpinnerProvider>
   // </React.StrictMode>
 );
 

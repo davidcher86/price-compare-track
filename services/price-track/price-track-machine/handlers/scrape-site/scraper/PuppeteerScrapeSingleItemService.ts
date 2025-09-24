@@ -1,22 +1,7 @@
 import {AbstractScrapeHandler} from '../../../../../commons/scrapers/AbstractPuppeteerScrapeService';
 import {ScrapeConfigDataInterface} from "../../../../../commons/scrapers/interfaces/ScrapeConfig";
+import { ScraperScrapeInfo } from "../../../../commons/models";
 // import puppeteerCore from "puppeteer-core";
-
-interface ScrapeInfo {
-    id: string;
-    scrapeCode: string;
-    userId: string;
-    source: string;
-    scrapeEngine?: string;
-    createDt: string;
-    iteration: number;
-    iterationType: string;
-    iterationStart: string;
-    enabled: string; // This will be converted to "true"/"false" string when stored in DynamoDB
-    href: string;
-    name?: string;
-    query?: string;
-}
 
 export class PuppeteerScrapeSingleItemService extends AbstractScrapeHandler {
 
@@ -24,7 +9,7 @@ export class PuppeteerScrapeSingleItemService extends AbstractScrapeHandler {
         super(scrapeConfigDataInterface);
     }
 
-    protected async scrape(scrapeInfo: ScrapeInfo) {
+    protected async scrape(scrapeInfo: ScraperScrapeInfo) {
         try {
             const disableSec = this.configData.getDisableSec();
             // const url = this.configData.getUrl();

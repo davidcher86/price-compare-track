@@ -1,21 +1,6 @@
 import {addPriceTrackRecord} from "@shared-commons/utils/DynamoDBService";
 import { v4 as uuid4 } from "uuid";
-
-interface PriceTrackItem {
-    id: string;
-    scrapeCode: string;
-    userId: string;
-    source: string;
-    scrapeEngine?: string;
-    createdDt: string;
-    img: string;
-    iteration: number;
-    iterationType: string;
-    iterationStart: string;
-    enabled: string;
-    href?: string;
-    name?: string;
-}
+import { PriceTrackItem } from "../../commons/models";
 
 export const addPriceTrackItem = async (event: any) => {
     const userId = event.headers?.userId;

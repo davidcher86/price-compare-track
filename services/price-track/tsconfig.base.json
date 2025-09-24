@@ -15,7 +15,8 @@
   },
   "paths": {
     "@commons/*": ["commons/**"],
-    "@shared-commons/*": ["../commons/**"]
+    "@shared-commons/*": ["../commons/**"],
+    "@price-track-commons/*": ["commons/**"]
   },
   "include": ["./**/*.ts", 
               "../../layers/**/*.ts", 

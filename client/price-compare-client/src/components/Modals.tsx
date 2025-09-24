@@ -61,32 +61,31 @@ export const PopUpProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     <PopUpContext.Provider value={{ isOpen, openModal, closeModal }}>
       {children}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Backdrop */}
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+
           <div
-            className="absolute inset-0 bg-black bg-opacity-50"
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
             onClick={handleNo}
           />
 
-          {/* Modal Box */}
-          <div className="relative bg-white rounded-2xl shadow-lg p-6 z-10 w-96">
+          <div className="relative bg-slate-800 backdrop-blur-md border border-slate-600 rounded-2xl shadow-2xl p-6 z-[10000] w-96">
             {/* Title */}
-            <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
+            <h2 className="text-lg font-semibold text-slate-100">{title}</h2>
 
             {/* Message */}
-            {content ? content : <p className="mt-2 text-gray-600">{message}</p>}
+            {content ? content : <p className="mt-2 text-slate-300">{message}</p>}
 
             {/* Buttons */}
             <div className="mt-6 flex justify-end space-x-3">
               <button
                 onClick={handleNo}
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
+                className="px-4 py-2 bg-slate-700 text-slate-200 rounded-lg hover:bg-slate-600 transition-colors duration-200 border border-slate-600"
               >
                 No
               </button>
               <button
                 onClick={handleYes}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors duration-200 shadow-md"
               >
                 Yes
               </button>
@@ -129,32 +128,32 @@ export const YesNoModal: React.FC<YesNoModalProps> = ({
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black bg-opacity-50"
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
         onClick={onNo}
       />
 
       {/* Modal Box */}
-      <div ref={modalRef} className="relative bg-white rounded-2xl shadow-lg p-6 z-10 w-96">
+      <div ref={modalRef} className="relative bg-slate-800 backdrop-blur-md border border-slate-600 rounded-2xl shadow-2xl p-6 z-[10000] w-96">
         {/* Title */}
-        <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
+        <h2 className="text-lg font-semibold text-slate-100">{title}</h2>
 
         {/* Message */}
-        <p className="mt-2 text-gray-600">{message}</p>
+        <p className="mt-2 text-slate-300">{message}</p>
 
         {/* Buttons */}
         <div className="mt-6 flex justify-end space-x-3">
           <button
             onClick={onNo}
-            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
+            className="px-4 py-2 bg-slate-700 text-slate-200 rounded-lg hover:bg-slate-600 transition-colors duration-200 border border-slate-600"
           >
             No
           </button>
           <button
             onClick={onYes}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors duration-200 shadow-md"
           >
             Yes
           </button>

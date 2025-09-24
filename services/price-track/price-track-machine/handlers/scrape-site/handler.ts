@@ -9,21 +9,7 @@ import {EbayScrapeConfigReader} from '../../../../commons/scrapers/sourcesScrape
 import {AmazonScrapeConfigReader} from '../../../../commons/scrapers/sourcesScrapeConfigs/Amazon/AmazonScrapeConfigReader';
 import {savePayload, getScrapeHtmlRawResultsBucketName} from "../../../../commons/utils/S3Service.ts";
 import {sendMessageToQueue, getDlqSqsName, generateDlqSqsPayload} from "../../../../commons/utils/SQSService.ts";
-
-interface ScrapeItemEvent {
-    id: string;
-    userId: string;
-    source: string;
-    scrapeCode: string;
-    scrapeEngine?: string;
-    createdDt: string;
-    iteration: number;
-    iterationType: string;
-    iterationStart: string;
-    enabled: string; // This will be converted to "true"/"false" string when stored in DynamoDB
-    href: string;
-    name?: string;
-}
+import { ScrapeItemEvent, ErrorMessage } from "../../../commons/models";
 
 export const scrapeSite = async (scrapeInfo: ScrapeItemEvent) => {
     console.log('event for scrape:', scrapeInfo);
@@ -85,8 +71,3 @@ export const scrapeSite = async (scrapeInfo: ScrapeItemEvent) => {
     }
 }
 
-interface ErrorMessage {
-    status: string;
-    message: string;
-    data?: any;
-}

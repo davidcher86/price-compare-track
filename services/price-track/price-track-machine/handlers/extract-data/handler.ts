@@ -1,8 +1,5 @@
-import * as cheerio from 'cheerio';
-// import AWS from 'aws-sdk';
 import {ExtractDataInterface} from '../../../../commons/scrapers/interfaces/ExtractDataInterface';
 import {getScrapeHtmlRawResultsBucketName, retrievePayload, deletePayload} from '../../../../commons/utils/S3Service'
-// const s3 = new AWS.S3();
 import {AliExpressExtractData} from "./dataExtractors/AliExpress/AliEpressDataExtractor";
 import {NewEggScrapeConfigReader} from "../../../../commons/scrapers/sourcesScrapeConfigs/NewEgg/NewEggScrapeConfigReader";
 import {AliExpressScrapeConfigReader} from "../../../../commons/scrapers/sourcesScrapeConfigs/AliExpress/AliExpressScrapeConfigReader";
@@ -14,47 +11,13 @@ import {AmazonScrapeConfigReader} from "../../../../commons/scrapers/sourcesScra
 import {EbayExtractData} from "./dataExtractors/Ebay/EbayExtractData";
 import {NewEggExtractData} from "./dataExtractors/NewEgg/NewEggExtractData";
 import {sendMessageToQueue, getDlqSqsName, generateDlqSqsPayload} from "../../../../commons/utils/SQSService";
-
-interface PriceTrackData {
-    price: string;
-}
-
-interface ExtractedData {
-    scrapeInfo: ScrapeInfo;
-    startScrapeDt: string;
-    endScrapeDt: string;
-    priceTrackData?: PriceTrackData;
-}
-
-interface ScrapeInfo {
-    id: string;
-    userId: string;
-    source: string;
-    scrapeEngine?: string;
-    createdDt: string;
-    iteration: number;
-    iterationType: string;
-    iterationStart: string;
-    enabled: string; // This will be converted to "true"/"false" string when stored in DynamoDB
-    href: string;
-    name?: string;
-    bucketName: string;
-    bucketKey: string;
-    startScrapeDt: string;
-    endScrapeDt: string;
-    scrapeCode: string;
-}
-
-interface ExtractedDataEvent {
-    stepScrapeSiteResult: StepScrapeSiteResult;
-}
-
-interface StepScrapeSiteResult {
-    scrapeInfo?: ScrapeInfo;
-    bucketKey: string;
-    startScrapeDt: string;
-    endScrapeDt: string;
-}
+import { 
+    PriceTrackData, 
+    ExtractedData, 
+    ScrapeInfo, 
+    ExtractedDataEvent, 
+    StepScrapeSiteResult 
+} from "../../../commons/models";
 
 export const extractData = async (extractDataEvent: any): Promise<ExtractedData> => {
     try {

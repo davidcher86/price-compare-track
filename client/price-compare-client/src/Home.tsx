@@ -25,7 +25,6 @@ export default function Home() {
                   
                   <div className="flex items-center">
                       <div className="flex items-center">
-                        <SimpleButton label="Register" additionalClasses={'m-3'} onClick={() => console.log('Register clicked')} />
                         <SimpleButton label="Sign-In" additionalClasses={'m-3'} onClick={() => console.log('Sign-In clicked')} />
                       </div>
                   </div>

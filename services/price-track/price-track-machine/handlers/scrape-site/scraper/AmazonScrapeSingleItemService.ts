@@ -1,28 +1,13 @@
 import {PuppeteerScrapeSingleItemService} from './PuppeteerScrapeSingleItemService'
 import {ScrapeConfigDataInterface} from "../../../../../commons/scrapers/interfaces/ScrapeConfig";
-
-interface ScrapeInfo {
-    id: string;
-    scrapeCode: string;
-    userId: string;
-    source: string;
-    scrapeEngine?: string;
-    createDt: string;
-    iteration: number;
-    iterationType: string;
-    iterationStart: string;
-    enabled: string; // This will be converted to "true"/"false" string when stored in DynamoDB
-    href: string;
-    name?: string;
-    query?: string;
-}
+import { ScraperScrapeInfo } from "../../../../commons/models";
 
 export class AmazonScrapeSingleItemService extends PuppeteerScrapeSingleItemService {
     constructor(scrapeConfigDataInterface: ScrapeConfigDataInterface) {
         super(scrapeConfigDataInterface);
     }
 
-    protected async scrape(scrapeInfo: ScrapeInfo) {
+    protected async scrape(scrapeInfo: ScraperScrapeInfo) {
         try {
             const disableSec = this.configData.getDisableSec();
             // const url = this.configData.getUrl();

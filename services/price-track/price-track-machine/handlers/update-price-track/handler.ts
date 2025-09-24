@@ -1,40 +1,9 @@
 import { v4 as UUID4 } from "uuid";
 import {savePriceTrackRecord} from '../../../../commons/utils/DynamoDBService'
 import {sendMessageToQueue, getDlqSqsName, generateDlqSqsPayload} from "../../../../commons/utils/SQSService.ts";
+import { ExtractedDataWithPrice } from "../../../commons/models";
 
-interface PriceTrackData {
-    image: string;
-    name: string;
-    price: string;
-}
-
-interface ExtractedData {
-    scrapeInfo: ScrapeInfo;
-    startScrapeDt: string;
-    endScrapeDt: string;
-    priceTrackData: PriceTrackData;
-}
-
-interface ScrapeInfo {
-    id: string;
-    userId: string;
-    source: string;
-    scrapeEngine?: string;
-    createdDt: string;
-    iteration: number;
-    iterationType: string;
-    iterationStart: string;
-    enabled: string; // This will be converted to "true"/"false" string when stored in DynamoDB
-    href: string;
-    name?: string;
-    bucketName: string;
-    bucketKey: string;
-    startScrapeDt: string;
-    endScrapeDt: string;
-    scrapeCode: string;
-}
-
-export const updateHistoryData = async (event: ExtractedData): Promise<any> => {
+export const updateHistoryData = async (event: ExtractedDataWithPrice): Promise<any> => {
     try {
         console.log('recieved save extracted data event:', JSON.stringify(event));
         if (event == undefined) 
