@@ -25,6 +25,7 @@ custom:
   S3_EXTRACTED_DATA_BUCKET_NAME: ${env:S3_EXTRACTED_DATA_BUCKET_NAME}-${self:provider.stage}
   PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME: ${env:PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME}-${self:provider.stage}
   PRICE_TRACK_RESULTS_TABLE_NAME: ${env:PRICE_TRACK_RESULTS_TABLE_NAME}-${self:provider.stage}
+  S3_FAILED_EXTRACTED_DATA_BUCKET_NAME: ${env:S3_FAILED_EXTRACTED_DATA_BUCKET_NAME}-${self:provider.stage}
 
 resources:
   Resources:
@@ -38,6 +39,12 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:custom.S3_EXTRACTED_DATA_BUCKET_NAME}
+      DeletionPolicy: Retain
+
+    FailedExtractDataBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.S3_FAILED_EXTRACTED_DATA_BUCKET_NAME}
       DeletionPolicy: Retain
 
     ReactAppBucket:

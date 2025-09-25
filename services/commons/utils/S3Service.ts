@@ -1,7 +1,41 @@
-import { S3Client, GetObjectCommand, DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, GetObjectCommand, CopyObjectCommand, DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { Readable } from 'stream';
 
 const client = new S3Client({ region: process.env.REGION });
+
+export const moveRawHtmlToFailedBucket = async (
+    bucketKey: string
+): Promise<any> => {
+    if (!bucketKey) {
+        throw new Error("Bucket key is undefined");
+    }
+
+    const sourceBucketName = getScrapeHtmlRawResultsBucketName();
+    const destinationBucketName = getScrapeFailedExtractedDataBucketName();
+    try {
+        const copyCommand = new CopyObjectCommand({
+            Bucket: destinationBucketName,
+            CopySource: `${sourceBucketName}/${bucketKey}`,
+            Key: bucketKey,
+        });
+        await client.send(copyCommand);
+        console.log(`Successfully copied object to ${destinationBucketName}/${bucketKey}`);
+
+        const deleteCommand = new DeleteObjectCommand({
+            Bucket: sourceBucketName,
+            Key : bucketKey,
+        });
+        await client.send(deleteCommand);
+        console.log(`Successfully deleted object from ${sourceBucketName}/${bucketKey}`);
+
+        return {
+            status: "COMPLETED"
+        };
+    } catch (error) {
+        console.error(`Error moving raw HTML to failed bucket: ${JSON.stringify(error)}`);
+        throw error;
+    }
+};
 
 export const retrievePayload = async (bucketName: string, bucketKey: string) => {
     console.log(`Retrieving payload from bucket: ${bucketName}, key: ${bucketKey}`);
@@ -94,6 +128,12 @@ export const getScrapeHtmlRawResultsBucketName = () => {
     return process.env.STAGE === 'prod'
             ? (process.env.S3_RAW_HTML_RESULT_BUCKET_NAME || '')
             : "sls-scrape-html-raw-results-prod";
+};
+
+export const getScrapeFailedExtractedDataBucketName = () => {
+    return process.env.STAGE === 'prod'
+            ? (process.env.S3_FAILED_EXTRACTED_DATA_BUCKET_NAME || '')
+            : "sls-scrape-failed-extracted-data-prod";
 };
 
 export const savePayload = async (

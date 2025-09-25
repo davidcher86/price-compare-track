@@ -1,4 +1,4 @@
-import {sendMessageToQueue, getAccepetScrapeRequestSqsName} from "../../../commons/utils/SQSService";
+import {sendMessageToQueue, getAcceptedScrapeRequestSqsName} from "../../../commons/utils/SQSService";
 import { v4 as uuid4 } from "uuid";
 
 export const formScrapeRequest = async (event: any) => {
@@ -38,7 +38,7 @@ export const formScrapeRequest = async (event: any) => {
                 triesCount: 1
             }
             console.log("sqsPayload: ", JSON.stringify(sqsPayload));
-            await sendMessageToQueue(getAccepetScrapeRequestSqsName(), sqsPayload);
+            await sendMessageToQueue(getAcceptedScrapeRequestSqsName(), sqsPayload);
         }
 
         return {

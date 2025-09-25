@@ -35,6 +35,7 @@ provider:
         - s3:PutObject
         - s3:DeleteObject
         - s3:ListBucket
+        - s3:CopyObject
       Resource: "*"
 
 
@@ -50,9 +51,11 @@ custom:
   SQS_SCRAPE_REQUEST: ${env:SQS_SCRAPE_REQUEST}-${self:provider.stage}
   SQS_HTML_RAW_DATA_RESULT: ${env:SQS_HTML_RAW_DATA_RESULT}-${self:provider.stage}
   SQS_EXTRACTED_DATA: ${env:SQS_EXTRACTED_DATA}-${self:provider.stage}
+  SQS_SCRAPE_DLQ: ${env:SQS_SCRAPE_DLQ}-${self:provider.stage}
   S3_RAW_HTML_RESULT_BUCKET_NAME: ${env:S3_RAW_HTML_RESULT_BUCKET_NAME}-${self:provider.stage}
   S3_EXTRACTED_DATA_BUCKET_NAME: ${env:S3_EXTRACTED_DATA_BUCKET_NAME}-${self:provider.stage}
-  SQS_SCRAPE_DLQ: ${env:SQS_SCRAPE_DLQ}-${self:provider.stage}
+  S3_FAILED_EXTRACTED_DATA_BUCKET_NAME: ${env:S3_FAILED_EXTRACTED_DATA_BUCKET_NAME}-${self:provider.stage}
+
   secrets:
     brightdataProxyUri: sls-fourth/brightdata/proxy/uri
   esbuild:
@@ -290,6 +293,7 @@ functions:
       STAGE: ${self:provider.stage}
       REGION: ${self:provider.region}
       SQS_SCRAPE_REQUEST: ${self:custom.SQS_SCRAPE_REQUEST}
+      S3_FAILED_EXTRACTED_DATA_BUCKET_NAME: ${self:custom.S3_FAILED_EXTRACTED_DATA_BUCKET_NAME}
     events:
       - sqs:
           arn:

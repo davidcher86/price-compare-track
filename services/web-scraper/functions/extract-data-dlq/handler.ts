@@ -1,4 +1,5 @@
-import {sendMessageToQueue, getAccepetScrapeRequestSqsName} from "../../../commons/utils/SQSService";
+import {sendMessageToQueue, getAcceptedScrapeRequestSqsName} from "../../../commons/utils/SQSService";
+import {moveRawHtmlToFailedBucket} from "../../../commons/utils/S3Service";
 import { v4 as uuid4 } from "uuid";
 
 export const handleSqsMessage = async (event: any) => {
@@ -42,12 +43,13 @@ export const handleMsg = async (payload: any) => {
                 }
 
                 console.log(`resending to accept scrape request queue for re-scraping`);
-                await sendMessageToQueue(getAccepetScrapeRequestSqsName(), payload);
+                await sendMessageToQueue(getAcceptedScrapeRequestSqsName(), payload);
                 break;
-            // case 'EXTRACT_DATA_FAILED':
-            //     console.log(`extract data failed, error: ${body.error}`);
-            //     // Handle extract data failure
-            //     break;
+            case 'SCHEDULED_EXTRACT_DATA_FAILED':
+                await moveRawHtmlToFailedBucket(payload.bucketKey);
+                // console.log(`extract data failed, error: ${body.error}`);
+                // Handle extract data failure
+                break;
             default:
                 console.log(`Unknown event type: ${payload.event}`);
                 break;

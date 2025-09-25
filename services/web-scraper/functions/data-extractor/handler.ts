@@ -1,4 +1,4 @@
-// Polyfill for File constructor that undici expects in browser environment
+
 if (typeof globalThis.File === 'undefined') {
     (globalThis as any).File = class File {
         constructor(fileBits: any[], fileName: string, options?: any) {
@@ -49,29 +49,17 @@ const extract = async (event: any) => {
     console.log(`scrapeInfo: ${JSON.stringify(scrapeInfo)}, userId: ${userId}, query: ${JSON.stringify(query)}`);
 
     try {
-        if (scrapeInfo == undefined || query == undefined || userId == undefined) {
+        if (scrapeInfo == undefined || query == undefined || userId == undefined)
             throw new Error("scrapeInfo, query or userId is undefined");
-            // await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(event,"some data is undefined"));
-            // return {
-            //     statusCode: 500,
-            //     body: JSON.stringify({ message: "some data is undefined" }),
-            // }
-        }
 
-    // try {
         console.log('event:', JSON.stringify(event));
         const bucketName = getScrapeHtmlRawResultsBucketName();
 
         const html = await retrievePayload(bucketName, bucketKey);
-        if (html.length === 0) {
+
+        if (html.length === 0)
             throw new Error("scraped raw HTML content is empty");
-            // await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(event, "HTML content is empty"));
-            // // throw new Error('HTML content is empty');
-            // return {
-            //     statusCode: 500,
-            //     body: JSON.stringify({ message: "HTML content is empty" }),
-            // }
-        }
+        
 
         let extractDataService: ExtractDataInterface;
 
@@ -130,12 +118,7 @@ const extract = async (event: any) => {
 
         await sendMessageToQueue(getExtractDataSqsName(),sqsPayload);
 
-        // await deletePayload(bucketName, bucketKey);
-
-        // return {
-        //     statusCode: 200,
-        //     body: JSON.stringify({ message: "Scraping completed successfully" }),
-        // }
+        await deletePayload(bucketName, bucketKey);
     } catch (error: ErrorMessage | any) {
         console.error('Error during scraping:', error);
         await sendMessageToQueue(getDlqSqsName(),generateDlqSqsPayload(event,error.status, error.errorMessage));

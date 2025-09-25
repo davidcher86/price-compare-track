@@ -11,13 +11,7 @@ import {AmazonScrapeConfigReader} from "../../../../commons/scrapers/sourcesScra
 import {EbayExtractData} from "./dataExtractors/Ebay/EbayExtractData";
 import {NewEggExtractData} from "./dataExtractors/NewEgg/NewEggExtractData";
 import {sendMessageToQueue, getDlqSqsName, generateDlqSqsPayload} from "../../../../commons/utils/SQSService";
-import { 
-    PriceTrackData, 
-    ExtractedData, 
-    ScrapeInfo, 
-    ExtractedDataEvent, 
-    StepScrapeSiteResult 
-} from "../../../commons/models";
+import { ExtractedData } from "../../../commons/models";
 
 export const extractData = async (extractDataEvent: any): Promise<ExtractedData> => {
     try {
@@ -26,6 +20,7 @@ export const extractData = async (extractDataEvent: any): Promise<ExtractedData>
         if (bucketKey == undefined || scrapeInfo == undefined) 
             throw new Error("scrapeInfo, query or userId is undefined");
   
+
         const bucketName = getScrapeHtmlRawResultsBucketName();
         const html = await retrievePayload(bucketName, bucketKey);
         
@@ -67,6 +62,9 @@ export const extractData = async (extractDataEvent: any): Promise<ExtractedData>
 
 
         console.log('Extracted data:', priceTrackResults[0]);
+
+        await deletePayload(bucketName, bucketKey);
+        
         return {
             scrapeInfo: scrapeInfo,
             priceTrackData: priceTrackResults[0],

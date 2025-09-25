@@ -36,6 +36,7 @@ provider:
         - s3:GetObject
         - s3:PutObject
         - s3:DeleteObject
+        - s3:CopyObject
         - s3:ListBucket
         - states:StartExecution
         - states:DescribeExecution
@@ -56,6 +57,7 @@ custom:
   PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME: ${env:PRICE_TRACK_SCHEDULED_ITEMS_TABLE_NAME}-${self:provider.stage}
   PRICE_TRACK_RESULTS_TABLE_NAME: ${env:PRICE_TRACK_RESULTS_TABLE_NAME}-${self:provider.stage}
   PRICE_TRACK_MACHINE_ARN: ${env:PRICE_TRACK_MACHINE_ARN}
+  SQS_SCRAPE_DLQ: ${env:SQS_SCRAPE_DLQ}-${self:provider.stage}
   secrets:
     brightdataProxyUri: sls-fourth/brightdata/proxy/uri
   serverless-offline:
@@ -243,6 +245,8 @@ functions:
       STAGE: ${self:provider.stage}
       REGION: ${self:provider.region}
       S3_RAW_HTML_RESULT_BUCKET_NAME: ${self:custom.S3_RAW_HTML_RESULT_BUCKET_NAME}
+      SQS_SCRAPE_DLQ: ${self:custom.SQS_SCRAPE_DLQ}
+      AWS_ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
 
   updatePriceTrackHistoryData:
     handler: price-track-machine/handlers/update-price-track/handler.updateHistoryData

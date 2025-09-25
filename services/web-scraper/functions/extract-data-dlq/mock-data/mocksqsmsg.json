@@ -3,7 +3,7 @@
     {
       "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",
       "receiptHandle": "MessageReceiptHandle",
-      "body": "{\"event\":\"SCRAPE_FAILED\",\"error\":\"Error: scrapeInfo or query is undefined\",\"scrapeRequestId\":\"382a459c-9f97-43c1-bdb6-066d5132895e\",\"scrapeId\":\"702f926e-f771-472a-89e4-d60621a2d93e\",\"scrapeInfo\":{\"name\":\"amazon\",\"order\":1},\"userId\":\"9962a416-504d-4b82-87f6-94a536aa27da\",\"scrapeDt\":\"2025-07-27T09:41:35.953Z\",\"query\":\"mouse\",\"triesCount\":1}",
+      "body": "{\"event\":\"SCHEDULED_EXTRACT_DATA_FAILED\",\"error\":\"Error: Error: extractDataEvent is undefined\",\"scrapeInfo\":{\"scrapeCode\":\"70863aff-a5c5-4747-8e85-a5f6367da808\",\"userId\":\"9962a416-504d-4b82-87f6-94a536aa27da\",\"source\":\"newegg\",\"scrapeEngine\":\"puppeteer\",\"createDt\":\"2025-09-07T17:17:25.281Z\",\"iteration\":1,\"iterationType\":\"hourly\",\"iterationStart\":\"2025-09-07T17:17:24.106Z\",\"href\":\"https://www.newegg.com/msi-forge-gk300-blue-us-forgegk300-mechanical-keyboard-clicky-mechanical-switches/p/N82E16823167059\",\"name\":\"MSI FORGE GK300 Gaming Keyboard - Clicky Blue Mechanical Switches, 9-Mode RGB, Ergonomic Keycaps - Black\",\"query\":\"MSI FORGE GK300 Gaming Keyboard - Clicky Blue Mechanical Switches, 9-Mode RGB, Ergonomic Keycaps - Black\"},\"bucketKey\":\"aliexpress-SINGLE-ITEM-9962a416-504d-4b82-87f6-94a536aa27da-e30ee601-0c04-4c7c-928d-170e658c66d5\",\"startScrapeDt\":\"2025-09-07T17:18:58.646Z\",\"endScrapeDt\":\"2025-09-07T17:19:19.729Z\"}",
         "attributes": {
         "ApproximateReceiveCount": "1",
         "SentTimestamp": "1523232000000",

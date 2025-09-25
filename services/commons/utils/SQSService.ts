@@ -39,7 +39,7 @@ export const getExtractDataSqsName = (): any => {
     : `https://sqs.${process.env.REGION}.amazonaws.com/${process.env.AWS_ACCOUNT_ID}/extracted-data-results-queue-prod`;
 }
 
-export const getAccepetScrapeRequestSqsName = (): any => {
+export const getAcceptedScrapeRequestSqsName = (): any => {
     return process.env.STAGE === 'prod'
     ? `https://sqs.${process.env.REGION}.amazonaws.com/${process.env.AWS_ACCOUNT_ID}/${process.env.SQS_SCRAPE_REQUEST}`
     : `https://sqs.${process.env.REGION}.amazonaws.com/${process.env.AWS_ACCOUNT_ID}/accept-scrape-request-queue-prod`;
